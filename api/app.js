@@ -17,7 +17,9 @@ const app = express()
 const processEnv = process.env
 const currentEnv = processEnv.NODE_ENV
 
-const whitelist = processEnv.WHITELISTED_DOMAINS ? processEnv.WHITELISTED_DOMAINS.split(',') : []
+const whitelist = processEnv.WHITELISTED_DOMAINS
+    ? processEnv.WHITELISTED_DOMAINS.split(',').map((item) => item.trim())
+    : []
 
 const corsOptions = {
     origin: function (origin, callback) {

@@ -8,6 +8,11 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: IndexView
+    },
+    {
+      path: '/user-activation/:token',
+      name: 'verifyEmail',
+      component: IndexView
     }
   ]
 })

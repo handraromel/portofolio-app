@@ -1,3 +1,18 @@
+// Auth Interfaces
+interface AuthUserData {
+  id: string
+  email: string
+  username: string
+  is_admin: string
+  is_active: string
+}
+
+interface UserDataResponse {
+  msg: string
+  data: AuthUserData
+}
+// End Auth Interfaces
+
 interface AdvantageCardProps {
   iconSrc: string
   title: string
@@ -37,6 +52,7 @@ interface ModalProps {
   title?: string
   size?: 'md' | 'lg' | 'xl'
   showCloseIcon?: boolean
+  persistModal?: boolean
 }
 
 interface SmoothScrollOptions {
@@ -68,11 +84,13 @@ type RegisterFormData = {
   username: string
   email: string
   password: string
-  firstName: string
-  lastName: string
+  first_name: string
+  last_name: string
 }
 
 export type {
+  AuthUserData,
+  UserDataResponse,
   AdvantageCardProps,
   ButtonProps,
   CircledIconProps,

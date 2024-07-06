@@ -7,12 +7,12 @@
   >
     <div class="container mx-auto px-4">
       <div class="flex items-center justify-between py-4">
-        <div class="logo mr-5 w-2/12">
-          <img class="object-contain" src="/assets/navbar/logo.png" alt="Navbar Logo" />
+        <div class="logo flex w-3/12 pt-5 md:w-2/12 lg:w-1/12 lg:justify-end">
+          <img class="h-20 w-20 object-contain" src="/favicon.svg" alt="Navbar Logo" />
         </div>
 
         <div
-          class="hidden md:flex md:w-9/12 md:flex-wrap md:justify-end md:gap-x-8 md:gap-y-4 xl:gap-x-3 xl:gap-y-8"
+          class="hidden md:flex md:w-9/12 md:flex-wrap md:justify-end md:gap-x-8 md:gap-y-4 lg:w-10/12 xl:gap-x-3 xl:gap-y-8"
         >
           <a
             v-for="item in menuItems"
@@ -29,7 +29,7 @@
           </a>
         </div>
 
-        <div class="flex w-9/12 justify-end pr-5 md:hidden">
+        <div class="flex w-8/12 justify-end pr-5 md:hidden">
           <button @click="toggleMobileMenu" class="text-white focus:outline-none">
             <svg
               class="h-10 w-10"

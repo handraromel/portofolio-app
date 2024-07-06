@@ -1,7 +1,7 @@
 <!-- Modal.vue -->
 <template>
   <TransitionRoot appear :show="isOpen" as="template">
-    <Dialog as="div" @close="closeModal" class="relative z-[200]">
+    <Dialog as="div" @close="handleClose" class="relative z-[200]">
       <TransitionChild
         as="template"
         enter="duration-300 ease-out"
@@ -74,7 +74,11 @@ import { computed } from 'vue'
 import { TransitionRoot, TransitionChild, Dialog, DialogPanel, DialogTitle } from '@headlessui/vue'
 import { type ModalProps } from '@/types'
 
-const props = defineProps<ModalProps>()
+const props = withDefaults(defineProps<ModalProps>(), {
+  size: 'md',
+  showCloseIcon: false,
+  persistModal: false
+})
 
 const emit = defineEmits<{
   (e: 'close'): void
@@ -90,6 +94,12 @@ const sizeClass = computed(() => {
       return 'max-w-md'
   }
 })
+
+const handleClose = () => {
+  if (!props.persistModal) {
+    closeModal()
+  }
+}
 
 const closeModal = () => {
   emit('close')

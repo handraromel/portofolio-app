@@ -28,10 +28,10 @@
       <MenuItems
         class="absolute right-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
       >
-        <div class="px-1 py-1">
+        <div v-if="!isAuthenticated" class="px-1 py-1">
           <MenuItem v-slot="{ active }">
             <button
-              @click="openRegisterModal"
+              @click="openModal('register')"
               :class="[
                 active ? 'bg-red-500 text-white' : 'text-gray-900',
                 'group flex w-full items-center rounded-md px-2 py-2 text-sm'
@@ -42,7 +42,7 @@
           </MenuItem>
           <MenuItem v-slot="{ active }">
             <button
-              @click="openSignInModal"
+              @click="openModal('signIn')"
               :class="[
                 active ? 'bg-red-500 text-white' : 'text-gray-900',
                 'group flex w-full items-center rounded-md px-2 py-2 text-sm'
@@ -52,9 +52,10 @@
             </button>
           </MenuItem>
         </div>
-        <div class="px-1 py-1">
+        <div v-else class="px-1 py-1">
           <MenuItem v-slot="{ active }">
             <button
+              @click="handleLogout"
               :class="[
                 active ? 'bg-red-500 text-white' : 'text-gray-900',
                 'group flex w-full items-center rounded-md px-2 py-2 text-sm'
@@ -68,51 +69,68 @@
     </transition>
   </Menu>
 
-  <Modal :is-open="isRegisterModalOpen" @close="closeRegisterModal" title="Register to Bino">
-    <Register @submit="handleRegister" @cancel="closeRegisterModal" />
-  </Modal>
-  <Modal :is-open="isSignInModalOpen" @close="closeSignInModal" title="Sign In To Your Account">
-    <SignIn @submit="handleSignIn" @cancel="closeSignInModal" />
+  <Modal
+    v-for="(modal, index) in modals"
+    :key="index"
+    :is-open="modal.isOpen"
+    :title="modal.title"
+    @close="closeModal(modal.name)"
+  >
+    <component
+      :is="modal.component"
+      @success="closeModal(modal.name)"
+      @cancel="closeModal(modal.name)"
+    />
   </Modal>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue'
 import { Modal, SignIn, Register } from '@/components'
-import { type SignInFormData, type RegisterFormData } from '@/types'
+import { storeToRefs } from 'pinia'
+import { useAuthStore } from '@/stores'
 
-const isSignInModalOpen = ref(false)
-const isRegisterModalOpen = ref(false)
+type ModalName = 'signIn' | 'register'
 
-const openSignInModal = () => {
-  isSignInModalOpen.value = true
+const authStore = useAuthStore()
+const { isAuthenticated } = storeToRefs(authStore)
+
+const modalStates = ref({
+  signIn: false,
+  register: false
+})
+
+const modals = computed(() => [
+  {
+    name: 'signIn' as const,
+    isOpen: modalStates.value.signIn,
+    title: 'Sign In To Your Account',
+    component: SignIn
+  },
+  {
+    name: 'register' as const,
+    isOpen: modalStates.value.register,
+    title: 'Register to Bino',
+    component: Register
+  }
+])
+
+const openModal = (modalName: ModalName) => {
+  modalStates.value[modalName] = true
 }
 
-const closeSignInModal = () => {
-  isSignInModalOpen.value = false
+const closeModal = (modalName: ModalName) => {
+  modalStates.value[modalName] = false
 }
 
-const openRegisterModal = () => {
-  isRegisterModalOpen.value = true
-}
-
-const closeRegisterModal = () => {
-  isRegisterModalOpen.value = false
-}
-
-const handleSignIn = (formData: SignInFormData) => {
-  console.log('Sign in with', formData.email, formData.password)
-}
-
-const handleRegister = (formData: RegisterFormData) => {
-  console.log(
-    'Sign in with',
-    formData.username,
-    formData.email,
-    formData.password,
-    formData.firstName,
-    formData.lastName
-  )
+const handleLogout = async () => {
+  try {
+    if (isAuthenticated.value) {
+      await authStore.logout()
+    }
+  } catch (error) {
+    console.error('Logout failed:', error)
+  }
 }
 </script>

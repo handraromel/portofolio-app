@@ -1,4 +1,3 @@
-<!-- Register.vue -->
 <template>
   <form @submit.prevent="handleSubmit">
     <div v-for="(field, index) in fields" :key="index" class="mb-4">
@@ -20,6 +19,7 @@
 import { ref } from 'vue'
 import { Button } from '@/components'
 import { type SignInFormData } from '@/types'
+import { useAuthStore } from '@/stores'
 
 const fields = [
   { model: 'email', type: 'email', placeholder: 'Email' },
@@ -31,12 +31,29 @@ const formData = ref<SignInFormData>({
   password: ''
 })
 
+const authStore = useAuthStore()
+const error = ref('')
+const isLoading = ref(false)
+
 const emit = defineEmits<{
-  (e: 'submit', formData: SignInFormData): void
+  (e: 'success'): void
   (e: 'cancel'): void
 }>()
 
-const handleSubmit = () => {
-  emit('submit', formData.value)
+const handleSubmit = async () => {
+  isLoading.value = true
+  error.value = ''
+  try {
+    const success = await authStore.login(formData.value)
+    if (success) {
+      emit('success')
+    } else {
+      error.value = 'Login failed. Please check your credentials.'
+    }
+  } catch (err) {
+    error.value = 'An error occurred. Please try again.'
+  } finally {
+    isLoading.value = false
+  }
 }
 </script>

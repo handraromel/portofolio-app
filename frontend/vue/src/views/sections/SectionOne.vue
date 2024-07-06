@@ -5,14 +5,16 @@
   >
     <div class="container mx-auto px-4 text-center max-sm:mb-10">
       <div class="flex flex-col gap-9 max-sm:gap-6">
-        <div id="header-subtitle" class="mx-5 text-3xl">
+        <div id="header-subtitle" class="mx-5 text-xl lg:text-3xl">
           <p>Our Clients Are Our First Priority</p>
         </div>
-        <div
-          id="header-title"
-          class="mx-5 text-5xl font-semibold tracking-widest lg:text-6xl xl:text-8xl"
-        >
-          <p>WELCOME TO BINO</p>
+        <div id="header-title" class="mx-5 text-5xl font-semibold tracking-widest xl:text-7xl">
+          WELCOME TO SOME WEB
+        </div>
+        <div v-if="isAuthenticated" id="display-username">
+          <p class="text-3xl uppercase tracking-wider text-red-500 lg:text-5xl">
+            {{ displayName }}
+          </p>
         </div>
         <div id="header-separator" class="flex justify-center">
           <Decoration />
@@ -27,7 +29,7 @@
         <div id="buttons" class="flex justify-center">
           <div class="flex flex-wrap justify-center gap-8">
             <div>
-              <Button button-text="get started now" :fixed-width="true" />
+              <Button button-text="get started now" :fixed-width="true" @click="openSignInModal" />
             </div>
             <div>
               <Button
@@ -47,12 +49,52 @@
       </a>
     </div>
   </div>
+
+  <Modal
+    :is-open="isSignInModalOpen"
+    @close="closeSignInModal"
+    :title="isAuthenticated ? '' : 'Sign In to Your Account'"
+  >
+    <div v-if="isAuthenticated" class="text-center">
+      <div class="-mt-5 mb-5 flex w-full justify-center">
+        <img class="h-20 w-20" src="/assets/stats/info.svg" alt="info" />
+      </div>
+      <p class="text-sky-600">You're Currently Signed In, Please Enjoy.</p>
+    </div>
+    <SignIn v-else @success="closeSignInModal" @cancel="closeSignInModal" />
+  </Modal>
 </template>
 
 <script setup lang="ts">
+import { computed, ref } from 'vue'
 import { Button, CircledIcon, Decoration } from '@/components'
-
+import { Modal, SignIn } from '@/components'
+import { storeToRefs } from 'pinia'
+import { useAuthStore } from '@/stores'
 import { useSmoothScroll } from '@/composables'
+
+defineProps<{
+  isAuthenticated: boolean
+}>()
+
+const { getAdminCheck, getUsername } = storeToRefs(useAuthStore())
+
+const isSignInModalOpen = ref(false)
+
+const displayName = computed(() => {
+  if (getAdminCheck.value) {
+    return 'administrator'
+  }
+  return getUsername.value
+})
+
+const openSignInModal = () => {
+  isSignInModalOpen.value = true
+}
+
+const closeSignInModal = () => {
+  isSignInModalOpen.value = false
+}
 
 const { scrollToElement } = useSmoothScroll()
 

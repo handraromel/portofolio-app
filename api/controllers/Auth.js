@@ -1,8 +1,10 @@
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
+const crypto = require('crypto')
+const { verify } = require('jsonwebtoken')
 const dotenv = require('dotenv')
 const { userRegisterDTO, userAuthDTO } = require('@api/dto/UserDTO')
-const { logger } = require('@api/utils')
+const { logger, sendVerificationEmail } = require('@api/utils')
 const User = require('@api/models/User')
 
 dotenv.config()
@@ -42,17 +44,37 @@ module.exports = {
                 is_active: false,
             })
 
-            const payload = { user: { id: user.id } }
-            const token = jwt.sign(payload, processEnv.JWT_SECRET, { expiresIn: 1800 })
+            const verificationToken = crypto.randomBytes(20).toString('hex')
+            user.verificationToken = verificationToken
+            await user.save()
 
-            res.cookie('authToken', token, {
-                httpOnly: true,
-                secure: processEnv.NODE_ENV === 'production',
-                sameSite: 'strict',
+            const verificationLink = `${processEnv.APP_URL}/user-activation/${verificationToken}`
+            sendVerificationEmail(user.email, verificationLink, res, logger)
+
+            res.json({
+                msg: 'Registration successful. Please check your email to verify your account.',
             })
-            res.json({ msg: 'Registration successful' })
         } catch (err) {
             logger.error('An error occured', { error: err })
+            res.status(500).send('Server Error')
+        }
+    },
+    userActivation: async (req, res) => {
+        try {
+            const { token } = req.params
+            const user = await User.findOne({ where: { verificationToken: token } })
+
+            if (!user) {
+                return res.status(400).json({ msg: 'Invalid verification token' })
+            }
+
+            user.is_active = true
+            user.verificationToken = null
+            await user.save()
+
+            res.json({ msg: 'Email verified successfully.' })
+        } catch (err) {
+            logger.error('An error occurred during email verification', { error: err })
             res.status(500).send('Server Error')
         }
     },
@@ -82,17 +104,53 @@ module.exports = {
             }
 
             const payload = { user: { id: user.id } }
-            const token = jwt.sign(payload, processEnv.JWT_SECRET, { expiresIn: 1800 })
+            const token = jwt.sign(payload, processEnv.JWT_SECRET, { expiresIn: '1d' })
 
             res.cookie('authToken', token, {
                 httpOnly: true,
                 secure: processEnv.NODE_ENV === 'production',
                 sameSite: 'strict',
+                priority: 'high',
             })
-            res.json({ msg: 'Login successful' })
+
+            res.json({
+                msg: "You're now logged in!",
+                data: {
+                    id: user.id,
+                    email: user.email,
+                    username: user.username,
+                    is_admin: user.is_admin,
+                },
+            })
         } catch (err) {
             logger.error('An error occured', { error: err })
             res.status(500).send('Server Error')
+        }
+    },
+    verifyToken: async (req, res) => {
+        const token = req.cookies['authToken']
+        if (!token) {
+            return res.status(401).json({ msg: 'No token found, authorization denied' })
+        }
+
+        try {
+            const decoded = verify(token, processEnv.JWT_SECRET)
+            const user = await User.findByPk(decoded.user.id)
+            if (!user) {
+                return res.status(401).json({ msg: 'User not found' })
+            }
+            res.json({
+                msg: 'Token is valid',
+                data: {
+                    id: user.id,
+                    email: user.email,
+                    username: user.username,
+                    is_admin: user.is_admin,
+                },
+            })
+        } catch (err) {
+            logger.error('An error occured', { error: err })
+            res.status(401).json({ msg: 'Token is not valid' })
         }
     },
     logout: async (req, res) => {

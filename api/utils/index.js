@@ -1,6 +1,6 @@
 const startServer = require('./start-server')
 const { sequelize } = require('./db-sync')
 const logger = require('./logger')
-const useMailer = require('./mailer')
+const { sendVerificationEmail, sendPasswordResetEmail } = require('./mailer')
 
-module.exports = { startServer, sequelize, logger, useMailer }
+module.exports = { startServer, sequelize, logger, sendVerificationEmail, sendPasswordResetEmail }

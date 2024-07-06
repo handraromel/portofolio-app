@@ -10,6 +10,7 @@ import UserMenu from './UserMenu.vue'
 import Modal from './Modal.vue'
 import SignIn from './Auth/SignIn.vue'
 import Register from './Auth/Register.vue'
+import VerifyEmail from './Auth/VerifyEmail.vue'
 
 export {
   Button,
@@ -23,5 +24,6 @@ export {
   UserMenu,
   Modal,
   SignIn,
-  Register
+  Register,
+  VerifyEmail
 }

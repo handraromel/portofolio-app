@@ -1,7 +1,7 @@
 const bcrypt = require('bcryptjs')
 const crypto = require('crypto')
 const { logger } = require('@api/utils')
-const { useMailer } = require('@api/utils')
+const { sendPasswordResetEmail } = require('@api/utils')
 const { userUpdateDTO, updatePasswordDTO } = require('@api/dto/UserDTO')
 const User = require('@api/models/User')
 
@@ -159,7 +159,7 @@ module.exports = {
             user.password = hashedPassword
             await user.save()
 
-            useMailer(user.email, newPassword, res, logger)
+            sendPasswordResetEmail(user.email, newPassword, res, logger)
         } catch (err) {
             logger.error('An error occurred', { error: err })
             res.status(500).json({ msg: 'Server Error' })

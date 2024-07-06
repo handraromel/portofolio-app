@@ -11,13 +11,17 @@ import {
   SectionNine,
   SectionTen
 } from '@/views/sections'
-import { Separator, Footer, Navbar } from '@/components'
+import { Separator, Footer, Navbar, VerifyEmail } from '@/components'
+import { storeToRefs } from 'pinia'
+import { useAuthStore } from '@/stores'
+
+const { isAuthenticated } = storeToRefs(useAuthStore())
 </script>
 
 <template>
   <main>
     <Navbar />
-    <SectionOne />
+    <SectionOne :is-authenticated="isAuthenticated" />
     <SectionTwo />
     <Separator />
     <SectionThree />
@@ -31,5 +35,6 @@ import { Separator, Footer, Navbar } from '@/components'
     <Separator />
     <SectionTen />
     <Footer />
+    <VerifyEmail />
   </main>
 </template>

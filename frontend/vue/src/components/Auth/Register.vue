@@ -20,29 +20,47 @@
 import { ref } from 'vue'
 import { Button } from '@/components'
 import { type RegisterFormData } from '@/types'
+import { useAuthStore } from '@/stores'
 
 const fields = [
   { model: 'username', type: 'text', placeholder: 'Username' },
   { model: 'email', type: 'email', placeholder: 'Email' },
   { model: 'password', type: 'password', placeholder: 'Password' },
-  { model: 'firstName', type: 'text', placeholder: 'First Name' },
-  { model: 'lastName', type: 'text', placeholder: 'Last Name' }
+  { model: 'first_name', type: 'text', placeholder: 'First Name' },
+  { model: 'last_name', type: 'text', placeholder: 'Last Name' }
 ] as const
 
 const formData = ref<RegisterFormData>({
   username: '',
   email: '',
   password: '',
-  firstName: '',
-  lastName: ''
+  first_name: '',
+  last_name: ''
 })
 
+const authStore = useAuthStore()
+const error = ref('')
+const isLoading = ref(false)
+
 const emit = defineEmits<{
-  (e: 'submit', formData: RegisterFormData): void
+  (e: 'success'): void
   (e: 'cancel'): void
 }>()
 
-const handleSubmit = () => {
-  emit('submit', formData.value)
+const handleSubmit = async () => {
+  isLoading.value = true
+  error.value = ''
+  try {
+    const success = await authStore.register(formData.value)
+    if (success) {
+      emit('success')
+    } else {
+      error.value = 'Registration failed. Please contact your administrator.'
+    }
+  } catch (err) {
+    error.value = 'An error occurred. Please try again.'
+  } finally {
+    isLoading.value = false
+  }
 }
 </script>
