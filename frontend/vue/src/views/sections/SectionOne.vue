@@ -19,7 +19,7 @@
         <div id="header-separator" class="flex justify-center">
           <Decoration />
         </div>
-        <div id="header-desc" class="mx-8 pb-14 text-xl max-sm:pb-4 lg:mx-48 xl:mx-[22rem]">
+        <div id="header-desc" class="mx-8 pb-14 text-lg max-sm:pb-4 lg:mx-48 xl:mx-[22rem]">
           <p class="leading-9 max-sm:leading-7">
             Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum
             has been the industry's standard dummy text ever since the 1500s, when an unknown

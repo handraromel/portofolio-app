@@ -79,7 +79,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { hyphenize } from '@/utils/stringUtils'
+import { hyphenize } from '@/utils/common'
 import { UserMenu } from '@/components'
 import { useScroll, useIntersectionObserver } from '@vueuse/core'
 import { useRouteHash } from '@vueuse/router'

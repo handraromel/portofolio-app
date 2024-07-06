@@ -21,12 +21,12 @@
             class="z-30 flex w-1/2 flex-col justify-center overflow-hidden bg-red-500 p-8 text-white max-sm:w-full"
           >
             <p class="mb-2 text-sm uppercase">{{ content.topSubtitle }}</p>
-            <h3 class="mb-4 text-2xl font-bold">{{ content.title }}</h3>
+            <h3 class="mb-4 text-2xl font-bold tracking-wider">{{ content.title }}</h3>
             <p class="mb-4 text-sm leading-relaxed">{{ content.description }}</p>
             <div class="flex flex-row items-center">
               <a
                 href="javascript:"
-                class="relative text-sm hover:font-semibold"
+                class="relative text-sm transition-all duration-300 group-hover:font-semibold"
                 @click="openModal(content)"
               >
                 <span class="relative z-10">Read More</span>

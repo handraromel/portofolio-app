@@ -21,7 +21,7 @@
         :class="{ '-rotate-45': isHovered || decorationFilled }"
       />
     </div>
-    <h3 class="mb-2 text-2xl font-semibold uppercase">{{ title }}</h3>
+    <h3 class="mb-2 text-2xl font-semibold uppercase tracking-wider">{{ title }}</h3>
     <div class="mb-4 h-px w-12 bg-red-500"></div>
     <p class="text-lg text-slate-500 max-sm:px-5">{{ description }}</p>
     <Button v-if="showButton" button-text="read more" />

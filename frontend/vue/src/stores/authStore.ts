@@ -35,7 +35,7 @@ export const useAuthStore = defineStore('auth', {
         this.authMessage = loginResponse.msg
         return true
       } catch (error) {
-        console.error('Login failed:', error)
+        console.error('Login failed')
         this.authMessage = 'Login failed'
         return false
       }
@@ -45,9 +45,9 @@ export const useAuthStore = defineStore('auth', {
         await authApi.logout()
         this.user = null
         this.isAuthenticated = false
-        this.authMessage = 'Logged out successfully'
+        this.authMessage = "You're now logged out"
       } catch (error) {
-        console.error('Logout failed:', error)
+        console.error('Logout failed')
         this.authMessage = 'Logout failed'
       }
     },

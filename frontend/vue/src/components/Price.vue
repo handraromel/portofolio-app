@@ -7,7 +7,7 @@
       class="flex h-40 justify-center px-6 pt-5"
       :class="[isActive ? 'bg-red-500 text-white' : 'bg-gray-300 text-gray-800']"
     >
-      <h3 class="text-center text-xl font-bold">{{ planName }}</h3>
+      <h3 class="text-center text-xl font-bold tracking-wider">{{ planName }}</h3>
     </div>
     <div class="flex flex-col items-center px-6 py-8">
       <div

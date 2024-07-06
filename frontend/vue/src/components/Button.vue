@@ -1,7 +1,7 @@
 <template>
   <button
     :class="[
-      'flex items-center justify-center rounded-sm py-1.5',
+      'flex items-center justify-center rounded-sm py-1.5 tracking-wider',
       'lg:text-md text-sm uppercase outline outline-offset-1 transition duration-300 ease-in-out',
       'disabled font-semibold hover:outline-2 hover:drop-shadow-lg',
       themeClasses,

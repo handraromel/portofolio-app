@@ -79,6 +79,7 @@
     <component
       :is="modal.component"
       @success="closeModal(modal.name)"
+      @error="closeModal(modal.name)"
       @cancel="closeModal(modal.name)"
     />
   </Modal>
@@ -88,13 +89,15 @@
 import { ref, computed } from 'vue'
 import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue'
 import { Modal, SignIn, Register } from '@/components'
+import { useToast } from 'vue-toastification'
 import { storeToRefs } from 'pinia'
 import { useAuthStore } from '@/stores'
 
 type ModalName = 'signIn' | 'register'
 
 const authStore = useAuthStore()
-const { isAuthenticated } = storeToRefs(authStore)
+const { isAuthenticated, authMessage } = storeToRefs(authStore)
+const toast = useToast()
 
 const modalStates = ref({
   signIn: false,
@@ -128,9 +131,11 @@ const handleLogout = async () => {
   try {
     if (isAuthenticated.value) {
       await authStore.logout()
+      toast.info(authMessage.value)
     }
   } catch (error) {
-    console.error('Logout failed:', error)
+    toast.error('Logout failed')
+    console.error('Logout failed')
   }
 }
 </script>

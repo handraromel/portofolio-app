@@ -159,6 +159,6 @@ module.exports = {
             secure: processEnv.NODE_ENV === 'production',
             sameSite: 'strict',
         })
-        res.json({ msg: 'Logout successful' })
+        res.json({ msg: "You're now logged out" })
     },
 }

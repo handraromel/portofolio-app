@@ -2,12 +2,13 @@ import '@/assets/main.css'
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
-
 import App from './App.vue'
 import router from './router'
 import { useAuthStore } from './stores'
-
 import Vue3SmoothScroll from 'vue3-smooth-scroll'
+import Toast from 'vue-toastification'
+import 'vue-toastification/dist/index.css'
+import { toastrOptions } from '@/utils/toastInit'
 
 const app = createApp(App)
 
@@ -18,6 +19,7 @@ app.use(Vue3SmoothScroll, {
   updateHistory: false,
   duration: 500
 })
+app.use(Toast, toastrOptions)
 
 const authAction = useAuthStore()
 authAction.verifyToken()

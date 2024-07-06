@@ -64,9 +64,9 @@ const message = ref('')
 const error = ref('')
 
 const token = useRouteParams('token')
-const CLOSE_DELAY = 5000
+const CLOSE_DELAY = 5
 
-const { count, reset } = useCounter(CLOSE_DELAY / 1000, { min: 0, max: CLOSE_DELAY / 1000 })
+const { count, reset } = useCounter(CLOSE_DELAY, { min: 0, max: CLOSE_DELAY })
 
 const singleToken = computed(() => {
   if (Array.isArray(token.value)) {
@@ -82,7 +82,7 @@ const closeVerificationModal = () => {
 
 const { start: startCloseTimeout } = useTimeoutFn(() => {
   closeVerificationModal()
-}, CLOSE_DELAY)
+}, CLOSE_DELAY * 1000)
 
 const verifyEmail = async () => {
   if (!singleToken.value) {
@@ -95,11 +95,11 @@ const verifyEmail = async () => {
     const result = await authStore.verifyEmail(singleToken.value)
     isVerified.value = true
     message.value = result.msg
-    reset(CLOSE_DELAY / 1000)
+    reset(CLOSE_DELAY)
     startCloseTimeout()
   } catch (err) {
     error.value = err instanceof Error ? err.message : 'An error occurred during verification'
-    reset(CLOSE_DELAY / 1000)
+    reset(CLOSE_DELAY)
     startCloseTimeout()
   } finally {
     isLoading.value = false

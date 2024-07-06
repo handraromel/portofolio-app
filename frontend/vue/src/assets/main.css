@@ -2,6 +2,18 @@
 @tailwind components;
 @tailwind utilities;
 
-.smooth-scroll {
-  scroll-behavior: smooth;
+@font-face {
+  font-family: 'Jakarta';
+  font-weight: 400;
+  font-style: normal;
+  font-display: auto;
+  unicode-range: U+000-5FF;
+  src:
+    local('Jakarta'),
+    url('/assets/fonts/jakarta.ttf') format('truetype'),
+    url('/assets/fonts/jakarta.ttf') format('truetype');
+}
+
+#app {
+  font-family: 'Jakarta', Arial, Helvetica, sans-serif;
 }

@@ -18,7 +18,9 @@
                 <CircledIcon :icon-src="service.iconSrc" :is-button="true" />
               </div>
               <div class="ml-4">
-                <h3 class="text-2xl font-semibold text-red-500">{{ service.title }}</h3>
+                <h3 class="text-2xl font-semibold tracking-wider text-red-500">
+                  {{ service.title }}
+                </h3>
                 <p class="text-lg text-gray-400">{{ service.description }}</p>
               </div>
             </div>
