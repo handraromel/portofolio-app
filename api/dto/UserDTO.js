@@ -2,17 +2,21 @@ const Joi = require('joi')
 
 const userRegisterDTO = Joi.object({
     username: Joi.string().required(),
-    password: Joi.string().min(6).required(),
+    password: Joi.string().min(8).required(),
     email: Joi.string().email().required(),
-    first_name: Joi.string().required(),
-    last_name: Joi.string().required(),
 })
 
 const userUpdateDTO = Joi.object({
     username: Joi.string().required(),
     email: Joi.string().email().required(),
-    first_name: Joi.string().required(),
-    last_name: Joi.string().required(),
+    first_name: Joi.string(),
+    last_name: Joi.string(),
+    has_pet: Joi.boolean(),
+    pet_name: Joi.string(),
+    has_liked_music_genre: Joi.boolean(),
+    like_music_genre: Joi.string(),
+    has_most_liked_place: Joi.boolean(),
+    most_liked_place: Joi.string(),
 })
 
 const updatePasswordDTO = Joi.object({

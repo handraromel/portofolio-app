@@ -12,7 +12,7 @@
       </Field>
     </div>
     <div class="mt-10 flex w-full justify-end gap-4 pr-0.5">
-      <Button button-text="cancel" bg-color="secondary" type="button" @click="$emit('cancel')" />
+      <Button button-text="cancel" bg-color="secondary" type="button" @click="$emit('close')" />
       <Button button-text="sign in" type="submit" :disabled="checkFormErrors(errors)" />
     </div>
   </Form>
@@ -40,9 +40,7 @@ const isLoading = ref(false)
 const toast = useToast()
 
 const emit = defineEmits<{
-  (e: 'success'): void
-  (e: 'error'): void
-  (e: 'cancel'): void
+  (e: 'close'): void
 }>()
 
 const handleSubmit: SubmissionHandler = async (payload: Record<string, any>) => {
@@ -51,13 +49,13 @@ const handleSubmit: SubmissionHandler = async (payload: Record<string, any>) => 
     const success = await authAction.login(payload as SignInFormData)
     if (success) {
       toast.success(authMessage.value)
-      emit('success')
+      emit('close')
     } else {
       toast.error(authMessage.value)
-      emit('error')
+      emit('close')
     }
   } catch (err) {
-    emit('error')
+    emit('close')
     toast.error('An error occurred. Please try again.')
   } finally {
     isLoading.value = false

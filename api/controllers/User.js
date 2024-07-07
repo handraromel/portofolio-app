@@ -79,7 +79,18 @@ module.exports = {
             return res.status(400).json({ msg: bodyError.details[0].message })
         }
 
-        const { username, email, first_name, last_name } = req.body
+        const {
+            username,
+            email,
+            first_name,
+            last_name,
+            has_pet,
+            pet_name,
+            has_liked_music_genre,
+            liked_music_genre,
+            has_most_liked_place,
+            most_liked_place,
+        } = req.body
 
         try {
             const user = await User.findByPk(req.params.id)
@@ -92,6 +103,12 @@ module.exports = {
                 email,
                 first_name,
                 last_name,
+                has_pet,
+                pet_name,
+                has_liked_music_genre,
+                liked_music_genre,
+                has_most_liked_place,
+                most_liked_place,
             })
 
             res.json({
@@ -101,6 +118,12 @@ module.exports = {
                     email: user.email,
                     first_name: user.first_name,
                     last_name: user.last_name,
+                    has_pet: user.has_pet,
+                    pet_name: user.pet_name,
+                    has_liked_music_genre: user.has_liked_music_genre,
+                    liked_music_genre: user.liked_music_genre,
+                    has_most_liked_place: user.has_most_liked_place,
+                    most_liked_place: user.most_liked_place,
                 },
             })
         } catch (err) {

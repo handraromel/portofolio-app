@@ -43,7 +43,5 @@ export const signInSchema = {
 export const registerSchema = {
   username: 'required|min:6|max:30',
   email: 'required|email',
-  password: 'required|min:8|password_strength',
-  first_name: 'required|alpha_spaces|min:2|max:50',
-  last_name: 'required|alpha_spaces|min:2|max:50'
+  password: 'required|min:8|password_strength'
 }

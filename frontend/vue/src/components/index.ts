@@ -11,6 +11,7 @@ import Modal from './Modal.vue'
 import SignIn from './Auth/SignIn.vue'
 import Register from './Auth/Register.vue'
 import VerifyEmail from './Auth/VerifyEmail.vue'
+import Info from './Auth/Info.vue'
 
 export {
   Button,
@@ -25,5 +26,6 @@ export {
   Modal,
   SignIn,
   Register,
+  Info,
   VerifyEmail
 }

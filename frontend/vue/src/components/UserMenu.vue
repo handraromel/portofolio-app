@@ -74,26 +74,22 @@
     :key="index"
     :is-open="modal.isOpen"
     :title="modal.title"
+    :show-close-icon="modal.name === 'info'"
     @close="closeModal(modal.name)"
   >
-    <component
-      :is="modal.component"
-      @success="closeModal(modal.name)"
-      @error="closeModal(modal.name)"
-      @cancel="closeModal(modal.name)"
-    />
+    <component :is="modal.component" @close="closeModal(modal.name)" @info="openModal('info')" />
   </Modal>
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue'
-import { Modal, SignIn, Register } from '@/components'
+import { Modal, SignIn, Register, Info } from '@/components'
 import { useToast } from 'vue-toastification'
 import { storeToRefs } from 'pinia'
 import { useAuthStore } from '@/stores'
 
-type ModalName = 'signIn' | 'register'
+type ModalName = 'signIn' | 'register' | 'info'
 
 const authStore = useAuthStore()
 const { isAuthenticated, authMessage } = storeToRefs(authStore)
@@ -101,7 +97,8 @@ const toast = useToast()
 
 const modalStates = ref({
   signIn: false,
-  register: false
+  register: false,
+  info: false
 })
 
 const modals = computed(() => [
@@ -114,8 +111,14 @@ const modals = computed(() => [
   {
     name: 'register' as const,
     isOpen: modalStates.value.register,
-    title: 'Register to Bino',
+    title: 'Register to This Web',
     component: Register
+  },
+  {
+    name: 'info' as const,
+    isOpen: modalStates.value.info,
+    title: 'Important Notice!',
+    component: Info
   }
 ])
 

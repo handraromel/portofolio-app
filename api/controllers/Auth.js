@@ -19,7 +19,7 @@ module.exports = {
             return res.status(400).json({ msg: error.details[0].message })
         }
 
-        const { username, password, email, first_name, last_name } = req.body
+        const { username, password, email } = req.body
 
         try {
             let user = await User.findOne({ where: { email } })
@@ -39,9 +39,10 @@ module.exports = {
                 username,
                 password: hashedPassword,
                 email,
-                first_name,
-                last_name,
                 is_active: false,
+                has_pet: false,
+                has_liked_music_genre: false,
+                has_most_liked_place: false,
             })
 
             const verificationToken = crypto.randomBytes(20).toString('hex')

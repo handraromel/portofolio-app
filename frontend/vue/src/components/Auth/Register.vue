@@ -12,7 +12,7 @@
       </Field>
     </div>
     <div class="mt-10 flex w-full justify-end gap-4 pr-0.5">
-      <Button button-text="cancel" bg-color="secondary" type="button" @click="$emit('cancel')" />
+      <Button button-text="cancel" bg-color="secondary" type="button" @click="$emit('close')" />
       <Button button-text="register" type="submit" :disabled="checkFormErrors(errors)" />
     </div>
   </Form>
@@ -21,8 +21,10 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { Form, Field, type SubmissionHandler } from 'vee-validate'
+import { useToast } from 'vue-toastification'
 import { Button } from '@/components'
 import { type RegisterFormData } from '@/types'
+import { storeToRefs } from 'pinia'
 import { useAuthStore } from '@/stores'
 import { registerSchema } from '@/utils/formValidation'
 import { checkFormErrors } from '@/utils/common'
@@ -30,35 +32,36 @@ import { checkFormErrors } from '@/utils/common'
 const fields = [
   { model: 'username', type: 'text', placeholder: 'Username' },
   { model: 'email', type: 'email', placeholder: 'Email' },
-  { model: 'password', type: 'password', placeholder: 'Password' },
-  { model: 'first_name', type: 'text', placeholder: 'First Name' },
-  { model: 'last_name', type: 'text', placeholder: 'Last Name' }
+  { model: 'password', type: 'password', placeholder: 'Password' }
 ] as const
 
-const authStore = useAuthStore()
+const { authMessage } = storeToRefs(useAuthStore())
+const authAction = useAuthStore()
 const error = ref('')
 const isLoading = ref(false)
 
+const toast = useToast()
+
 const emit = defineEmits<{
-  (e: 'success'): void
-  (e: 'error'): void
-  (e: 'cancel'): void
+  (e: 'close'): void
+  (e: 'info'): void
 }>()
 
 const handleSubmit: SubmissionHandler = async (payload: Record<string, any>) => {
   isLoading.value = true
   error.value = ''
   try {
-    const success = await authStore.register(payload as RegisterFormData)
+    const success = await authAction.register(payload as RegisterFormData)
     if (success) {
-      emit('success')
+      emit('close')
+      emit('info')
     } else {
-      error.value = 'Registration failed. Please contact your administrator.'
-      emit('error')
+      toast.error(authMessage.value)
+      emit('close')
     }
   } catch (err) {
-    emit('error')
-    error.value = 'An error occurred. Please try again.'
+    emit('close')
+    toast.error(err || authMessage.value)
   } finally {
     isLoading.value = false
   }
