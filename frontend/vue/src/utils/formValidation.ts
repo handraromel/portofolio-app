@@ -1,13 +1,15 @@
+import { computed } from 'vue'
 import { defineRule, configure } from 'vee-validate'
-import { required, email, min, max, alpha_spaces } from '@vee-validate/rules'
+import { required, email, min, max, alpha_spaces, min_value, max_value } from '@vee-validate/rules'
 import { localize } from '@vee-validate/i18n'
-import { formalizeKebabCase } from './common'
 
 defineRule('required', required)
 defineRule('email', email)
 defineRule('min', min)
 defineRule('max', max)
 defineRule('alpha_spaces', alpha_spaces)
+defineRule('min_value', min_value)
+defineRule('max_value', max_value)
 
 configure({
   generateMessage: localize('en', {
@@ -22,8 +24,8 @@ configure({
       username: 'Username',
       email: 'Email',
       password: 'Password',
-      first_name: formalizeKebabCase('first_name'),
-      last_name: formalizeKebabCase('last_name')
+      first_name: 'First Name',
+      last_name: 'Last Name'
     }
   })
 })
@@ -44,4 +46,9 @@ export const registerSchema = {
   username: 'required|min:6|max:30',
   email: 'required|email',
   password: 'required|min:8|password_strength'
+}
+
+export const editProfileSchema = {
+  username: 'required|min:6|max:30',
+  email: 'required|email'
 }

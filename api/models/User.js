@@ -55,6 +55,10 @@ const User = sequelize.define(
             type: DataTypes.STRING,
             allowNull: true,
         },
+        feel_score: {
+            type: DataTypes.INTEGER,
+            allowNull: true,
+        },
         is_admin: {
             type: DataTypes.BOOLEAN,
             defaultValue: false,

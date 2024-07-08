@@ -5,7 +5,7 @@ const { userController } = require('@api/controllers')
 const { adminMiddleware } = require('@api/middleware')
 
 router.get('/', adminMiddleware, userController.getUsers)
-router.get('/:id', adminMiddleware, userController.getUserById)
+router.get('/:id', userController.getUserById)
 router.put('/:id', userController.updateUser)
 router.put('/:id/update-password', userController.updateUserPassword)
 router.put('/:id/forgot-password', userController.forgotPassword)

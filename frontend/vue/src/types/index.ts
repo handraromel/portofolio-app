@@ -1,19 +1,50 @@
-// Auth Interfaces
-interface AuthUserData {
-  id: string
+export type BaseAuthType = {
   email: string
+  password: string
+}
+
+// Auth Types
+export interface AuthUserData extends BaseAuthType {
+  id: string
   username: string
   is_admin: string
   is_active: string
 }
 
-interface UserDataResponse {
+export interface AuthUserResponse {
   msg: string
   data: AuthUserData
 }
-// End Auth Interfaces
 
-interface AdvantageCardProps {
+export type SignInFormData = BaseAuthType
+
+export type RegisterFormData = SignInFormData & {
+  username: string
+}
+// End Auth Types
+
+// User Types
+export interface CurrentUserData {
+  username: string
+  email: string
+  first_name: string
+  last_name: string
+  has_pet: boolean
+  pet_name: string
+  has_liked_music_genre: boolean
+  liked_music_genre: string
+  has_most_liked_place: boolean
+  most_liked_place: string
+  feel_score: number
+}
+
+export interface CurrentUserResponse {
+  msg: string
+  data: CurrentUserData
+}
+// End User Types
+
+export interface AdvantageCardProps {
   iconSrc: string
   title: string
   description: string
@@ -22,17 +53,18 @@ interface AdvantageCardProps {
   customGap?: number
 }
 
-type BgColorType = 'primary' | 'secondary' | 'transparent' | 'disabled'
+export type BgColorType = 'primary' | 'info' | 'secondary' | 'transparent' | 'disabled'
 
-interface ButtonProps {
+export interface ButtonProps {
   buttonText: string
   bgColor?: BgColorType
   fixedWidth?: boolean
   disabled?: boolean
   type?: 'button' | 'submit' | 'reset'
+  textSize?: 'xs' | 'sm' | 'md' | 'lg'
 }
 
-interface CircledIconProps {
+export interface CircledIconProps {
   iconSrc: string
   size?: 'small' | 'medium' | 'large'
   alt?: string
@@ -40,63 +72,37 @@ interface CircledIconProps {
   isTransparent?: boolean
 }
 
-interface PriceProps {
+export interface PriceProps {
   planName: string
   price: number
   features: string[]
   isActive: boolean
 }
 
-interface ModalProps {
+export interface ModalProps {
   isOpen: boolean
   title?: string
-  size?: 'md' | 'lg' | 'xl'
+  size?: string
   showCloseIcon?: boolean
   persistModal?: boolean
 }
 
-interface SmoothScrollOptions {
+export interface SmoothScrollOptions {
   scrollTo: HTMLElement | null
   hash?: string
 }
 
-type SmoothScrollFunction = (options: SmoothScrollOptions) => void
+export type SmoothScrollFunction = (options: SmoothScrollOptions) => void
 
-interface PriceContent {
+export interface PriceContent {
   name: string
   price: number
   features: string[]
 }
 
-interface BlogPost {
+export interface BlogPost {
   image: string
   topSubtitle: string
   title: string
   description: string
-}
-
-type SignInFormData = {
-  email: string
-  password: string
-}
-
-type RegisterFormData = {
-  username: string
-  email: string
-  password: string
-}
-
-export type {
-  AuthUserData,
-  UserDataResponse,
-  AdvantageCardProps,
-  ButtonProps,
-  CircledIconProps,
-  PriceProps,
-  ModalProps,
-  SmoothScrollFunction,
-  PriceContent,
-  BlogPost,
-  SignInFormData,
-  RegisterFormData
 }

@@ -18,10 +18,26 @@ module.exports = {
 
     getUserById: async (req, res) => {
         try {
-            const user = await User.findByPk(req.params.id)
+            const user = await User.findByPk(req.params.id, {
+                attributes: [
+                    'username',
+                    'email',
+                    'first_name',
+                    'last_name',
+                    'has_pet',
+                    'pet_name',
+                    'has_liked_music_genre',
+                    'liked_music_genre',
+                    'has_most_liked_place',
+                    'most_liked_place',
+                    'feel_score',
+                ],
+            })
+
             if (!user) {
                 return res.status(404).json({ msg: 'User not found' })
             }
+
             res.json({ data: user })
         } catch (err) {
             logger.error('An error occurred', { error: err })

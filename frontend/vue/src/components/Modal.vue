@@ -27,7 +27,7 @@
           >
             <DialogPanel
               :class="[
-                'relative w-full transform overflow-hidden rounded-md bg-white p-6 text-left align-middle shadow-xl transition-all',
+                'relative w-full transform overflow-auto rounded-md bg-white p-6 text-left align-middle shadow-xl transition-all',
                 sizeClass
               ]"
             >
@@ -53,8 +53,8 @@
               </button>
               <DialogTitle
                 v-if="title"
-                as="h3"
-                class="mb-10 text-center text-lg font-medium leading-6 text-gray-900"
+                as="h2"
+                class="mb-10 text-center text-2xl font-semibold leading-6 text-gray-900"
               >
                 {{ title }}
               </DialogTitle>
@@ -75,7 +75,6 @@ import { TransitionRoot, TransitionChild, Dialog, DialogPanel, DialogTitle } fro
 import { type ModalProps } from '@/types'
 
 const props = withDefaults(defineProps<ModalProps>(), {
-  size: 'md',
   showCloseIcon: false,
   persistModal: false
 })
@@ -90,6 +89,20 @@ const sizeClass = computed(() => {
       return 'max-w-lg'
     case 'xl':
       return 'max-w-xl'
+    case '2xl':
+      return 'max-w-2xl'
+    case '3xl':
+      return 'max-w-3xl'
+    case '4xl':
+      return 'max-w-4xl'
+    case '5xl':
+      return 'max-w-5xl'
+    case '6xl':
+      return 'max-w-6xl'
+    case '7xl':
+      return 'max-w-7xl'
+    case 'full':
+      return 'max-w-full'
     default:
       return 'max-w-md'
   }

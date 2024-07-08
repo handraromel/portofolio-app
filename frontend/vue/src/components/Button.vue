@@ -2,10 +2,11 @@
   <button
     :class="[
       'flex items-center justify-center rounded-sm py-1.5 tracking-wider',
-      'lg:text-md text-sm uppercase outline outline-offset-1 transition duration-300 ease-in-out',
+      'uppercase outline outline-offset-1 transition duration-300 ease-in-out',
       'disabled font-semibold hover:outline-2 hover:drop-shadow-lg',
       themeClasses,
-      fixedWidth ? 'w-[200px]' : 'w-auto px-5'
+      fixedWidth ? 'w-[200px]' : 'w-auto px-5',
+      getTextSize || 'text-sm'
     ]"
     :disabled="disabled"
     :type="type"
@@ -27,13 +28,28 @@ const props = withDefaults(defineProps<ButtonProps>(), {
 const themeClasses = computed(() => {
   switch (props.bgColor) {
     case 'primary':
-      return 'bg-red-400 text-white outline-red-500 hover:bg-red-500'
+      return 'bg-red-400 text-white outline-red-500 hover:bg-red-600'
     case 'transparent':
       return 'bg-transparent text-white outline-white hover:bg-white hover:text-black'
     case 'secondary':
       return 'bg-white outline-white drop-shadow-md hover:drop-shadow'
+    case 'info':
+      return 'bg-sky-400 outline-sky-500 text-white hover:bg-sky-600'
     default:
       return `bg-slate-400 text-white outline-slate-500 ${props.disabled ? '' : 'hover:bg-slate-500'}`
+  }
+})
+
+const getTextSize = computed(() => {
+  switch (props.textSize) {
+    case 'xs':
+      return 'text-[10px]'
+    case 'sm':
+      return 'text-[12px]'
+    case 'md':
+      return 'text-[14px]'
+    case 'lg':
+      return 'text-[16px]'
   }
 })
 

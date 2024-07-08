@@ -55,6 +55,17 @@
         <div v-else class="px-1 py-1">
           <MenuItem v-slot="{ active }">
             <button
+              @click="openModal('displayData')"
+              :class="[
+                active ? 'bg-red-500 text-white' : 'text-gray-900',
+                'group flex w-full items-center rounded-md px-2 py-2 text-sm'
+              ]"
+            >
+              Your Profile
+            </button>
+          </MenuItem>
+          <MenuItem v-slot="{ active }">
+            <button
               @click="handleLogout"
               :class="[
                 active ? 'bg-red-500 text-white' : 'text-gray-900',
@@ -74,22 +85,36 @@
     :key="index"
     :is-open="modal.isOpen"
     :title="modal.title"
-    :show-close-icon="modal.name === 'info'"
+    :show-close-icon="modalsWithCloseIcon.includes(modal.name)"
+    :size="modal.size"
     @close="closeModal(modal.name)"
   >
-    <component :is="modal.component" @close="closeModal(modal.name)" @info="openModal('info')" />
+    <component
+      :is="modal.component"
+      @close="closeModal(modal.name)"
+      @info="openModal('info')"
+      @openModal="handleChildModalOpen"
+    />
   </Modal>
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue'
-import { Modal, SignIn, Register, Info } from '@/components'
+import {
+  Modal,
+  SignIn,
+  Register,
+  Info,
+  DisplayData,
+  EditProfile,
+  UpdatePassword
+} from '@/components'
 import { useToast } from 'vue-toastification'
 import { storeToRefs } from 'pinia'
 import { useAuthStore } from '@/stores'
 
-type ModalName = 'signIn' | 'register' | 'info'
+type ModalName = 'signIn' | 'register' | 'info' | 'displayData' | 'editProfile' | 'updatePassword'
 
 const authStore = useAuthStore()
 const { isAuthenticated, authMessage } = storeToRefs(authStore)
@@ -98,29 +123,68 @@ const toast = useToast()
 const modalStates = ref({
   signIn: false,
   register: false,
-  info: false
+  info: false,
+  displayData: false,
+  editProfile: false,
+  updatePassword: false
 })
 
-const modals = computed(() => [
-  {
-    name: 'signIn' as const,
-    isOpen: modalStates.value.signIn,
-    title: 'Sign In To Your Account',
-    component: SignIn
-  },
-  {
-    name: 'register' as const,
-    isOpen: modalStates.value.register,
-    title: 'Register to This Web',
-    component: Register
-  },
-  {
-    name: 'info' as const,
-    isOpen: modalStates.value.info,
-    title: 'Important Notice!',
-    component: Info
-  }
-])
+const modalSizes: Partial<Record<ModalName, string>> = {
+  displayData: 'xl',
+  editProfile: 'xl'
+}
+
+const modals = computed(() =>
+  [
+    {
+      name: 'signIn' as const,
+      isOpen: modalStates.value.signIn,
+      title: 'Sign In To Your Account',
+      component: SignIn,
+      size: modalSizes.signIn
+    },
+    {
+      name: 'register' as const,
+      isOpen: modalStates.value.register,
+      title: 'Register to This Web',
+      component: Register,
+      size: modalSizes.register
+    },
+    {
+      name: 'info' as const,
+      isOpen: modalStates.value.info,
+      title: 'Important Notice!',
+      component: Info,
+      size: modalSizes.info
+    },
+    {
+      name: 'displayData' as const,
+      isOpen: modalStates.value.displayData,
+      title: 'User Profile',
+      component: DisplayData,
+      size: modalSizes.displayData
+    },
+    {
+      name: 'editProfile' as const,
+      isOpen: modalStates.value.editProfile,
+      title: 'Edit Profile',
+      component: EditProfile,
+      size: modalSizes.editProfile
+    },
+    {
+      name: 'updatePassword' as const,
+      isOpen: modalStates.value.updatePassword,
+      title: 'Update Password',
+      component: UpdatePassword,
+      size: modalSizes.updatePassword
+    }
+  ].map((modal) => ({
+    ...modal,
+    size: modalSizes[modal.name as keyof typeof modalSizes]
+  }))
+)
+
+const modalsWithCloseIcon = ['info', 'displayData']
 
 const openModal = (modalName: ModalName) => {
   modalStates.value[modalName] = true
@@ -128,6 +192,14 @@ const openModal = (modalName: ModalName) => {
 
 const closeModal = (modalName: ModalName) => {
   modalStates.value[modalName] = false
+  if (modalName === 'editProfile' || modalName === 'updatePassword') {
+    openModal('displayData')
+  }
+}
+
+const handleChildModalOpen = (modalName: ModalName) => {
+  closeModal('displayData')
+  openModal(modalName)
 }
 
 const handleLogout = async () => {

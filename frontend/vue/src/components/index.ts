@@ -12,6 +12,9 @@ import SignIn from './Auth/SignIn.vue'
 import Register from './Auth/Register.vue'
 import VerifyEmail from './Auth/VerifyEmail.vue'
 import Info from './Auth/Info.vue'
+import DisplayData from './User/DisplayData.vue'
+import EditProfile from './User/EditProfile.vue'
+import UpdatePassword from './User/UpdatePassword.vue'
 
 export {
   Button,
@@ -27,5 +30,8 @@ export {
   SignIn,
   Register,
   Info,
-  VerifyEmail
+  VerifyEmail,
+  DisplayData,
+  EditProfile,
+  UpdatePassword
 }
