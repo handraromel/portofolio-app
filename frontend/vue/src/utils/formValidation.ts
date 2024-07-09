@@ -49,6 +49,10 @@ export const registerSchema = {
       helpers.regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/),
       validationMessages.passwordStrength
     )
+  },
+  confirmPassword: {
+    required: withMessage(required, validationMessages.required),
+    sameAsPassword: withMessage((value, vm) => value === vm.password, 'Password not match')
   }
 }
 

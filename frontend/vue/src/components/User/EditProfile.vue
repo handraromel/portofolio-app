@@ -1,25 +1,36 @@
 <template>
   <form @submit.prevent="handleSubmit">
     <div class="space-y-6">
-      <Field
-        id="username"
-        label="Username"
-        type="text"
-        v-model="formData.username"
-        :error="v$.username.$errors[0]?.$message"
-      />
+      <div class="flex flex-row gap-6 max-md:flex-wrap">
+        <div class="w-full md:w-1/2">
+          <Field
+            id="username"
+            label="Username"
+            type="text"
+            v-model="formData.username"
+            :error="v$.username.$errors[0]?.$message"
+          />
+        </div>
 
-      <Field
-        id="email"
-        label="Email"
-        type="email"
-        v-model="formData.email"
-        :error="v$.email.$errors[0]?.$message"
-      />
+        <div class="w-full md:w-1/2">
+          <Field
+            id="email"
+            label="Email"
+            type="email"
+            v-model="formData.email"
+            :error="v$.email.$errors[0]?.$message"
+          />
+        </div>
+      </div>
+      <div class="flex flex-row gap-6 max-md:flex-wrap">
+        <div class="w-full md:w-1/2">
+          <Field id="first_name" label="First Name" type="text" v-model="formData.first_name" />
+        </div>
 
-      <Field id="first_name" label="First Name" type="text" v-model="formData.first_name" />
-
-      <Field id="last_name" label="Last Name" type="text" v-model="formData.last_name" />
+        <div class="w-full md:w-1/2">
+          <Field id="last_name" label="Last Name" type="text" v-model="formData.last_name" />
+        </div>
+      </div>
 
       <ToggleSwitch v-model="showPetName" label="Has Pet" />
 
@@ -77,9 +88,10 @@
         <Button button-text="cancel" bg-color="secondary" type="button" @click="$emit('close')" />
         <Button
           button-text="update"
-          :bg-color="v$.$invalid ? 'disabled' : 'primary'"
           type="submit"
           :disabled="v$.$invalid"
+          :bg-color="v$.$invalid ? 'disabled' : 'primary'"
+          :loading-state="isLoading"
         />
       </div>
     </div>
@@ -103,6 +115,7 @@ const toast = useToast()
 const authUserAction = useAuthStore()
 const currentUserId = authUserAction.getUserId
 
+const isLoading = ref(false)
 const showPetName = ref(false)
 const showLikedMusicGenre = ref(false)
 const showMostLikedPlace = ref(false)
@@ -155,21 +168,21 @@ const places = [
   'Outside'
 ]
 
-// Update watchers
-watch(showPetName, (newValue) => {
-  if (!newValue) formData.value.pet_name = null
-})
-
-watch(showLikedMusicGenre, (newValue) => {
-  if (!newValue) formData.value.liked_music_genre = null
-})
-
-watch(showMostLikedPlace, (newValue) => {
-  if (!newValue) {
-    formData.value.most_liked_place = null
-    formData.value.other_place = ''
+watch(
+  [showPetName, showLikedMusicGenre, showMostLikedPlace],
+  ([newShowPetName, newShowLikedMusicGenre, newShowMostLikedPlace]) => {
+    if (!newShowPetName) {
+      formData.value.pet_name = null
+    }
+    if (!newShowLikedMusicGenre) {
+      formData.value.liked_music_genre = null
+    }
+    if (!newShowMostLikedPlace) {
+      formData.value.most_liked_place = null
+      formData.value.other_place = ''
+    }
   }
-})
+)
 
 onMounted(async () => {
   if (user.value) {
@@ -194,6 +207,8 @@ const handleSubmit = async () => {
   const isValid = await v$.value.$validate()
   if (!isValid) return
 
+  isLoading.value = true
+
   try {
     const payload = { ...formData.value }
     if (payload.most_liked_place === 'Outside') {
@@ -213,6 +228,8 @@ const handleSubmit = async () => {
   } catch (error) {
     toast.error('Failed to update profile')
     console.error('Update profile error:', error)
+  } finally {
+    isLoading.value = false
   }
 }
 </script>

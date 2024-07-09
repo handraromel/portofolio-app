@@ -12,9 +12,10 @@
       <Button button-text="cancel" bg-color="secondary" type="button" @click="$emit('close')" />
       <Button
         button-text="register"
-        :bg-color="v$.$invalid ? 'disabled' : 'primary'"
         type="submit"
+        :bg-color="v$.$invalid ? 'disabled' : 'primary'"
         :disabled="v$.$invalid"
+        :loading-state="isLoading"
       />
     </div>
   </form>
@@ -33,12 +34,12 @@ import { registerSchema } from '@/utils/formValidation'
 const fields = [
   { model: 'username', type: 'text', placeholder: 'Username' },
   { model: 'email', type: 'email', placeholder: 'Email' },
-  { model: 'password', type: 'password', placeholder: 'Password' }
+  { model: 'password', type: 'password', placeholder: 'Password' },
+  { model: 'confirmPassword', type: 'password', placeholder: 'Confirm Your Password' }
 ] as const
 
 const { authMessage } = storeToRefs(useAuthStore())
 const authAction = useAuthStore()
-const error = ref('')
 const isLoading = ref(false)
 
 const toast = useToast()
@@ -51,7 +52,8 @@ const emit = defineEmits<{
 const formData = ref<RegisterFormData>({
   username: '',
   email: '',
-  password: ''
+  password: '',
+  confirmPassword: ''
 })
 
 const rules = registerSchema
@@ -62,8 +64,8 @@ const handleSubmit = async () => {
   if (!isFormCorrect) return
 
   isLoading.value = true
-  error.value = ''
   try {
+    const { confirmPassword, ...payload } = formData.value
     const success = await authAction.register(formData.value)
     if (success) {
       emit('close')

@@ -20,6 +20,7 @@ export type SignInFormData = BaseAuthType
 
 export type RegisterFormData = SignInFormData & {
   username: string
+  confirmPassword: string
 }
 // End Auth Types
 
@@ -60,6 +61,7 @@ export interface ButtonProps {
   disabled?: boolean
   type?: 'button' | 'submit' | 'reset'
   textSize?: 'xs' | 'sm' | 'md' | 'lg'
+  loadingState?: boolean
 }
 
 export interface CircledIconProps {

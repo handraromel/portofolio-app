@@ -11,10 +11,11 @@
     <div class="mt-10 flex w-full justify-end gap-4 pr-0.5">
       <Button button-text="cancel" bg-color="secondary" type="button" @click="$emit('close')" />
       <Button
-        button-text="register"
-        :bg-color="v$.$invalid ? 'disabled' : 'primary'"
+        button-text="sign in"
         type="submit"
         :disabled="v$.$invalid"
+        :bg-color="v$.$invalid ? 'disabled' : 'primary'"
+        :loading-state="isLoading"
       />
     </div>
   </form>

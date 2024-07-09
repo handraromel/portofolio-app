@@ -8,11 +8,19 @@
       fixedWidth ? 'w-[200px]' : 'w-auto px-5',
       getTextSize || 'text-sm'
     ]"
-    :disabled="disabled"
+    :disabled="disabled || loadingState"
     :type="type"
     @click="handleClick"
   >
-    {{ buttonText }}
+    <template v-if="loadingState">
+      <div
+        class="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-b-transparent"
+      ></div>
+      processing
+    </template>
+    <template v-else>
+      {{ buttonText }}
+    </template>
   </button>
 </template>
 
