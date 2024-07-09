@@ -8,13 +8,9 @@ import Footer from './Footer.vue'
 import Navbar from './Navbar.vue'
 import UserMenu from './UserMenu.vue'
 import Modal from './Modal.vue'
-import SignIn from './Auth/SignIn.vue'
-import Register from './Auth/Register.vue'
-import VerifyEmail from './Auth/VerifyEmail.vue'
-import Info from './Auth/Info.vue'
-import DisplayData from './User/DisplayData.vue'
-import EditProfile from './User/EditProfile.vue'
-import UpdatePassword from './User/UpdatePassword.vue'
+import { SignIn, Register, VerifyEmail, Info } from './Auth'
+import { DisplayData, EditProfile, UpdatePassword } from './User'
+import { Field, Dropdown, Slider, ToggleSwitch } from './Inputs'
 
 export {
   Button,
@@ -33,5 +29,9 @@ export {
   VerifyEmail,
   DisplayData,
   EditProfile,
-  UpdatePassword
+  UpdatePassword,
+  Field,
+  Dropdown,
+  Slider,
+  ToggleSwitch
 }

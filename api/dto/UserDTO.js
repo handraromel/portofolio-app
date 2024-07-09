@@ -9,14 +9,15 @@ const userRegisterDTO = Joi.object({
 const userUpdateDTO = Joi.object({
     username: Joi.string().required(),
     email: Joi.string().email().required(),
-    first_name: Joi.string(),
-    last_name: Joi.string(),
+    first_name: Joi.string().allow('', null),
+    last_name: Joi.string().allow('', null),
     has_pet: Joi.boolean(),
-    pet_name: Joi.string(),
+    pet_name: Joi.string().allow('', null),
     has_liked_music_genre: Joi.boolean(),
-    like_music_genre: Joi.string(),
+    liked_music_genre: Joi.string().allow('', null),
     has_most_liked_place: Joi.boolean(),
-    most_liked_place: Joi.string(),
+    most_liked_place: Joi.string().allow('', null),
+    feel_score: Joi.number().allow(null),
 })
 
 const updatePasswordDTO = Joi.object({

@@ -74,7 +74,8 @@
             <h3 class="mb-2 text-lg font-semibold text-pink-800">Feel Score</h3>
             <p class="text-sm">
               <span class="font-medium">Current Score: </span>
-              {{ user.feel_score ?? '' }} {{ feelScoreData.text }}
+              <span class="font-medium">{{ user.feel_score ?? '' }}</span> <br />
+              {{ feelScoreData.text }}
             </p>
           </div>
         </div>

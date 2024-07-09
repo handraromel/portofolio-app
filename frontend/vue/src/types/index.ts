@@ -27,14 +27,15 @@ export type RegisterFormData = SignInFormData & {
 export interface CurrentUserData {
   username: string
   email: string
-  first_name: string
-  last_name: string
+  first_name: string | null
+  last_name: string | null
   has_pet: boolean
-  pet_name: string
+  pet_name?: string | null
   has_liked_music_genre: boolean
-  liked_music_genre: string
+  liked_music_genre?: string | null
   has_most_liked_place: boolean
-  most_liked_place: string
+  most_liked_place?: string | null
+  other_place?: string
   feel_score: number
 }
 

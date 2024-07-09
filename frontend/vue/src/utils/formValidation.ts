@@ -1,54 +1,95 @@
-import { computed } from 'vue'
-import { defineRule, configure } from 'vee-validate'
-import { required, email, min, max, alpha_spaces, min_value, max_value } from '@vee-validate/rules'
-import { localize } from '@vee-validate/i18n'
+import { computed, type ComputedRef } from 'vue'
+import { required, email, minLength, maxLength, helpers } from '@vuelidate/validators'
+import type { ValidationRule, ValidationRuleWithoutParams } from '@vuelidate/core'
+import type { CurrentUserData } from '@/types'
 
-defineRule('required', required)
-defineRule('email', email)
-defineRule('min', min)
-defineRule('max', max)
-defineRule('alpha_spaces', alpha_spaces)
-defineRule('min_value', min_value)
-defineRule('max_value', max_value)
+type VuelidateMessageGenerator = (params: { $params: Record<string, any> }) => string
 
-configure({
-  generateMessage: localize('en', {
-    messages: {
-      required: '{field} is required',
-      email: '{field} must be a valid email',
-      min: '{field} must be at least 0:{min} characters',
-      max: '{field} must not exceed 0:{max} characters',
-      alpha_spaces: '{field} may only contain alphabetic characters and spaces'
-    },
-    names: {
-      username: 'Username',
-      email: 'Email',
-      password: 'Password',
-      first_name: 'First Name',
-      last_name: 'Last Name'
-    }
-  })
-})
+const withMessage = (
+  validator: ValidationRule | ValidationRuleWithoutParams,
+  message: string | VuelidateMessageGenerator
+): ValidationRule => helpers.withMessage(message, validator)
 
-defineRule('password_strength', (value: string) => {
-  if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/.test(value)) {
-    return 'Password must contain at least one uppercase letter, one lowercase letter, and one number'
-  }
-  return true
-})
+export const validationMessages = {
+  required: 'This field is required',
+  email: 'Please enter a valid email address',
+  minLength: ({ $params }: { $params: Record<string, any> }) =>
+    `This field must be at least ${$params.min} characters long`,
+  maxLength: ({ $params }: { $params: Record<string, any> }) =>
+    `This field must not exceed ${$params.max} characters`,
+  passwordStrength:
+    'Password must contain at least one uppercase letter, one lowercase letter, and one number'
+}
 
 export const signInSchema = {
-  email: 'required|email',
-  password: 'required|min:8'
+  email: {
+    required: withMessage(required, validationMessages.required),
+    email: withMessage(email, validationMessages.email)
+  },
+  password: {
+    required: withMessage(required, validationMessages.required),
+    minLength: withMessage(minLength(8), validationMessages.minLength)
+  }
 }
 
 export const registerSchema = {
-  username: 'required|min:6|max:30',
-  email: 'required|email',
-  password: 'required|min:8|password_strength'
+  username: {
+    required: withMessage(required, validationMessages.required),
+    minLength: withMessage(minLength(6), validationMessages.minLength),
+    maxLength: withMessage(maxLength(30), validationMessages.maxLength)
+  },
+  email: {
+    required: withMessage(required, validationMessages.required),
+    email: withMessage(email, validationMessages.email)
+  },
+  password: {
+    required: withMessage(required, validationMessages.required),
+    minLength: withMessage(minLength(8), validationMessages.minLength),
+    passwordStrength: withMessage(
+      helpers.regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/),
+      validationMessages.passwordStrength
+    )
+  }
 }
 
 export const editProfileSchema = {
-  username: 'required|min:6|max:30',
-  email: 'required|email'
+  username: {
+    required: withMessage(required, validationMessages.required),
+    minLength: withMessage(minLength(6), validationMessages.minLength),
+    maxLength: withMessage(maxLength(30), validationMessages.maxLength)
+  },
+  email: {
+    required: withMessage(required, validationMessages.required),
+    email: withMessage(email, validationMessages.email)
+  }
+}
+
+export const createEditProfileSchema = (formData: ComputedRef<CurrentUserData>) => {
+  return computed(() => ({
+    ...editProfileSchema,
+    pet_name: {
+      required: withMessage(
+        () => !formData.value.has_pet || !!formData.value.pet_name,
+        'Pet name is required when you have a pet'
+      )
+    },
+    liked_music_genre: {
+      required: withMessage(
+        () => !formData.value.has_liked_music_genre || !!formData.value.liked_music_genre,
+        'Music genre is required when you have a liked music genre'
+      )
+    },
+    most_liked_place: {
+      required: withMessage(
+        () => !formData.value.has_most_liked_place || !!formData.value.most_liked_place,
+        'A specific place is required when you have a most liked place'
+      )
+    },
+    other_place: {
+      required: withMessage(
+        () => formData.value.most_liked_place !== 'Other' || !!formData.value.other_place,
+        'Other place is required when you select "Other" as your most liked place'
+      )
+    }
+  }))
 }

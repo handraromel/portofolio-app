@@ -3,5 +3,5 @@ import { type CurrentUserData } from '@/types'
 
 export const userApi = {
   currentUser: (userId: string) => api.get(`/users/${userId}`),
-  updateUser: (userId: string, payload: CurrentUserData) => api.post(`/users/${userId}`, payload)
+  updateUser: (userId: string, payload: CurrentUserData) => api.put(`/users/${userId}`, payload)
 }

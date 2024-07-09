@@ -106,6 +106,7 @@ module.exports = {
             liked_music_genre,
             has_most_liked_place,
             most_liked_place,
+            feel_score,
         } = req.body
 
         try {
@@ -125,6 +126,7 @@ module.exports = {
                 liked_music_genre,
                 has_most_liked_place,
                 most_liked_place,
+                feel_score,
             })
 
             res.json({
@@ -140,6 +142,7 @@ module.exports = {
                     liked_music_genre: user.liked_music_genre,
                     has_most_liked_place: user.has_most_liked_place,
                     most_liked_place: user.most_liked_place,
+                    feel_score: user.feel_score,
                 },
             })
         } catch (err) {
