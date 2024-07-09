@@ -18,14 +18,14 @@
           <div
             :class="[
               'flex h-full flex-col rounded-md p-4',
-              user.has_pet ? 'bg-green-50' : 'bg-gray-200'
+              user.pet_name ? 'bg-green-50' : 'bg-gray-200'
             ]"
           >
             <h3 class="mb-2 text-lg font-semibold text-green-800">Pet Information</h3>
             <p class="text-sm">
-              <span class="font-medium">Has Pet:</span> {{ user.has_pet ? 'Yes' : 'No' }}
+              <span class="font-medium">Has Pet:</span> {{ user.pet_name ? 'Yes' : 'No' }}
             </p>
-            <p v-if="user.has_pet" class="text-sm">
+            <p v-if="user.pet_name" class="text-sm">
               <span class="font-medium">Pet Name:</span> {{ user.pet_name || 'Not provided' }}
             </p>
           </div>
@@ -34,15 +34,15 @@
           <div
             :class="[
               'flex h-full flex-col rounded-md p-4',
-              user.has_liked_music_genre ? 'bg-purple-50' : 'bg-gray-200'
+              user.liked_music_genre ? 'bg-purple-50' : 'bg-gray-200'
             ]"
           >
             <h3 class="mb-2 text-lg font-semibold text-purple-800">Music Preference</h3>
             <p class="text-sm">
               <span class="font-medium">Has Liked Genre:</span>
-              {{ user.has_liked_music_genre ? 'Yes' : 'No' }}
+              {{ user.liked_music_genre ? 'Yes' : 'No' }}
             </p>
-            <p v-if="user.has_liked_music_genre" class="text-sm">
+            <p v-if="user.liked_music_genre" class="text-sm">
               <span class="font-medium">Favorite Genre:</span>
               {{ user.liked_music_genre || 'Not specified' }}
             </p>
@@ -55,15 +55,15 @@
           <div
             :class="[
               'flex h-full flex-col rounded-md p-4',
-              user.has_most_liked_place ? 'bg-yellow-50' : 'bg-gray-200'
+              user.most_liked_place ? 'bg-yellow-50' : 'bg-gray-200'
             ]"
           >
             <h3 class="mb-2 text-lg font-semibold text-yellow-800">Place Preference</h3>
             <p class="text-sm">
               <span class="font-medium">Has Favorite Place:</span>
-              {{ user.has_most_liked_place ? 'Yes' : 'No' }}
+              {{ user.most_liked_place ? 'Yes' : 'No' }}
             </p>
-            <p v-if="user.has_most_liked_place" class="text-sm">
+            <p v-if="user.most_liked_place" class="text-sm">
               <span class="font-medium">Favorite Place:</span>
               {{ user.most_liked_place || 'Not specified' }}
             </p>

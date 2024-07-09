@@ -7,18 +7,18 @@
           class="absolute h-2 rounded-full"
           :style="{
             width: `${modelValue}%`,
-            backgroundColor: colorizeBg ? scoreColor : '#3b82f6'
+            backgroundColor: colorizeBg ? valueColor : '#3b82f6'
           }"
         ></div>
       </div>
       <input
         :id="id"
-        :value="modelValue"
-        @input="$emit('update:modelValue', parseInt($event.target.value))"
         type="range"
-        min="0"
-        max="100"
-        step="1"
+        :min="min"
+        :max="max"
+        :step="step"
+        :value="modelValue"
+        @input="handleInput"
         class="absolute top-0 h-2 w-full cursor-pointer opacity-0"
       />
       <div
@@ -30,7 +30,7 @@
         ></div>
       </div>
     </div>
-    <div v-if="displayValue" class="mt-2 text-center font-semibold" :style="{ color: scoreColor }">
+    <div v-if="displayValue" class="mt-2 text-center font-semibold" :style="{ color: valueColor }">
       {{ modelValue }}
     </div>
   </div>
@@ -39,19 +39,39 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
-const props = defineProps<{
-  id: string
-  label: string
-  modelValue: number
-  displayValue?: boolean
-  colorizeBg?: boolean
-}>()
+const props = withDefaults(
+  defineProps<{
+    id?: string
+    label?: string
+    modelValue: number
+    min?: number
+    max?: number
+    step?: number
+    colorizeBg?: boolean
+    displayValue?: boolean
+    error?: string
+  }>(),
+  {
+    min: 0,
+    max: 100,
+    step: 1,
+    colorizeBg: false,
+    displayValue: false
+  }
+)
 
-defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue'])
 
-const scoreColor = computed(() => {
-  if (props.modelValue <= 33) return '#EF4444'
-  if (props.modelValue <= 66) return '#F59E0B'
-  return '#10B981'
+const handleInput = (event: Event) => {
+  const target = event.target as HTMLInputElement
+  emit('update:modelValue', Number(target.value))
+}
+
+const valueColor = computed(() => {
+  const range = props.max - props.min
+  const value = props.modelValue - props.min
+  if (value <= range / 3) return '#EF4444' // red
+  if (value <= (range * 2) / 3) return '#F59E0B' // amber
+  return '#10B981' // green
 })
 </script>

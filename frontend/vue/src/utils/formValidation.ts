@@ -64,31 +64,36 @@ export const editProfileSchema = {
   }
 }
 
-export const createEditProfileSchema = (formData: ComputedRef<CurrentUserData>) => {
+export const createEditProfileSchema = (
+  formData: ComputedRef<CurrentUserData>,
+  showPetName: ComputedRef<boolean>,
+  showLikedMusicGenre: ComputedRef<boolean>,
+  showMostLikedPlace: ComputedRef<boolean>
+) => {
   return computed(() => ({
     ...editProfileSchema,
     pet_name: {
       required: withMessage(
-        () => !formData.value.has_pet || !!formData.value.pet_name,
+        () => !showPetName.value || !!formData.value.pet_name,
         'Pet name is required when you have a pet'
       )
     },
     liked_music_genre: {
       required: withMessage(
-        () => !formData.value.has_liked_music_genre || !!formData.value.liked_music_genre,
+        () => !showLikedMusicGenre.value || !!formData.value.liked_music_genre,
         'Music genre is required when you have a liked music genre'
       )
     },
     most_liked_place: {
       required: withMessage(
-        () => !formData.value.has_most_liked_place || !!formData.value.most_liked_place,
+        () => !showMostLikedPlace.value || !!formData.value.most_liked_place,
         'A specific place is required when you have a most liked place'
       )
     },
     other_place: {
       required: withMessage(
-        () => formData.value.most_liked_place !== 'Other' || !!formData.value.other_place,
-        'Other place is required when you select "Other" as your most liked place'
+        () => formData.value.most_liked_place !== 'Outside' || !!formData.value.other_place,
+        "Please specify the 'Other' place"
       )
     }
   }))

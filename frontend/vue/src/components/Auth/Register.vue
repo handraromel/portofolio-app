@@ -1,20 +1,12 @@
 <template>
   <form @submit.prevent="handleSubmit">
     <div v-for="(field, index) in fields" :key="index" class="mb-4">
-      <input
+      <Field
         :type="field.type"
         :placeholder="field.placeholder"
         v-model="formData[field.model]"
-        :class="[
-          'block w-full rounded-md border-0 p-2 text-gray-900 ring-1 ring-inset transition duration-300 ease-in-out placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6',
-          v$[field.model].$error
-            ? 'ring-red-500 focus:ring-red-500'
-            : 'ring-gray-300 focus:ring-red-400/50'
-        ]"
+        :error="v$[field.model].$errors[0]?.$message as string"
       />
-      <span v-if="v$[field.model].$error" class="text-sm text-red-500">
-        {{ v$[field.model].$errors[0].$message }}
-      </span>
     </div>
     <div class="mt-10 flex w-full justify-end gap-4 pr-0.5">
       <Button button-text="cancel" bg-color="secondary" type="button" @click="$emit('close')" />
@@ -32,7 +24,7 @@
 import { ref } from 'vue'
 import { useVuelidate } from '@vuelidate/core'
 import { useToast } from 'vue-toastification'
-import { Button } from '@/components'
+import { Field, Button } from '@/components'
 import { type RegisterFormData } from '@/types'
 import { storeToRefs } from 'pinia'
 import { useAuthStore } from '@/stores'

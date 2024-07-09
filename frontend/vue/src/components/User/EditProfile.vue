@@ -21,10 +21,10 @@
 
       <Field id="last_name" label="Last Name" type="text" v-model="formData.last_name" />
 
-      <ToggleSwitch v-model="formData.has_pet" label="Has Pet" />
+      <ToggleSwitch v-model="showPetName" label="Has Pet" />
 
       <Field
-        v-if="formData.has_pet"
+        v-if="showPetName"
         id="pet_name"
         label="Pet Name"
         type="text"
@@ -32,10 +32,10 @@
         :error="v$.pet_name.$errors[0]?.$message"
       />
 
-      <ToggleSwitch v-model="formData.has_liked_music_genre" label="Has Liked Music Genre" />
+      <ToggleSwitch v-model="showLikedMusicGenre" label="Has Liked Music Genre" />
 
       <Dropdown
-        v-if="formData.has_liked_music_genre"
+        v-if="showLikedMusicGenre"
         id="liked_music_genre"
         label="Liked Music Genre"
         v-model="formData.liked_music_genre"
@@ -44,10 +44,10 @@
         :error="v$.liked_music_genre.$errors[0]?.$message"
       />
 
-      <ToggleSwitch v-model="formData.has_most_liked_place" label="Has Most Liked Place" />
+      <ToggleSwitch v-model="showMostLikedPlace" label="Has Most Liked Place" />
 
       <Dropdown
-        v-if="formData.has_most_liked_place"
+        v-if="showMostLikedPlace"
         id="most_liked_place"
         label="Most Liked Place"
         v-model="formData.most_liked_place"
@@ -57,7 +57,7 @@
       />
 
       <Field
-        v-if="formData.most_liked_place === 'Other'"
+        v-if="formData.most_liked_place === 'Outside'"
         id="other_place"
         label="Other Place"
         type="text"
@@ -76,7 +76,7 @@
       <div class="mt-10 flex w-full justify-end gap-4 pr-0.5">
         <Button button-text="cancel" bg-color="secondary" type="button" @click="$emit('close')" />
         <Button
-          button-text="register"
+          button-text="update"
           :bg-color="v$.$invalid ? 'disabled' : 'primary'"
           type="submit"
           :disabled="v$.$invalid"
@@ -103,6 +103,10 @@ const toast = useToast()
 const authUserAction = useAuthStore()
 const currentUserId = authUserAction.getUserId
 
+const showPetName = ref(false)
+const showLikedMusicGenre = ref(false)
+const showMostLikedPlace = ref(false)
+
 const emit = defineEmits<{
   (e: 'close'): void
 }>()
@@ -112,75 +116,76 @@ const formData = ref<CurrentUserData>({
   email: '',
   first_name: null,
   last_name: null,
-  has_pet: false,
   pet_name: null,
-  has_liked_music_genre: false,
   liked_music_genre: null,
-  has_most_liked_place: false,
   most_liked_place: null,
   other_place: '',
   feel_score: 0
 })
 
-const rules = createEditProfileSchema(computed(() => formData.value))
+const rules = createEditProfileSchema(
+  computed(() => formData.value),
+  computed(() => showPetName.value),
+  computed(() => showLikedMusicGenre.value),
+  computed(() => showMostLikedPlace.value)
+)
+
 const v$ = useVuelidate<CurrentUserData>(rules, formData, { $autoDirty: true })
 
 const musicGenres = [
-  'Rock',
-  'Pop',
-  'Jazz',
-  'Classical',
-  'Hip Hop',
-  'Electronic',
-  'Country',
-  'R&B',
-  'Blues',
-  'Reggae'
+  'Just Normal Metal',
+  'Death Metal With Clean Vocal',
+  'Accoustic Death Metal With Growling',
+  'Mathematical Metal (Need to write it down to understand the song)',
+  'No Metal, Just Unicorn',
+  'Metal With Spit Fire',
+  'Gloomy Metal',
+  'Metal While Hugging Your Adorable Cat',
+  'Cannibal Corpse'
 ]
 
 const places = [
-  'Beach',
-  'Mountains',
-  'City',
-  'Countryside',
-  'Forest',
-  'Desert',
-  'Lake',
-  'Island',
-  'Other'
+  'Kitchen',
+  'Living Room',
+  'Your Room',
+  'Balcony',
+  'Backyard',
+  'Terrace',
+  'Shower',
+  'Outside'
 ]
 
-watch(
-  () => formData.value.has_pet,
-  (newValue) => {
-    if (!newValue) formData.value.pet_name = null
-  }
-)
+// Update watchers
+watch(showPetName, (newValue) => {
+  if (!newValue) formData.value.pet_name = null
+})
 
-watch(
-  () => formData.value.has_liked_music_genre,
-  (newValue) => {
-    if (!newValue) formData.value.liked_music_genre = null
-  }
-)
+watch(showLikedMusicGenre, (newValue) => {
+  if (!newValue) formData.value.liked_music_genre = null
+})
 
-watch(
-  () => formData.value.has_most_liked_place,
-  (newValue) => {
-    if (!newValue) {
-      formData.value.most_liked_place = null
-      formData.value.other_place = ''
-    }
+watch(showMostLikedPlace, (newValue) => {
+  if (!newValue) {
+    formData.value.most_liked_place = null
+    formData.value.other_place = ''
   }
-)
+})
 
 onMounted(async () => {
   if (user.value) {
     Object.assign(formData.value, user.value)
+
+    showPetName.value = !!formData.value.pet_name
+    showLikedMusicGenre.value = !!formData.value.liked_music_genre
+    showMostLikedPlace.value = !!formData.value.most_liked_place
   } else {
     await userStore.currentUser(currentUserId)
     if (user.value) {
       Object.assign(formData.value, user.value)
+
+      showPetName.value = !!formData.value.pet_name
+      showLikedMusicGenre.value = !!formData.value.liked_music_genre
+      showMostLikedPlace.value = !!formData.value.most_liked_place
     }
   }
 })
@@ -191,7 +196,7 @@ const handleSubmit = async () => {
 
   try {
     const payload = { ...formData.value }
-    if (payload.most_liked_place === 'Other') {
+    if (payload.most_liked_place === 'Outside') {
       payload.most_liked_place = payload.other_place as string
     }
     delete payload.other_place

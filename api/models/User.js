@@ -31,24 +31,12 @@ const User = sequelize.define(
             type: DataTypes.STRING,
             allowNull: true,
         },
-        has_pet: {
-            type: DataTypes.BOOLEAN,
-            allowNull: true,
-        },
         pet_name: {
             type: DataTypes.STRING,
             allowNull: true,
         },
-        has_liked_music_genre: {
-            type: DataTypes.BOOLEAN,
-            allowNull: true,
-        },
         liked_music_genre: {
             type: DataTypes.STRING,
-            allowNull: true,
-        },
-        has_most_liked_place: {
-            type: DataTypes.BOOLEAN,
             allowNull: true,
         },
         most_liked_place: {
