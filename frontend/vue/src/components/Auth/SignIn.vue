@@ -5,7 +5,18 @@
         :type="field.type"
         :placeholder="field.placeholder"
         v-model="formData[field.model]"
+        :name="field.model"
         :error="v$[field.model].$errors[0]?.$message as string"
+      />
+    </div>
+    <div class="group mt-5 flex w-full justify-end gap-4 pr-0.5">
+      <Button
+        button-text="Forgot your password?"
+        bg-color="link"
+        type="button"
+        text-size="sm"
+        :uppercase="false"
+        @click="openModal('forgotPassword')"
       />
     </div>
     <div class="mt-10 flex w-full justify-end gap-4 pr-0.5">
@@ -29,7 +40,7 @@ import { type SignInFormData } from '@/types'
 import { storeToRefs } from 'pinia'
 import { useAuthStore } from '@/stores'
 import { useToast } from 'vue-toastification'
-import { signInSchema } from '@/utils/formValidation'
+import { useFormValidation } from '@/composables'
 
 const fields = [
   { model: 'email', type: 'email', placeholder: 'Email' },
@@ -38,12 +49,18 @@ const fields = [
 
 const authAction = useAuthStore()
 const { authMessage } = storeToRefs(useAuthStore())
+const { signInSchema } = useFormValidation()
 const isLoading = ref(false)
 const toast = useToast()
 
 const emit = defineEmits<{
   (e: 'close'): void
+  (e: 'openModal', modalName: string): void
 }>()
+
+const openModal = (modalName: string) => {
+  emit('openModal', modalName)
+}
 
 const formData = ref<SignInFormData>({
   email: '',
@@ -59,7 +76,8 @@ const handleSubmit = async () => {
 
   isLoading.value = true
   try {
-    const success = await authAction.login(formData.value)
+    const payload = formData.value
+    const success = await authAction.login(payload)
     if (success) {
       toast.success(authMessage.value)
       emit('close')

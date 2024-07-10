@@ -5,6 +5,7 @@
       :id="id"
       :type="type"
       :value="modelValue"
+      :name="name"
       @input="handleInput"
       :class="[
         'block w-full rounded-md border-0 p-2 text-gray-900 ring-1 ring-inset transition duration-300 ease-in-out placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6',
@@ -20,6 +21,7 @@
 defineProps<{
   id?: string
   label?: string
+  name?: string
   type: string
   modelValue: string
   placeholder?: string

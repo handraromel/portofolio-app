@@ -9,7 +9,7 @@ import Navbar from './Navbar.vue'
 import UserMenu from './UserMenu.vue'
 import Modal from './Modal.vue'
 import { SignIn, Register, VerifyEmail, Info } from './Auth'
-import { DisplayData, EditProfile, UpdatePassword } from './User'
+import { DisplayData, EditProfile, UpdatePassword, ForgotPassword } from './User'
 import { Field, Dropdown, Slider, ToggleSwitch } from './Inputs'
 
 export {
@@ -23,6 +23,10 @@ export {
   Navbar,
   UserMenu,
   Modal,
+  Field,
+  Dropdown,
+  Slider,
+  ToggleSwitch,
   SignIn,
   Register,
   Info,
@@ -30,8 +34,5 @@ export {
   DisplayData,
   EditProfile,
   UpdatePassword,
-  Field,
-  Dropdown,
-  Slider,
-  ToggleSwitch
+  ForgotPassword
 }

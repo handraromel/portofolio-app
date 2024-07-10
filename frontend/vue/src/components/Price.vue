@@ -22,7 +22,7 @@
       <div class="mt-20">
         <Button
           button-text="choose plan"
-          :bg-color="isActive ? 'primary' : 'disabled'"
+          :bg-color="isActive ? 'primary' : 'secondary'"
           :disabled="!isActive"
           @click="$emit('openModal')"
         />

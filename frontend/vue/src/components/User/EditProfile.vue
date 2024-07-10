@@ -6,6 +6,7 @@
           <Field
             id="username"
             label="Username"
+            name="username"
             type="text"
             v-model="formData.username"
             :error="v$.username.$errors[0]?.$message"
@@ -16,6 +17,7 @@
           <Field
             id="email"
             label="Email"
+            name="email"
             type="email"
             v-model="formData.email"
             :error="v$.email.$errors[0]?.$message"
@@ -24,11 +26,23 @@
       </div>
       <div class="flex flex-row gap-6 max-md:flex-wrap">
         <div class="w-full md:w-1/2">
-          <Field id="first_name" label="First Name" type="text" v-model="formData.first_name" />
+          <Field
+            id="first_name"
+            label="First Name"
+            name="first_name"
+            type="text"
+            v-model="formData.first_name"
+          />
         </div>
 
         <div class="w-full md:w-1/2">
-          <Field id="last_name" label="Last Name" type="text" v-model="formData.last_name" />
+          <Field
+            id="last_name"
+            label="Last Name"
+            name="last_name"
+            type="text"
+            v-model="formData.last_name"
+          />
         </div>
       </div>
 
@@ -38,6 +52,7 @@
         v-if="showPetName"
         id="pet_name"
         label="Pet Name"
+        name="pet_name"
         type="text"
         v-model="formData.pet_name"
         :error="v$.pet_name.$errors[0]?.$message"
@@ -71,6 +86,7 @@
         v-if="formData.most_liked_place === 'Outside'"
         id="other_place"
         label="Other Place"
+        name="other_place"
         type="text"
         v-model="formData.other_place"
         :error="v$.other_place.$errors[0]?.$message"
@@ -102,7 +118,7 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import { Field, ToggleSwitch, Dropdown, Slider, Button } from '@/components'
 import { useVuelidate } from '@vuelidate/core'
-import { createEditProfileSchema } from '@/utils/formValidation'
+import { useFormValidation } from '@/composables'
 import { storeToRefs } from 'pinia'
 import { useUserStore, useAuthStore } from '@/stores'
 import { useToast } from 'vue-toastification'
@@ -110,6 +126,7 @@ import type { CurrentUserData } from '@/types'
 
 const userStore = useUserStore()
 const { user, userMessage } = storeToRefs(userStore)
+const { editProfileSchema } = useFormValidation()
 const toast = useToast()
 
 const authUserAction = useAuthStore()
@@ -136,7 +153,7 @@ const formData = ref<CurrentUserData>({
   feel_score: 0
 })
 
-const rules = createEditProfileSchema(
+const rules = editProfileSchema(
   computed(() => formData.value),
   computed(() => showPetName.value),
   computed(() => showLikedMusicGenre.value),

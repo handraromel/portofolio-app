@@ -1,8 +1,12 @@
 import { defineStore } from 'pinia'
 import { authApi } from '@/services/api'
-import { type UserDataResponse, type AuthUserData } from '@/types'
+import {
+  type AuthUserResponse,
+  type AuthUserData,
+  type SignInPayload,
+  type RegisterPayload
+} from '@/types'
 import { AxiosError } from 'axios'
-import { type RegisterFormData, type SignInFormData } from '@/types'
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
@@ -11,7 +15,7 @@ export const useAuthStore = defineStore('auth', {
     authMessage: ''
   }),
   actions: {
-    async register(payload: RegisterFormData) {
+    async register(payload: RegisterPayload) {
       try {
         const response = await authApi.register(payload)
         this.authMessage = response.data.msg
@@ -26,10 +30,10 @@ export const useAuthStore = defineStore('auth', {
       const response = await authApi.verifyEmail(token)
       return response.data
     },
-    async login(payload: SignInFormData) {
+    async login(payload: SignInPayload) {
       try {
         const response = await authApi.login(payload)
-        const loginResponse = response.data as UserDataResponse
+        const loginResponse = response.data as AuthUserResponse
         this.user = loginResponse.data
         this.isAuthenticated = true
         this.authMessage = loginResponse.msg
@@ -54,7 +58,7 @@ export const useAuthStore = defineStore('auth', {
     async verifyToken() {
       try {
         const response = await authApi.verifyToken()
-        const verifyTokenResponse = response.data as UserDataResponse
+        const verifyTokenResponse = response.data as AuthUserResponse
         this.user = verifyTokenResponse.data
         this.isAuthenticated = true
         this.authMessage = verifyTokenResponse.msg

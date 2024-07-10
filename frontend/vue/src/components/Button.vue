@@ -1,12 +1,13 @@
 <template>
   <button
     :class="[
-      'flex items-center justify-center rounded-sm py-1.5 tracking-wider',
-      'uppercase outline outline-offset-1 transition duration-300 ease-in-out',
-      'disabled font-semibold hover:outline-2 hover:drop-shadow-lg',
+      'flex items-center justify-center rounded-sm tracking-wider',
+      'outline outline-2 outline-offset-2 transition duration-300 ease-in-out',
+      'disabled font-semibold hover:drop-shadow-lg',
       themeClasses,
-      fixedWidth ? 'w-[200px]' : 'w-auto px-5',
-      getTextSize || 'text-sm'
+      fixedWidth ? 'w-[200px]' : 'w-auto',
+      getTextSize || 'text-sm',
+      uppercase && 'uppercase'
     ]"
     :disabled="disabled || loadingState"
     :type="type"
@@ -30,21 +31,24 @@ import { type ButtonProps } from '@/types'
 
 const props = withDefaults(defineProps<ButtonProps>(), {
   bgColor: 'primary',
-  type: 'button'
+  type: 'button',
+  uppercase: true
 })
 
 const themeClasses = computed(() => {
   switch (props.bgColor) {
     case 'primary':
-      return 'bg-red-400 text-white outline-red-500 hover:bg-red-600'
+      return 'bg-red-400 text-white outline-red-500 hover:bg-red-600 py-1.5 px-5'
     case 'transparent':
-      return 'bg-transparent text-white outline-white hover:bg-white hover:text-black'
+      return 'bg-transparent text-white outline-white hover:bg-white hover:text-black py-1.5 px-5'
     case 'secondary':
-      return 'bg-white outline-white drop-shadow-md hover:drop-shadow'
+      return 'bg-white outline-white drop-shadow-md hover:drop-shadow py-1.5 px-5'
     case 'info':
-      return 'bg-sky-400 outline-sky-500 text-white hover:bg-sky-600'
+      return 'bg-sky-400 outline-sky-500 text-white hover:bg-sky-600 py-1.5 px-5'
+    case 'link':
+      return 'p-0 m-0 bg-transparent border-none outline-none text-blue-600 group-hover:text-blue-800 group-hover:underline cursor-pointer'
     default:
-      return `bg-slate-400 text-white outline-slate-500 ${props.disabled ? '' : 'hover:bg-slate-500'}`
+      return `bg-slate-400 text-white outline-slate-500 ${props.disabled ? '' : 'hover:bg-slate-500'} py-1.5 px-5`
   }
 })
 

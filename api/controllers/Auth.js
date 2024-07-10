@@ -121,6 +121,7 @@ module.exports = {
                     email: user.email,
                     username: user.username,
                     is_admin: user.is_admin,
+                    is_active: user.is_active,
                 },
             })
         } catch (err) {

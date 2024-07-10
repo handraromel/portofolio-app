@@ -4,8 +4,9 @@ export type BaseAuthType = {
 }
 
 // Auth Types
-export interface AuthUserData extends BaseAuthType {
+export type AuthUserData = {
   id: string
+  email: string
   username: string
   is_admin: string
   is_active: string
@@ -17,25 +18,39 @@ export interface AuthUserResponse {
 }
 
 export type SignInFormData = BaseAuthType
+export type SignInPayload = BaseAuthType
 
 export type RegisterFormData = SignInFormData & {
   username: string
-  confirmPassword: string
+  confirm_password: string
 }
+
+export type RegisterPayload = Omit<RegisterFormData, 'confirm_password'>
 // End Auth Types
 
 // User Types
-export interface CurrentUserData {
+export type CurrentUserData = {
   username: string
   email: string
-  first_name: string | null
-  last_name: string | null
+  first_name?: string | null
+  last_name?: string | null
   pet_name?: string | null
   liked_music_genre?: string | null
   most_liked_place?: string | null
-  other_place?: string
+  other_place?: string | null
   feel_score: number
 }
+
+export type PasswordUpdateFormData = {
+  old_password: string
+  new_password: string
+  confirm_password: string
+}
+
+export type ForgotPasswordFormData = Omit<BaseAuthType, 'password'>
+
+export type PasswordUpdatePayload = Omit<PasswordUpdateFormData, 'confirm_password'>
+export type ForgotPasswordPayload = ForgotPasswordFormData
 
 export interface CurrentUserResponse {
   msg: string
@@ -52,7 +67,7 @@ export interface AdvantageCardProps {
   customGap?: number
 }
 
-export type BgColorType = 'primary' | 'info' | 'secondary' | 'transparent' | 'disabled'
+export type BgColorType = 'primary' | 'info' | 'secondary' | 'transparent' | 'disabled' | 'link'
 
 export interface ButtonProps {
   buttonText: string
@@ -62,6 +77,7 @@ export interface ButtonProps {
   type?: 'button' | 'submit' | 'reset'
   textSize?: 'xs' | 'sm' | 'md' | 'lg'
   loadingState?: boolean
+  uppercase?: boolean
 }
 
 export interface CircledIconProps {

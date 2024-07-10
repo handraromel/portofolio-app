@@ -54,7 +54,7 @@ const sendPasswordResetEmail = (userEmail, newPassword, response, logger) => {
             logger.error('Error sending password reset email', { error })
             return response.status(500).json({ msg: 'Error sending password reset email' })
         }
-        response.json({ msg: 'New password has been sent to your email' })
+        response.json({ msg: `New password has been sent to ${userEmail}` })
     })
 }
 

@@ -108,13 +108,21 @@ import {
   Info,
   DisplayData,
   EditProfile,
-  UpdatePassword
+  UpdatePassword,
+  ForgotPassword
 } from '@/components'
 import { useToast } from 'vue-toastification'
 import { storeToRefs } from 'pinia'
 import { useAuthStore } from '@/stores'
 
-type ModalName = 'signIn' | 'register' | 'info' | 'displayData' | 'editProfile' | 'updatePassword'
+type ModalName =
+  | 'signIn'
+  | 'register'
+  | 'info'
+  | 'displayData'
+  | 'editProfile'
+  | 'updatePassword'
+  | 'forgotPassword'
 
 const authStore = useAuthStore()
 const { isAuthenticated, authMessage } = storeToRefs(authStore)
@@ -126,7 +134,8 @@ const modalStates = ref({
   info: false,
   displayData: false,
   editProfile: false,
-  updatePassword: false
+  updatePassword: false,
+  forgotPassword: false
 })
 
 const modalSizes: Partial<Record<ModalName, string>> = {
@@ -177,6 +186,13 @@ const modals = computed(() =>
       title: 'Update Password',
       component: UpdatePassword,
       size: modalSizes.updatePassword
+    },
+    {
+      name: 'forgotPassword' as const,
+      isOpen: modalStates.value.forgotPassword,
+      title: 'Forgot Password',
+      component: ForgotPassword,
+      size: modalSizes.forgotPassword
     }
   ].map((modal) => ({
     ...modal,
@@ -195,10 +211,15 @@ const closeModal = (modalName: ModalName) => {
   if (modalName === 'editProfile' || modalName === 'updatePassword') {
     openModal('displayData')
   }
+  if (modalName === 'forgotPassword') openModal('signIn')
 }
 
 const handleChildModalOpen = (modalName: ModalName) => {
-  closeModal('displayData')
+  if (modalName === 'editProfile' || modalName === 'updatePassword') {
+    closeModal('displayData')
+  }
+
+  if (modalName === 'forgotPassword') closeModal('signIn')
   openModal(modalName)
 }
 

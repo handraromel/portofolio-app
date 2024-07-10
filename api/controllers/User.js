@@ -2,7 +2,7 @@ const bcrypt = require('bcryptjs')
 const crypto = require('crypto')
 const { logger } = require('@api/utils')
 const { sendPasswordResetEmail } = require('@api/utils')
-const { userUpdateDTO, updatePasswordDTO } = require('@api/dto/UserDTO')
+const { userUpdateDTO, updatePasswordDTO, userForgotPasswordDTO } = require('@api/dto/UserDTO')
 const User = require('@api/models/User')
 
 module.exports = {
@@ -145,7 +145,7 @@ module.exports = {
             return res.status(400).json({ msg: bodyError.details[0].message })
         }
 
-        const { oldPassword, newPassword } = req.body
+        const { old_password, new_password } = req.body
 
         try {
             const user = await User.findByPk(req.params.id)
@@ -153,17 +153,17 @@ module.exports = {
                 return res.status(404).json({ msg: 'User not found' })
             }
 
-            const isMatch = await bcrypt.compare(oldPassword, user.password)
+            const isMatch = await bcrypt.compare(old_password, user.password)
             if (!isMatch) {
                 return res.status(400).json({ msg: 'Old password is incorrect' })
             }
 
-            if (oldPassword === newPassword) {
+            if (old_password === new_password) {
                 return res.status(400).json({ msg: 'Password is duplicated!' })
             }
 
             const salt = await bcrypt.genSalt(10)
-            const hashedPassword = await bcrypt.hash(newPassword, salt)
+            const hashedPassword = await bcrypt.hash(new_password, salt)
 
             user.password = hashedPassword
             await user.save()
@@ -176,20 +176,38 @@ module.exports = {
     },
 
     forgotPassword: async (req, res) => {
+        const { error: bodyError } = userForgotPasswordDTO.validate(req.body)
+        if (bodyError) {
+            return res.status(400).json({ msg: bodyError.details[0].message })
+        }
+
+        const { email } = req.body
+
         try {
-            const user = await User.findByPk(req.params.id)
+            const user = await User.findOne({ where: { email } })
+
             if (!user) {
                 return res.status(404).json({ msg: 'User not found' })
             }
 
-            const newPassword = crypto.randomBytes(8).toString('hex')
+            const generatePassword = (length) => {
+                const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+                let password = ''
+                const randomBytes = crypto.randomBytes(length)
+                for (let i = 0; i < length; i++) {
+                    password += charset[randomBytes[i] % charset.length]
+                }
+                return password
+            }
+
+            const new_password = generatePassword(16)
             const salt = await bcrypt.genSalt(12)
-            const hashedPassword = await bcrypt.hash(newPassword, salt)
+            const hashedPassword = await bcrypt.hash(new_password, salt)
 
             user.password = hashedPassword
             await user.save()
 
-            sendPasswordResetEmail(user.email, newPassword, res, logger)
+            sendPasswordResetEmail(user.email, new_password, res, logger)
         } catch (err) {
             logger.error('An error occurred', { error: err })
             res.status(500).json({ msg: 'Server Error' })

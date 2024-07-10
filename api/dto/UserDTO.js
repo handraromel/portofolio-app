@@ -21,8 +21,12 @@ const userUpdateDTO = Joi.object({
 })
 
 const updatePasswordDTO = Joi.object({
-    oldPassword: Joi.string().min(6).required(),
-    newPassword: Joi.string().min(6).required(),
+    old_password: Joi.string().min(6).required(),
+    new_password: Joi.string().min(6).required(),
+})
+
+const userForgotPasswordDTO = Joi.object({
+    email: Joi.string().email().required(),
 })
 
 const userAuthDTO = Joi.object({
@@ -34,5 +38,6 @@ module.exports = {
     userRegisterDTO,
     userUpdateDTO,
     userAuthDTO,
+    userForgotPasswordDTO,
     updatePasswordDTO,
 }

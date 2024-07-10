@@ -12,7 +12,7 @@
     <div class="mt-10 flex w-full justify-end gap-4 pr-0.5">
       <Button button-text="cancel" bg-color="secondary" type="button" @click="$emit('close')" />
       <Button
-        button-text="register"
+        button-text="submit"
         type="submit"
         :bg-color="v$.$invalid ? 'disabled' : 'primary'"
         :disabled="v$.$invalid"
@@ -27,38 +27,29 @@ import { ref } from 'vue'
 import { useVuelidate } from '@vuelidate/core'
 import { useToast } from 'vue-toastification'
 import { Field, Button } from '@/components'
-import { type RegisterFormData, type RegisterPayload } from '@/types'
+import { type ForgotPasswordFormData, type ForgotPasswordPayload } from '@/types'
 import { storeToRefs } from 'pinia'
-import { useAuthStore } from '@/stores'
+import { useUserStore } from '@/stores'
 import { useFormValidation } from '@/composables'
 
-const fields = [
-  { model: 'username', type: 'text', placeholder: 'Username' },
-  { model: 'email', type: 'email', placeholder: 'Email' },
-  { model: 'password', type: 'password', placeholder: 'Password' },
-  { model: 'confirm_password', type: 'password', placeholder: 'Confirm Your Password' }
-] as const
+const fields = [{ model: 'email', type: 'email', placeholder: 'Your Registered Email' }] as const
 
-const { authMessage } = storeToRefs(useAuthStore())
-const authAction = useAuthStore()
-const { registerSchema } = useFormValidation()
+const userAction = useUserStore()
+const { userMessage } = storeToRefs(useUserStore())
+const { forgotPasswordSchema } = useFormValidation()
 const isLoading = ref(false)
 
 const toast = useToast()
 
 const emit = defineEmits<{
   (e: 'close'): void
-  (e: 'info'): void
 }>()
 
-const formData = ref<RegisterFormData>({
-  username: '',
-  email: '',
-  password: '',
-  confirm_password: ''
+const formData = ref<ForgotPasswordFormData>({
+  email: ''
 })
 
-const rules = registerSchema
+const rules = forgotPasswordSchema
 const v$ = useVuelidate(rules, formData, { $autoDirty: true })
 
 const handleSubmit = async () => {
@@ -67,18 +58,18 @@ const handleSubmit = async () => {
 
   isLoading.value = true
   try {
-    const { confirm_password, ...payload } = formData.value
-    const success = await authAction.register(payload as RegisterPayload)
+    const payload = formData.value
+    const success = await userAction.forgotPassword(payload as ForgotPasswordPayload)
     if (success) {
+      toast.success(userMessage.value)
       emit('close')
-      emit('info')
     } else {
-      toast.error(authMessage.value)
+      toast.error(userMessage.value)
       emit('close')
     }
   } catch (err) {
+    toast.error((err as Error).message || userMessage.value)
     emit('close')
-    toast.error((err as Error).message || authMessage.value)
   } finally {
     isLoading.value = false
   }
