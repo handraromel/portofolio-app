@@ -20,7 +20,7 @@ const userUpdateDTO = Joi.object({
     feel_score: Joi.number().allow(null),
 })
 
-const updatePasswordDTO = Joi.object({
+const userUpdatePasswordDTO = Joi.object({
     old_password: Joi.string().min(6).required(),
     new_password: Joi.string().min(6).required(),
 })
@@ -39,5 +39,5 @@ module.exports = {
     userUpdateDTO,
     userAuthDTO,
     userForgotPasswordDTO,
-    updatePasswordDTO,
+    userUpdatePasswordDTO,
 }

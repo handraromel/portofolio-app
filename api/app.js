@@ -8,6 +8,7 @@ const helmet = require('helmet')
 const cookieParser = require('cookie-parser')
 const routes = require('@api/routes')
 const { startServer, logger } = require('@api/utils')
+const { errorHandler, requestLogger } = require('@api/middleware')
 const { helmetConfig } = require('@api/config/')
 
 dotenv.config()
@@ -39,6 +40,8 @@ app.use(cookieParser())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use('/api/v1', routes)
+app.use(requestLogger)
+app.use(errorHandler)
 
 app.use((req, res) => {
     res.status(404).send({ message: 'Route not found' })

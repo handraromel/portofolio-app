@@ -1,25 +1,23 @@
 const nodemailer = require('nodemailer')
-const dotenv = require('dotenv')
-dotenv.config()
+const { appConfig } = require('@api/config')
 
-// eslint-disable-next-line no-undef
-const processEnv = process.env
+const { emailServer, emailServerPassword } = appConfig
 
 const createTransporter = () => {
     return nodemailer.createTransport({
         service: 'gmail',
         auth: {
-            user: processEnv.EMAIL,
-            pass: processEnv.EMAIL_PASSWORD,
+            user: emailServer,
+            pass: emailServerPassword,
         },
     })
 }
 
-const sendVerificationEmail = (userEmail, verificationLink, response, logger) => {
+const sendVerificationEmail = (userEmail, verificationLink, logger) => {
     const transporter = createTransporter()
 
     const mailOptions = {
-        from: `"No Reply" <${processEnv.EMAIL}>`,
+        from: `"No Reply" <${emailServer}>`,
         to: userEmail,
         subject: 'Verify Your Email',
         html: `
@@ -30,31 +28,38 @@ const sendVerificationEmail = (userEmail, verificationLink, response, logger) =>
         replyTo: 'no-reply@gmail.com',
     }
 
-    transporter.sendMail(mailOptions, (error) => {
-        if (error) {
-            logger.error('Error sending verification email', { error })
-            return response.status(500).json({ msg: 'Error sending verification email' })
-        }
+    return new Promise((resolve, reject) => {
+        transporter.sendMail(mailOptions, (error) => {
+            if (error) {
+                logger.error('Error sending verification email', { error })
+                reject(new Error('Error sending verification email'))
+            } else {
+                resolve(`A verification link has been sent to ${userEmail}`)
+            }
+        })
     })
 }
 
-const sendPasswordResetEmail = (userEmail, newPassword, response, logger) => {
+const sendPasswordResetEmail = (userEmail, newPassword, logger) => {
     const transporter = createTransporter()
 
     const mailOptions = {
-        from: `"No Reply" <${processEnv.EMAIL}>`,
+        from: `"No Reply" <${emailServer}>`,
         to: userEmail,
         subject: 'Your new password',
         text: `Your new password is: ${newPassword}`,
         replyTo: 'no-reply@gmail.com',
     }
 
-    transporter.sendMail(mailOptions, (error) => {
-        if (error) {
-            logger.error('Error sending password reset email', { error })
-            return response.status(500).json({ msg: 'Error sending password reset email' })
-        }
-        response.json({ msg: `New password has been sent to ${userEmail}` })
+    return new Promise((resolve, reject) => {
+        transporter.sendMail(mailOptions, (error) => {
+            if (error) {
+                logger.error('Error sending password reset email', { error })
+                reject(new Error('Error sending password reset email'))
+            } else {
+                resolve(`New password has been sent to ${userEmail}`)
+            }
+        })
     })
 }
 

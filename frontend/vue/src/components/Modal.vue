@@ -70,9 +70,12 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, watch, onMounted, onUnmounted } from 'vue'
 import { TransitionRoot, TransitionChild, Dialog, DialogPanel, DialogTitle } from '@headlessui/vue'
+import { useComponentStore } from '@/stores'
 import { type ModalProps } from '@/types'
+
+const componentStore = useComponentStore()
 
 const props = withDefaults(defineProps<ModalProps>(), {
   showCloseIcon: false,
@@ -116,5 +119,13 @@ const handleClose = () => {
 
 const closeModal = () => {
   emit('close')
+  componentStore.setModalState(false)
 }
+
+watch(
+  () => props.isOpen,
+  (newValue) => {
+    componentStore.setModalState(newValue)
+  }
+)
 </script>

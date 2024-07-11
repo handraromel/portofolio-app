@@ -1,240 +1,109 @@
-const bcrypt = require('bcryptjs')
-const crypto = require('crypto')
+const { userUpdateDTO, userUpdatePasswordDTO, userForgotPasswordDTO } = require('@api/dto/UserDTO')
 const { logger } = require('@api/utils')
-const { sendPasswordResetEmail } = require('@api/utils')
-const { userUpdateDTO, updatePasswordDTO, userForgotPasswordDTO } = require('@api/dto/UserDTO')
-const User = require('@api/models/User')
+const UserService = require('@api/services/userService')
 
 module.exports = {
-    getUsers: async (req, res) => {
+    getUsers: async (req, res, next) => {
         try {
-            const users = await User.findAll()
+            const users = await UserService.getUsers()
             res.json({ data: users })
         } catch (err) {
             logger.error('An error occurred', { error: err })
-            res.status(500).json({ msg: 'Server Error' })
+            next(err)
         }
     },
 
-    getUserById: async (req, res) => {
+    getUserById: async (req, res, next) => {
         try {
-            const user = await User.findByPk(req.params.id, {
-                attributes: [
-                    'username',
-                    'email',
-                    'first_name',
-                    'last_name',
-                    'pet_name',
-                    'liked_music_genre',
-                    'most_liked_place',
-                    'feel_score',
-                ],
-            })
-
-            if (!user) {
-                return res.status(404).json({ msg: 'User not found' })
-            }
-
+            const user = await UserService.getUserById(req.params.id)
             res.json({ data: user })
         } catch (err) {
             logger.error('An error occurred', { error: err })
-            res.status(500).json({ msg: 'Server Error' })
+            next(err)
         }
     },
 
-    toggleUserStatus: async (req, res) => {
+    toggleUserStatus: async (req, res, next) => {
         try {
-            const user = await User.findByPk(req.params.id)
-
-            if (!user) {
-                return res.status(404).json({ msg: 'User not found' })
-            }
-
-            user.is_active = !user.is_active
-            await user.save()
+            const isActive = await UserService.toggleUserStatus(req.params.id)
             res.json({
-                msg: `User status is currently ${user.is_active ? 'active' : 'inactive'}`,
-                data: {
-                    is_active: user.is_active,
-                },
+                msg: `User status is currently ${isActive ? 'active' : 'inactive'}`,
+                data: { is_active: isActive },
             })
         } catch (err) {
             logger.error('An error occurred', { error: err })
-            res.status(500).json({ msg: 'Server Error' })
+            next(err)
         }
     },
 
-    toggleUserAsAdmin: async (req, res) => {
+    toggleUserAsAdmin: async (req, res, next) => {
         try {
-            const user = await User.findByPk(req.params.id)
-
-            if (!user) {
-                return res.status(404).json({ msg: 'User not found' })
-            }
-
-            user.is_admin = !user.is_admin
-            await user.save()
+            const isAdmin = await UserService.toggleUserAsAdmin(req.params.id)
             res.json({
-                msg: `${user.is_admin ? 'User is currently an administrator' : 'Administrator rights revoked!'}`,
-                data: {
-                    is_admin: user.is_admin,
-                },
+                msg: `${isAdmin ? 'User is currently an administrator' : 'Administrator rights revoked!'}`,
+                data: { is_admin: isAdmin },
             })
         } catch (err) {
             logger.error('An error occurred', { error: err })
-            res.status(500).json({ msg: 'Server Error' })
+            next(err)
         }
     },
 
-    updateUser: async (req, res) => {
+    updateUser: async (req, res, next) => {
         const { error: bodyError } = userUpdateDTO.validate(req.body)
-        if (bodyError) {
-            return res.status(400).json({ msg: bodyError.details[0].message })
-        }
-
-        const {
-            username,
-            email,
-            first_name,
-            last_name,
-            pet_name,
-            liked_music_genre,
-            most_liked_place,
-            feel_score,
-        } = req.body
+        if (bodyError) return res.status(400).json({ msg: bodyError.details[0].message })
 
         try {
-            const user = await User.findByPk(req.params.id)
-            if (!user) {
-                return res.status(404).json({ msg: 'User not found' })
-            }
-
-            await user.update({
-                username,
-                email,
-                first_name,
-                last_name,
-                pet_name,
-                liked_music_genre,
-                most_liked_place,
-                feel_score,
-            })
-
+            const updatedUser = await UserService.updateUser(req.params.id, req.body)
             res.json({
                 msg: 'Your data has been updated',
-                data: {
-                    username: user.username,
-                    email: user.email,
-                    first_name: user.first_name,
-                    last_name: user.last_name,
-                    pet_name: user.pet_name,
-                    liked_music_genre: user.liked_music_genre,
-                    most_liked_place: user.most_liked_place,
-                    feel_score: user.feel_score,
-                },
+                data: updatedUser,
             })
         } catch (err) {
             logger.error('An error occurred', { error: err })
-            res.status(500).json({ msg: 'Server Error' })
+            next(err)
         }
     },
 
-    updateUserPassword: async (req, res) => {
-        const { error: bodyError } = updatePasswordDTO.validate(req.body)
-        if (bodyError) {
-            return res.status(400).json({ msg: bodyError.details[0].message })
-        }
-
-        const { old_password, new_password } = req.body
+    updateUserPassword: async (req, res, next) => {
+        const { error: bodyError } = userUpdatePasswordDTO.validate(req.body)
+        if (bodyError) return res.status(400).json({ msg: bodyError.details[0].message })
 
         try {
-            const user = await User.findByPk(req.params.id)
-            if (!user) {
-                return res.status(404).json({ msg: 'User not found' })
-            }
-
-            const isMatch = await bcrypt.compare(old_password, user.password)
-            if (!isMatch) {
-                return res.status(400).json({ msg: 'Old password is incorrect' })
-            }
-
-            if (old_password === new_password) {
-                return res.status(400).json({ msg: 'Password is duplicated!' })
-            }
-
-            const salt = await bcrypt.genSalt(10)
-            const hashedPassword = await bcrypt.hash(new_password, salt)
-
-            user.password = hashedPassword
-            await user.save()
-
-            res.json({ msg: 'Password updated successfully' })
+            const { old_password, new_password } = req.body
+            const message = await UserService.updateUserPassword(
+                req.params.id,
+                old_password,
+                new_password
+            )
+            res.json({ msg: message })
         } catch (err) {
             logger.error('An error occurred', { error: err })
-            res.status(500).json({ msg: 'Server Error' })
+            next(err)
         }
     },
 
-    forgotPassword: async (req, res) => {
+    forgotPassword: async (req, res, next) => {
         const { error: bodyError } = userForgotPasswordDTO.validate(req.body)
-        if (bodyError) {
-            return res.status(400).json({ msg: bodyError.details[0].message })
-        }
-
-        const { email } = req.body
+        if (bodyError) return res.status(400).json({ msg: bodyError.details[0].message })
 
         try {
-            const user = await User.findOne({ where: { email } })
-
-            if (!user) {
-                return res.status(404).json({ msg: 'User not found' })
-            }
-
-            const generatePassword = (length) => {
-                const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
-                let password = ''
-                const randomBytes = crypto.randomBytes(length)
-                for (let i = 0; i < length; i++) {
-                    password += charset[randomBytes[i] % charset.length]
-                }
-                return password
-            }
-
-            const new_password = generatePassword(16)
-            const salt = await bcrypt.genSalt(12)
-            const hashedPassword = await bcrypt.hash(new_password, salt)
-
-            user.password = hashedPassword
-            await user.save()
-
-            sendPasswordResetEmail(user.email, new_password, res, logger)
+            const { email } = req.body
+            const message = await UserService.forgotPassword(email)
+            res.json({ msg: message })
         } catch (err) {
             logger.error('An error occurred', { error: err })
-            res.status(500).json({ msg: 'Server Error' })
+            next(err)
         }
     },
 
-    deleteUser: async (req, res) => {
+    deleteUser: async (req, res, next) => {
         try {
-            const user = await User.findByPk(req.params.id)
-
-            if (!user) {
-                return res.status(404).json({ msg: 'User not found' })
-            }
-
-            if (user.is_admin) {
-                return res.status(400).json({ msg: 'Cannot delete an administrator' })
-            }
-
-            if (user.is_active) {
-                return res.status(400).json({ msg: 'Cannot delete an active user' })
-            }
-
-            await user.destroy()
-            return res.json({ msg: 'User removed' })
+            const message = await UserService.deleteUser(req.params.id)
+            res.json({ msg: message })
         } catch (err) {
             logger.error('An error occurred while trying to delete user', { error: err })
-            return res.status(500).json({ msg: 'Server Error' })
+            next(err)
         }
     },
 }

@@ -29,7 +29,11 @@
         <div id="buttons" class="flex justify-center">
           <div class="flex flex-wrap justify-center gap-8">
             <div>
-              <Button button-text="get started now" :fixed-width="true" @click="openSignInModal" />
+              <Button
+                button-text="get started now"
+                :fixed-width="true"
+                @click="openModal('signIn')"
+              />
             </div>
             <div>
               <Button
@@ -51,9 +55,12 @@
   </div>
 
   <Modal
-    :is-open="isSignInModalOpen"
-    @close="closeSignInModal"
-    :title="isAuthenticated ? '' : 'Sign In to Your Account'"
+    v-for="(modal, index) in modals"
+    :key="index"
+    :is-open="modal.isOpen"
+    :title="modal.title"
+    :show-close-icon="modalsWithCloseIcon.includes(modal.name)"
+    @close="closeModal(modal.name)"
   >
     <div v-if="isAuthenticated" class="text-center">
       <div class="-mt-5 mb-5 flex w-full justify-center">
@@ -61,14 +68,19 @@
       </div>
       <p class="text-sky-600">You're Currently Signed In, Please Enjoy.</p>
     </div>
-    <SignIn v-else @success="closeSignInModal" @cancel="closeSignInModal" />
+    <component
+      v-else
+      :is="modal.component"
+      @close="closeModal(modal.name)"
+      @openModal="handleChildModalOpen"
+    />
   </Modal>
 </template>
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { Button, CircledIcon, Decoration } from '@/components'
-import { Modal, SignIn } from '@/components'
+import { Modal, SignIn, ForgotPassword } from '@/components'
 import { storeToRefs } from 'pinia'
 import { useAuthStore } from '@/stores'
 import { useSmoothScroll } from '@/composables'
@@ -79,7 +91,7 @@ defineProps<{
 
 const { getAdminCheck, getUsername } = storeToRefs(useAuthStore())
 
-const isSignInModalOpen = ref(false)
+// const isSignInModalOpen = ref(false)
 
 const displayName = computed(() => {
   if (getAdminCheck.value) {
@@ -88,12 +100,45 @@ const displayName = computed(() => {
   return getUsername.value
 })
 
-const openSignInModal = () => {
-  isSignInModalOpen.value = true
+type ModalName = 'signIn' | 'forgotPassword'
+
+const authStore = useAuthStore()
+const { isAuthenticated } = storeToRefs(authStore)
+
+const modalStates = ref({
+  signIn: false,
+  forgotPassword: false
+})
+
+const modals = computed(() => [
+  {
+    name: 'signIn' as const,
+    isOpen: modalStates.value.signIn,
+    title: 'Sign In To Your Account',
+    component: SignIn
+  },
+  {
+    name: 'forgotPassword' as const,
+    isOpen: modalStates.value.forgotPassword,
+    title: 'Forgot Password',
+    component: ForgotPassword
+  }
+])
+
+const modalsWithCloseIcon = ['info', 'displayData']
+
+const openModal = (modalName: ModalName) => {
+  modalStates.value[modalName] = true
 }
 
-const closeSignInModal = () => {
-  isSignInModalOpen.value = false
+const closeModal = (modalName: ModalName) => {
+  modalStates.value[modalName] = false
+  if (modalName === 'forgotPassword') openModal('signIn')
+}
+
+const handleChildModalOpen = (modalName: ModalName) => {
+  if (modalName === 'forgotPassword') closeModal('signIn')
+  openModal(modalName)
 }
 
 const { scrollToElement } = useSmoothScroll()
