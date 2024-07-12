@@ -1,42 +1,40 @@
-const { feedbackDTO } = require('@api/dto/FeedbackDTO')
 const Feedback = require('@api/models/Feedback')
 const User = require('@api/models/User')
 
-class FeedbackService {
-    static async submitFeedback(data, userId) {
-        const { error } = feedbackDTO.validate(data)
-        if (error) throw new Error(error.details[0].message)
+function createFeedbackService() {
+    return {
+        async submitFeedback(data, userId) {
+            const { subject, message } = data
 
-        const { subject, message } = data
+            const user = await User.findByPk(userId)
+            if (!user) throw new Error('User not found')
 
-        const user = await User.findByPk(userId)
-        if (!user) throw new Error('User not found')
+            const feedback = await Feedback.create({ userId, subject, message })
 
-        const feedback = await Feedback.create({ userId, subject, message })
+            return {
+                subject: feedback.subject,
+                message: feedback.message,
+            }
+        },
 
-        return {
-            subject: feedback.subject,
-            message: feedback.message,
-        }
-    }
+        async getFeedbacks(userId) {
+            const user = await User.findByPk(userId)
+            if (!user) throw new Error('User not found')
 
-    static async getFeedbacks(userId) {
-        const user = await User.findByPk(userId)
-        if (!user) throw new Error('User not found')
+            const feedbacks = await Feedback.findAll({ where: { userId } })
+            return feedbacks
+        },
 
-        const feedbacks = await Feedback.findAll({ where: { userId } })
-        return feedbacks
-    }
+        async getFeedbackById(userId, id) {
+            const user = await User.findByPk(userId)
+            if (!user) throw new Error('User not found')
 
-    static async getFeedbackById(userId, id) {
-        const user = await User.findByPk(userId)
-        if (!user) throw new Error('User not found')
+            const feedback = await Feedback.findOne({ where: { id, userId } })
+            if (!feedback) throw new Error('Feedback not found for this user')
 
-        const feedback = await Feedback.findOne({ where: { id, userId } })
-        if (!feedback) throw new Error('Feedback not found for this user')
-
-        return feedback
+            return feedback
+        },
     }
 }
 
-module.exports = FeedbackService
+module.exports = createFeedbackService

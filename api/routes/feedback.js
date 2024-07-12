@@ -4,7 +4,7 @@ const { feedbackController } = require('@api/controllers')
 const { authMiddleware } = require('@api/middleware')
 
 router.post('/:userId/submit', authMiddleware, feedbackController.submitFeedback)
-router.get('/user/:userId', authMiddleware, feedbackController.getFeedbacks)
-router.get('/:id/user/:userId', authMiddleware, feedbackController.getFeedbackById)
+router.get('/:userId', authMiddleware, feedbackController.getFeedbacks)
+router.get('/:userId/:id', authMiddleware, feedbackController.getFeedbackById)
 
 module.exports = router

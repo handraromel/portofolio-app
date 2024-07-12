@@ -39,7 +39,7 @@ const fields = [
   { model: 'confirm_password', type: 'password', placeholder: 'Confirm Your Password' }
 ] as const
 
-const { authMessage } = storeToRefs(useAuthStore())
+const { userMessage } = storeToRefs(useAuthStore())
 const authAction = useAuthStore()
 const { registerSchema } = useFormValidation()
 const isLoading = ref(false)
@@ -73,12 +73,12 @@ const handleSubmit = async () => {
       emit('close')
       emit('info')
     } else {
-      toast.error(authMessage.value)
+      toast.error(userMessage.value)
       emit('close')
     }
   } catch (err) {
     emit('close')
-    toast.error((err as Error).message || authMessage.value)
+    toast.error((err as Error).message || userMessage.value)
   } finally {
     isLoading.value = false
   }

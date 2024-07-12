@@ -32,14 +32,13 @@ import { storeToRefs } from 'pinia'
 import { useUserStore } from '@/stores'
 import { useFormValidation } from '@/composables'
 
-const fields = [{ model: 'email', type: 'email', placeholder: 'Your Registered Email' }] as const
-
 const userAction = useUserStore()
 const { userMessage } = storeToRefs(useUserStore())
 const { forgotPasswordSchema } = useFormValidation()
 const isLoading = ref(false)
-
 const toast = useToast()
+
+const fields = [{ model: 'email', type: 'email', placeholder: 'Your Registered Email' }] as const
 
 const emit = defineEmits<{
   (e: 'close'): void

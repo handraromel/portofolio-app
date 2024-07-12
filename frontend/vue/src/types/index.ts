@@ -58,6 +58,20 @@ export interface CurrentUserResponse {
 }
 // End User Types
 
+// Feedback Types
+export type CurrentFeedbackData = {
+  subject: string
+  message: string
+}
+
+export type FeedbackPayload = CurrentFeedbackData
+
+export interface FeedbackResponse {
+  msg: string
+  data: CurrentFeedbackData
+}
+// End Feedback Types
+
 export interface AdvantageCardProps {
   iconSrc: string
   title: string

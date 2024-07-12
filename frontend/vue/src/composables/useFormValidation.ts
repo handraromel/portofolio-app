@@ -116,11 +116,21 @@ export function useFormValidation() {
       email: withMessage(email, messages.email('Email'))
     }
   }
+
+  const submitFeedbackSchema = {
+    subject: {
+      required: withMessage(required, messages.required('Subject'))
+    },
+    message: {
+      required: withMessage(required, messages.required('Message'))
+    }
+  }
   return {
     signInSchema,
     registerSchema,
     editProfileSchema,
     passwordUpdateSchema,
-    forgotPasswordSchema
+    forgotPasswordSchema,
+    submitFeedbackSchema
   }
 }

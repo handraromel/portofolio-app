@@ -48,7 +48,7 @@ const fields = [
 ] as const
 
 const authAction = useAuthStore()
-const { authMessage } = storeToRefs(useAuthStore())
+const { userMessage } = storeToRefs(useAuthStore())
 const { signInSchema } = useFormValidation()
 const isLoading = ref(false)
 const toast = useToast()
@@ -79,10 +79,10 @@ const handleSubmit = async () => {
     const payload = formData.value
     const success = await authAction.login(payload)
     if (success) {
-      toast.success(authMessage.value)
+      toast.success(userMessage.value)
       emit('close')
     } else {
-      toast.error(authMessage.value)
+      toast.error(userMessage.value)
       emit('close')
     }
   } catch (err) {

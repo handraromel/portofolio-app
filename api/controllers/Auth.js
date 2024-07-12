@@ -1,9 +1,11 @@
 const { userRegisterDTO, userAuthDTO } = require('@api/dto/UserDTO')
 const { logger } = require('@api/utils')
 const { appConfig } = require('@api/config')
-const { AuthService } = require('@api/services')
+const { createAuthService } = require('@api/services')
+const { User } = require('@api/models')
 
 const { nodeEnv } = appConfig
+const authService = createAuthService(User)
 
 module.exports = {
     register: async (req, res, next) => {
@@ -11,7 +13,7 @@ module.exports = {
             const { error } = userRegisterDTO.validate(req.body)
             if (error) return res.status(400).json({ msg: error.details[0].message })
 
-            const message = await AuthService.register(req.body)
+            const message = await authService.register(req.body)
             res.json({ msg: message })
         } catch (err) {
             logger.error('An error occurred during registration', { error: err })
@@ -21,7 +23,7 @@ module.exports = {
     userActivation: async (req, res, next) => {
         try {
             const { token } = req.params
-            const message = await AuthService.activateUser(token)
+            const message = await authService.activateUser(token)
             res.json({ msg: message })
         } catch (err) {
             logger.error('An error occurred during email verification', { error: err })
@@ -33,7 +35,7 @@ module.exports = {
             const { error } = userAuthDTO.validate(req.body)
             if (error) return res.status(400).json({ msg: error.details[0].message })
 
-            const { token, user } = await AuthService.login(req.body)
+            const { token, user } = await authService.login(req.body)
             res.cookie('authToken', token, {
                 httpOnly: true,
                 secure: nodeEnv === 'production',
@@ -61,7 +63,7 @@ module.exports = {
             const token = req.cookies['authToken']
             if (!token) return res.status(401).json({ msg: 'No token found, authorization denied' })
 
-            const user = await AuthService.verifyToken(token)
+            const user = await authService.verifyToken(token)
             res.json({
                 msg: 'Token is valid',
                 data: {

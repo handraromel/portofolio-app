@@ -125,7 +125,7 @@ type ModalName =
   | 'forgotPassword'
 
 const authStore = useAuthStore()
-const { isAuthenticated, authMessage } = storeToRefs(authStore)
+const { isAuthenticated, userMessage } = storeToRefs(authStore)
 const toast = useToast()
 
 const modalStates = ref({
@@ -227,7 +227,7 @@ const handleLogout = async () => {
   try {
     if (isAuthenticated.value) {
       await authStore.logout()
-      toast.info(authMessage.value)
+      toast.info(userMessage.value)
     }
   } catch (error) {
     toast.error('Logout failed')

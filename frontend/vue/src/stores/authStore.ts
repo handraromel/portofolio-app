@@ -12,16 +12,16 @@ export const useAuthStore = defineStore('auth', {
   state: () => ({
     user: null as AuthUserData | null,
     isAuthenticated: false,
-    authMessage: ''
+    userMessage: ''
   }),
   actions: {
     async register(payload: RegisterPayload) {
       try {
         const response = await authApi.register(payload)
-        this.authMessage = response.data.msg
+        this.userMessage = response.data.msg
         return true
       } catch (error: any) {
-        this.authMessage =
+        this.userMessage =
           error.response?.data?.msg || 'Registration failed, please contact your administrator'
         return false
       }
@@ -36,11 +36,11 @@ export const useAuthStore = defineStore('auth', {
         const loginResponse = response.data as AuthUserResponse
         this.user = loginResponse.data
         this.isAuthenticated = true
-        this.authMessage = loginResponse.msg
+        this.userMessage = loginResponse.msg
         return true
       } catch (error) {
         console.error('Login failed')
-        this.authMessage = 'Login failed'
+        this.userMessage = 'Login failed'
         return false
       }
     },
@@ -49,10 +49,10 @@ export const useAuthStore = defineStore('auth', {
         await authApi.logout()
         this.user = null
         this.isAuthenticated = false
-        this.authMessage = "You're now logged out"
+        this.userMessage = "You're now logged out"
       } catch (error) {
         console.error('Logout failed')
-        this.authMessage = 'Logout failed'
+        this.userMessage = 'Logout failed'
       }
     },
     async verifyToken() {
@@ -61,7 +61,7 @@ export const useAuthStore = defineStore('auth', {
         const verifyTokenResponse = response.data as AuthUserResponse
         this.user = verifyTokenResponse.data
         this.isAuthenticated = true
-        this.authMessage = verifyTokenResponse.msg
+        this.userMessage = verifyTokenResponse.msg
       } catch (error) {
         if (error instanceof AxiosError) {
           if (error.response && error.response.status === 401) {
