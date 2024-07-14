@@ -12,7 +12,7 @@ module.exports = {
             if (error) throw new Error(error.details[0].message)
 
             const feedbackData = await feedbackService.submitFeedback(req.body, req.params.userId)
-            res.json({
+            res.status(200).json({
                 msg: 'Thank you! Your feedback is recorded.',
                 data: feedbackData,
             })
@@ -24,20 +24,12 @@ module.exports = {
 
     getFeedbacks: async (req, res, next) => {
         try {
-            const feedbacks = await feedbackService.getFeedbacks(req.params.userId)
-            res.json({ data: feedbacks })
+            const page = parseInt(req.query.page) || 1
+            const limit = parseInt(req.query.limit) || 5
+            const feedbackData = await feedbackService.getFeedbacks(req.params.userId, page, limit)
+            res.status(200).json(feedbackData)
         } catch (err) {
             logger.error('Error getting feedbacks:', { err })
-            next(err)
-        }
-    },
-
-    getFeedbackById: async (req, res, next) => {
-        try {
-            const feedback = await feedbackService.getFeedbackById(req.params.userId, req.params.id)
-            res.status(200).json(feedback)
-        } catch (err) {
-            logger.error('Error getting feedback by id:', { err })
             next(err)
         }
     },

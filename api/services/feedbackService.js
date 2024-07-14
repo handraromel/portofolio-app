@@ -17,22 +17,28 @@ function createFeedbackService() {
             }
         },
 
-        async getFeedbacks(userId) {
+        async getFeedbacks(userId, page, limit) {
             const user = await User.findByPk(userId)
             if (!user) throw new Error('User not found')
 
-            const feedbacks = await Feedback.findAll({ where: { userId } })
-            return feedbacks
-        },
+            const offset = (page - 1) * limit
 
-        async getFeedbackById(userId, id) {
-            const user = await User.findByPk(userId)
-            if (!user) throw new Error('User not found')
+            const { count, rows } = await Feedback.findAndCountAll({
+                where: { userId },
+                limit: limit,
+                offset: offset,
+                order: [['createdAt', 'DESC']], // Assuming you want the most recent feedbacks first
+            })
 
-            const feedback = await Feedback.findOne({ where: { id, userId } })
-            if (!feedback) throw new Error('Feedback not found for this user')
+            const totalPages = Math.ceil(count / limit)
 
-            return feedback
+            return {
+                feedbacks: rows,
+                currentPage: page,
+                totalPages: totalPages,
+                totalItems: count,
+                itemsPerPage: limit,
+            }
         },
     }
 }

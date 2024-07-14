@@ -8,9 +8,11 @@ import Footer from './Footer.vue'
 import Navbar from './Navbar.vue'
 import UserMenu from './UserMenu.vue'
 import Modal from './Modal.vue'
+import Pagination from './Pagination.vue'
 import { SignIn, Register, VerifyEmail, Info } from './Auth'
 import { DisplayData, EditProfile, UpdatePassword, ForgotPassword } from './User'
 import { Field, Dropdown, Slider, ToggleSwitch } from './Inputs'
+import { FeedbackView, FeedbackDetail } from './Feedback'
 
 export {
   Button,
@@ -25,6 +27,7 @@ export {
   Modal,
   Field,
   Dropdown,
+  Pagination,
   Slider,
   ToggleSwitch,
   SignIn,
@@ -34,5 +37,7 @@ export {
   DisplayData,
   EditProfile,
   UpdatePassword,
-  ForgotPassword
+  ForgotPassword,
+  FeedbackView,
+  FeedbackDetail
 }

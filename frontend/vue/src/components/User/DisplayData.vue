@@ -139,7 +139,5 @@ const feelScoreData = computed(() => {
   return { bgColor: 'bg-green-500', text: "Let's socialize!" }
 })
 
-onMounted(async () => {
-  await userAction.currentUser(currentUserId)
-})
+onMounted(async () => await userAction.currentUser(currentUserId))
 </script>

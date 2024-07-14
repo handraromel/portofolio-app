@@ -48,7 +48,7 @@ const themeClasses = computed(() => {
     case 'link':
       return 'p-0 m-0 bg-transparent border-none outline-none text-blue-600 group-hover:text-blue-800 group-hover:underline cursor-pointer'
     default:
-      return `bg-slate-400 text-white outline-slate-500 ${props.disabled ? '' : 'hover:bg-slate-500'} py-1.5 px-5`
+      return `bg-slate-300 text-white outline-slate-300 ${props.disabled ? '' : 'hover:bg-slate-500'} py-1.5 px-5`
   }
 })
 

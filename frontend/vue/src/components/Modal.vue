@@ -70,7 +70,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, watch, onMounted, onUnmounted } from 'vue'
+import { computed, watch } from 'vue'
 import { TransitionRoot, TransitionChild, Dialog, DialogPanel, DialogTitle } from '@headlessui/vue'
 import { useComponentStore } from '@/stores'
 import { type ModalProps } from '@/types'

@@ -15,3 +15,11 @@ export const formalizeKebabCase = (field: string): string => {
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ')
 }
+
+export const truncateMessage = (message: string, wordLimit: number) => {
+  const words = message.split(/\s+/)
+  if (words.length > wordLimit) {
+    return words.slice(0, wordLimit).join(' ') + '...'
+  }
+  return message
+}

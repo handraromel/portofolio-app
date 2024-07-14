@@ -34,13 +34,25 @@
             <div v-for="(field, index) in fields" :key="index" class="mb-4">
               <Field
                 :type="field.type"
-                :placeholder="field.placeholder"
                 v-model="formData[field.model]"
+                :placeholder="field.placeholder"
                 :name="field.model"
+                :label="field.label"
+                :rows="field.rows"
                 :error="v$[field.model].$errors[0]?.$message as string"
               />
             </div>
-            <div class="w-full pl-0.5">
+            <div v-if="isAuthenticated" class="mb-4 flex items-end justify-end">
+              <Button
+                button-text="View submitted messages"
+                type="button"
+                bg-color="link"
+                :uppercase="false"
+                text-size="sm"
+                @click="openModal('feedbackList')"
+              />
+            </div>
+            <div class="flex w-full justify-end pl-0.5">
               <Button
                 button-text="send message"
                 type="submit"
@@ -66,40 +78,73 @@
       </div>
     </div>
   </div>
+  <Modal
+    v-for="modal in modals"
+    :key="modal.name"
+    :is-open="modal.isOpen"
+    :title="modal.title"
+    :show-close-icon="modal.showCloseIcon"
+    :size="modal.size"
+    @close="closeModal(modal.name)"
+  >
+    <component
+      :is="modal.component"
+      v-bind="modal.props"
+      @close="closeModal(modal.name)"
+      @open-modal="openModal"
+      @change-page="handlePageChange"
+    />
+  </Modal>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import { useTimeoutFn } from '@vueuse/core'
 import useVuelidate from '@vuelidate/core'
-import { Decoration, Button, Field } from '@/components'
-import { type CurrentFeedbackData, type FeedbackPayload } from '@/types'
+import { Decoration, Button, Field, Modal, FeedbackView, FeedbackDetail } from '@/components'
+import { type FeedbackFormData, type FeedbackPayload, type CurrentFeedbackData } from '@/types'
 import { storeToRefs } from 'pinia'
 import { useAuthStore, useFeedbackStore } from '@/stores'
 import { useFormValidation } from '@/composables'
 
+type ModalName = 'feedbackList' | 'feedbackDetail'
+
 const authStore = useAuthStore()
 const feedbackStore = useFeedbackStore()
 const { userMessage: authMessage, isAuthenticated } = storeToRefs(authStore)
-const { userMessage: feedbackMessage } = storeToRefs(feedbackStore)
+const {
+  userMessage: feedbackMessage,
+  feedbacks,
+  currentPage,
+  totalPages
+} = storeToRefs(feedbackStore)
 const { submitFeedbackSchema } = useFormValidation()
 
 const isLoading = ref(false)
+const isFeedbackLoading = ref(false)
 const isError = ref(false)
-const formData = ref<CurrentFeedbackData>({
+const userMessage = ref('')
+const showMessage = ref(false)
+const selectedFeedback = ref<CurrentFeedbackData | null>(null)
+
+const formData = ref<FeedbackFormData>({
   subject: '',
   message: ''
 })
 
+const modalStates = ref({
+  feedbackList: false,
+  feedbackDetail: false
+})
+
 const fields = [
-  { model: 'subject', type: 'text', placeholder: 'Subject' },
-  { model: 'message', type: 'textarea', placeholder: 'Message' }
+  { model: 'subject', type: 'text', placeholder: 'Subject', rows: 0, label: '' },
+  { model: 'message', type: 'textarea', placeholder: 'Message', rows: 7, label: 'Your Message' }
 ] as const
 
 const v$ = useVuelidate(submitFeedbackSchema, formData, { $autoDirty: true })
 
-const userMessage = ref('')
-const showMessage = ref(false)
+const PAGINATION_DISPLAY_LIMIT = 5
 
 const { start: startMessageTimeout, stop: stopMessageTimeout } = useTimeoutFn(
   () => {
@@ -117,7 +162,7 @@ const displayMessage = (newMessage: string, error: boolean) => {
   startMessageTimeout()
 }
 
-const effectiveUserId = computed(() => {
+const currentUserId = computed(() => {
   const userId = authStore.getUserId
   return userId || Math.floor(Math.random() * 1000000).toString()
 })
@@ -133,7 +178,7 @@ const handleSubmit = async () => {
   isLoading.value = true
   try {
     const success = await feedbackStore.submitFeedback(
-      effectiveUserId.value,
+      currentUserId.value,
       formData.value as FeedbackPayload
     )
     displayMessage(feedbackMessage.value, !success)
@@ -141,12 +186,81 @@ const handleSubmit = async () => {
     displayMessage((err as Error).message || feedbackMessage.value, true)
   } finally {
     isLoading.value = false
+    formData.value = {
+      subject: '',
+      message: ''
+    }
+    v$.value.$reset()
   }
 }
 
-watch(isAuthenticated, (newValue) => {
+const fetchFeedbacks = async (pageNumber: number = 1) => {
+  isFeedbackLoading.value = true
+  try {
+    await feedbackStore.getFeedbacks(currentUserId.value, pageNumber, PAGINATION_DISPLAY_LIMIT)
+  } catch (error) {
+    console.error('Error fetching feedbacks:', error)
+    displayMessage(feedbackMessage.value, true)
+  } finally {
+    isFeedbackLoading.value = false
+  }
+}
+
+const handlePageChange = (pageNumber: number) => {
+  fetchFeedbacks(pageNumber)
+}
+
+const openModal = (modalName: ModalName, data?: CurrentFeedbackData) => {
+  if (modalName === 'feedbackDetail' && data) {
+    selectedFeedback.value = data
+    modalStates.value.feedbackList = false
+    modalStates.value.feedbackDetail = true
+  } else if (modalName === 'feedbackList') {
+    modalStates.value.feedbackDetail = false
+    modalStates.value.feedbackList = true
+    fetchFeedbacks()
+  }
+}
+
+const closeModal = (modalName: ModalName) => {
+  modalStates.value[modalName] = false
+  if (modalName === 'feedbackDetail') {
+    modalStates.value.feedbackList = true
+  }
+}
+
+const modals = computed(() => [
+  {
+    name: 'feedbackList' as const,
+    isOpen: modalStates.value.feedbackList,
+    title: 'Your Submitted Messages',
+    component: FeedbackView,
+    showCloseIcon: true,
+    size: '2xl',
+    props: {
+      feedbackData: feedbacks.value,
+      currentPage: currentPage.value,
+      totalPages: totalPages.value,
+      loading: isFeedbackLoading.value
+    }
+  },
+  {
+    name: 'feedbackDetail' as const,
+    isOpen: modalStates.value.feedbackDetail,
+    title: 'Feedback Detail',
+    component: FeedbackDetail,
+    showCloseIcon: true,
+    size: 'xl',
+    props: {
+      feedback: selectedFeedback.value
+    }
+  }
+])
+
+watch(isAuthenticated, async (newValue) => {
   if (!newValue) {
     displayMessage(authMessage.value, true)
+    feedbacks.value = null
   }
 })
 </script>

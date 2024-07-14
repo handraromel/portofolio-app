@@ -11,6 +11,9 @@ importers:
       '@headlessui/vue':
         specifier: ^1.7.22
         version: 1.7.22(vue@3.4.31(typescript@5.4.5))
+      '@tinymce/tinymce-vue':
+        specifier: ^6.0.1
+        version: 6.0.1(vue@3.4.31(typescript@5.4.5))
       '@vee-validate/i18n':
         specifier: ^4.13.2
         version: 4.13.2
@@ -35,6 +38,9 @@ importers:
       pinia:
         specifier: ^2.1.7
         version: 2.1.7(typescript@5.4.5)(vue@3.4.31(typescript@5.4.5))
+      uninstall:
+        specifier: ^0.0.0
+        version: 0.0.0
       vee-validate:
         specifier: ^4.13.2
         version: 4.13.2(vue@3.4.31(typescript@5.4.5))
@@ -47,6 +53,9 @@ importers:
       vue-toastification:
         specifier: 2.0.0-rc.5
         version: 2.0.0-rc.5(vue@3.4.31(typescript@5.4.5))
+      vue-trumbowyg:
+        specifier: ^4.0.0
+        version: 4.0.0(vue@3.4.31(typescript@5.4.5))
       vue3-carousel:
         specifier: ^0.3.3
         version: 0.3.3(vue@3.4.31(typescript@5.4.5))
@@ -439,6 +448,11 @@ packages:
     resolution: {integrity: sha512-uhty1LzUbbcVc5zdMMSUjUt/ECTlMCtK49Ww7dH2m4lNNLGYwkj5SbfrAD8uCZxV1VeV7DRMXqhwUTELyR5rrA==}
     peerDependencies:
       vue: ^2.7.0 || ^3.0.0
+
+  '@tinymce/tinymce-vue@6.0.1':
+    resolution: {integrity: sha512-VzjI8AKlNrrsosIk3WuBez6kubqPsPMeaButkRLuts77uo4e2EwPRFX+VyB6fHbMGHwUPK22zNjOUGMvJFZFCw==}
+    peerDependencies:
+      vue: ^3.0.0
 
   '@tsconfig/node20@20.1.4':
     resolution: {integrity: sha512-sqgsT69YFeLWf5NtJ4Xq/xAF8p4ZQHlmGW74Nu2tD4+g5fAsposc4ZfaaPixVu4y01BEiDCWLRDCvDM5JOsRxg==}
@@ -1054,6 +1068,9 @@ packages:
     resolution: {integrity: sha512-2yTgeWTWzMWkHu6Jp9NKgePDaYHbntiwvYuuJLbbN9vl7DC9DvXKOB2BC3ZZ92D3cvV/aflH0osDfwpHepQ53w==}
     hasBin: true
 
+  jquery@3.7.1:
+    resolution: {integrity: sha512-m4avr8yL8kmFN8psrbFFFmB/If14iN5o9nw/NgnnM+kybDJpRsAynV2BsfpTYrTRysYUdADVD7CkUUizgkpLfg==}
+
   js-yaml@4.1.0:
     resolution: {integrity: sha512-wpxZs9NoxZaJESJGIZTyDEaYpl0FKSA+FB9aJiyemKhMwkxQg63h4T1KJgUGHpTqPDNRcmmYLugrRjJlBtWvRA==}
     hasBin: true
@@ -1497,6 +1514,9 @@ packages:
   thenify@3.3.1:
     resolution: {integrity: sha512-RVZSIV5IG10Hk3enotrhvz0T9em6cyHBLkH/YAZuKqd8hRkKhSfCGIcP2KUY0EPxndzANBmNllzWPwak+bheSw==}
 
+  tinymce@7.2.1:
+    resolution: {integrity: sha512-ADd1cvdIuq6NWyii0ZOZRuu+9sHIdQfcRNWBcBps2K8vy7OjlRkX6iw7zz1WlL9kY4z4L1DvIP+xOrVX/46aHA==}
+
   to-fast-properties@2.0.0:
     resolution: {integrity: sha512-/OaKK0xYrs3DmxRYqL/yDc+FxFUVYhDlXMhRmv3z915w2HF1tnN1omB354j8VUGO/hbRzyD6Y3sA7v7GS/ceog==}
     engines: {node: '>=4'}
@@ -1504,6 +1524,11 @@ packages:
   to-regex-range@5.0.1:
     resolution: {integrity: sha512-65P7iz6X5yEr1cwcgvQxbbIw7Uk3gOy5dIdtZ4rDveLqhrdJP+Li/Hx6tyK0NEb+2GCyneCMJiGqrADCSNk8sQ==}
     engines: {node: '>=8.0'}
+
+  trumbowyg@2.28.0:
+    resolution: {integrity: sha512-K4KX6psV+hUt03Y3RNdQM5Y+JLfZOUliNnCz5lm12Llfhwvx0P0geBsM0w9ZHeX5g8q7d2MC5X7sPOwGv0Q7Kw==}
+    peerDependencies:
+      jquery: '>=1.8'
 
   ts-api-utils@1.3.0:
     resolution: {integrity: sha512-UQMIo7pb8WRomKR1/+MFVLTroIvDVtMX3K6OUir8ynLyzB8Jeriont2bTAtmNPa1ekAgN7YPDyf6V+ygrdU+eQ==}
@@ -1536,6 +1561,9 @@ packages:
 
   undici-types@5.26.5:
     resolution: {integrity: sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA==}
+
+  uninstall@0.0.0:
+    resolution: {integrity: sha512-pjP/0+A4gsbDVa8XH/S2GZdT9NPJW8NFMy3GI7HnsWG+NAmFSSj3QidNosXBI9cPtxxNExEDdhKFO6sli8K3mA==}
 
   update-browserslist-db@1.0.16:
     resolution: {integrity: sha512-KVbTxlBYlckhF5wgfyZXTWnMn7MMZjMu9XG8bPlliUOP9ThaF4QnhP8qrjrH7DRzHfSk0oQv1wToW+iA5GajEQ==}
@@ -1625,6 +1653,12 @@ packages:
     resolution: {integrity: sha512-q73e5jy6gucEO/U+P48hqX+/qyXDozAGmaGgLFm5tXX4wJBcVsnGp4e/iJqlm9xzHETYOilUuwOUje2Qg1JdwA==}
     peerDependencies:
       vue: ^3.0.2
+
+  vue-trumbowyg@4.0.0:
+    resolution: {integrity: sha512-lvq7lNbMMsAl7FeLKO+0qZR3guvwgunq4uPKTgXpzOI7DlXrUXQOukFn6fBrAQ0M1qXNUW57bl9qdh2v6e9ypQ==}
+    engines: {node: '>= 10.13.0'}
+    peerDependencies:
+      vue: ^3.0.0
 
   vue-tsc@2.0.22:
     resolution: {integrity: sha512-lMBIwPBO0sxCcmvu45yt1b035AaQ8/XSXQDk8m75y4j0jSXY/y/XzfEtssQ9JMS47lDaR10O3/926oCs8OeGUw==}
@@ -1906,6 +1940,11 @@ snapshots:
   '@tanstack/vue-virtual@3.8.1(vue@3.4.31(typescript@5.4.5))':
     dependencies:
       '@tanstack/virtual-core': 3.8.1
+      vue: 3.4.31(typescript@5.4.5)
+
+  '@tinymce/tinymce-vue@6.0.1(vue@3.4.31(typescript@5.4.5))':
+    dependencies:
+      tinymce: 7.2.1
       vue: 3.4.31(typescript@5.4.5)
 
   '@tsconfig/node20@20.1.4': {}
@@ -2604,6 +2643,8 @@ snapshots:
 
   jiti@1.21.6: {}
 
+  jquery@3.7.1: {}
+
   js-yaml@4.1.0:
     dependencies:
       argparse: 2.0.1
@@ -2976,11 +3017,17 @@ snapshots:
     dependencies:
       any-promise: 1.3.0
 
+  tinymce@7.2.1: {}
+
   to-fast-properties@2.0.0: {}
 
   to-regex-range@5.0.1:
     dependencies:
       is-number: 7.0.0
+
+  trumbowyg@2.28.0(jquery@3.7.1):
+    dependencies:
+      jquery: 3.7.1
 
   ts-api-utils@1.3.0(typescript@5.4.5):
     dependencies:
@@ -3001,6 +3048,8 @@ snapshots:
   typescript@5.4.5: {}
 
   undici-types@5.26.5: {}
+
+  uninstall@0.0.0: {}
 
   update-browserslist-db@1.0.16(browserslist@4.23.1):
     dependencies:
@@ -3064,6 +3113,12 @@ snapshots:
 
   vue-toastification@2.0.0-rc.5(vue@3.4.31(typescript@5.4.5)):
     dependencies:
+      vue: 3.4.31(typescript@5.4.5)
+
+  vue-trumbowyg@4.0.0(vue@3.4.31(typescript@5.4.5)):
+    dependencies:
+      jquery: 3.7.1
+      trumbowyg: 2.28.0(jquery@3.7.1)
       vue: 3.4.31(typescript@5.4.5)
 
   vue-tsc@2.0.22(typescript@5.4.5):

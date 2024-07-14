@@ -14,7 +14,7 @@ const Feedback = sequelize.define(
             allowNull: false,
         },
         message: {
-            type: DataTypes.STRING,
+            type: DataTypes.TEXT('long'),
             allowNull: false,
         },
         userId: {

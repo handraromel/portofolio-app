@@ -1,52 +1,52 @@
 import { defineStore } from 'pinia'
 import { feedbackApi } from '@/services/api'
-import { type FeedbackPayload, type CurrentFeedbackData, type FeedbackResponse } from '@/types'
+import {
+  type FeedbackPayload,
+  type CurrentFeedbackData,
+  type FeedbackPaginationResponse,
+  type MultiFeedbacksResponse
+} from '@/types'
 import { AxiosError } from 'axios'
 
 export const useFeedbackStore = defineStore('feedback', {
   state: () => ({
+    feedbacks: null as FeedbackPaginationResponse['feedbacks'] | null,
     feedback: null as CurrentFeedbackData | null,
-    userMessage: ''
+    userMessage: '',
+    totalPages: 1,
+    currentPage: 1,
+    itemsPerPage: 5
   }),
   actions: {
     async submitFeedback(userId: string, payload: FeedbackPayload) {
       try {
         const response = await feedbackApi.submitFeedback(userId, payload)
-        const fetched = response.data as FeedbackResponse
-        this.feedback = fetched.data
+        const fetched = response.data as MultiFeedbacksResponse
         this.userMessage = fetched.msg
         return true
       } catch (error) {
         if (error instanceof AxiosError) {
           if (error.response && error.response.status === 401) {
-            this.feedback = null
             this.userMessage = error.response.data.msg
           }
         }
         return false
       }
     },
-    async getFeedbacks(userId: string) {
+    async getFeedbacks(userId: string, page?: number, limit?: number) {
       try {
-        const response = await feedbackApi.getFeedbacks(userId)
-        const fetched = response.data as FeedbackResponse
-        this.feedback = fetched.data
-        this.userMessage = fetched.msg
+        const response = await feedbackApi.getFeedbacks(
+          userId,
+          page || this.currentPage,
+          limit || this.itemsPerPage
+        )
+        const fetched = response.data as FeedbackPaginationResponse
+        this.feedbacks = fetched.feedbacks
+        this.currentPage = fetched.currentPage
+        this.totalPages = fetched.totalPages
       } catch (error) {
         if (error instanceof AxiosError) {
           this.userMessage = error.response?.data?.msg || 'Failed to update profile'
-        }
-      }
-    },
-    async getFeedbacksById(userId: string, feedbackId: string) {
-      try {
-        const response = await feedbackApi.getFeedbackById(userId, feedbackId)
-        const fetched = response.data as FeedbackResponse
-        this.feedback = fetched.data
-        this.userMessage = fetched.msg
-      } catch (error) {
-        if (error instanceof AxiosError) {
-          this.userMessage = error.response?.data?.msg || 'Failed to update your password'
         }
       }
     }
