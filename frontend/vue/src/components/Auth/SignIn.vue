@@ -47,7 +47,7 @@ const fields = [
   { model: 'password', type: 'password', placeholder: 'Password' }
 ] as const
 
-const authAction = useAuthStore()
+const authStore = useAuthStore()
 const { userMessage } = storeToRefs(useAuthStore())
 const { signInSchema } = useFormValidation()
 const isLoading = ref(false)
@@ -77,7 +77,7 @@ const handleSubmit = async () => {
   isLoading.value = true
   try {
     const payload = formData.value
-    const success = await authAction.login(payload)
+    const success = await authStore.login(payload)
     if (success) {
       toast.success(userMessage.value)
       emit('close')

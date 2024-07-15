@@ -10,14 +10,14 @@
           mode="out-in"
           enter-active-class="transition-all duration-200 ease-in-out"
           leave-active-class="transition-all duration-200 ease-in-out"
-          enter-from-class="opacity-0 transform opacity-1"
-          leave-to-class="opacity-0 transform opacity-1"
+          enter-from-class="opacity-0 transform translate-x-1"
+          leave-to-class="opacity-0 transform translate-x-1"
         >
           <div v-if="loading" :key="`skeleton-${index}`" class="flex h-full max-sm:flex-wrap">
             <div class="flex w-full flex-col justify-between sm:w-7/12">
               <div>
                 <div class="my-2 h-4 w-1/4 rounded bg-slate-200" />
-                <div class="h-4 w-full rounded bg-slate-200" />
+                <div class="mb-1 h-4 w-full rounded bg-slate-200" />
                 <div class="h-4 w-full rounded bg-slate-200" />
               </div>
               <div>
@@ -55,7 +55,10 @@
         </Transition>
       </div>
     </div>
-    <div v-if="displayItems.length < 1" class="flex flex-col items-center justify-center">
+    <div
+      v-if="displayItems.length < 1 && !loading"
+      class="flex flex-col items-center justify-center"
+    >
       <p class="text-3xl font-bold">OOPS...</p>
       <p class="mt-3 text-lg italic">Seems you don't have any messages yet</p>
     </div>
@@ -89,11 +92,14 @@ const emit = defineEmits<{
   (e: 'open-modal', modalName: string, data: CurrentFeedbackData): void
 }>()
 
+const MAX_PAGE_ITEM = 5
+
 const loading = ref(props.loading)
+const lastKnownItemCount = ref(0)
 
 const displayItems = computed((): CurrentFeedbackData[] => {
   if (props.loading) {
-    return Array(props.feedbackData?.length).fill({})
+    return Array(lastKnownItemCount.value).fill({})
   }
   return props.feedbackData || []
 })
@@ -105,8 +111,18 @@ watch(
   }
 )
 
+watch(
+  () => props.feedbackData,
+  (newValue) => {
+    if (newValue && newValue.length > 0) {
+      lastKnownItemCount.value = newValue.length
+    }
+  }
+)
+
 const changePage = (newPage: number) => {
   if (newPage >= 1 && newPage <= props.totalPages && !loading.value) {
+    lastKnownItemCount.value = MAX_PAGE_ITEM
     emit('change-page', newPage)
   }
 }

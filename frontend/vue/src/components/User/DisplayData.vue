@@ -4,7 +4,12 @@
       <div class="flex flex-col rounded-md bg-blue-50 p-4">
         <h3 class="mb-2 text-lg font-semibold text-blue-800">Basic Information</h3>
         <div class="flex flex-col space-y-2">
-          <p class="text-sm"><span class="font-medium">Username:</span> {{ user.username }}</p>
+          <p class="text-sm">
+            <span class="font-medium">Username:</span> <span>{{ user.username }}</span>
+            <span v-if="authStore.getAdminCheck">
+              || <b class="font-bold text-emerald-600">Administrator</b>
+            </span>
+          </p>
           <p class="text-sm"><span class="font-medium">Email:</span> {{ user.email }}</p>
           <p class="text-sm">
             <span class="font-medium">Name:</span>
@@ -113,12 +118,12 @@ const emit = defineEmits<{
   (e: 'openModal', modalName: string): void
 }>()
 
-const authUserAction = useAuthStore()
-const currentUserId = authUserAction.getUserId
+const authStore = useAuthStore()
+const currentUserId = authStore.getUserId
 
 const { user } = storeToRefs(useUserStore())
 
-const userAction = useUserStore()
+const userStore = useUserStore()
 
 const openModal = (modalName: string) => {
   emit('openModal', modalName)
@@ -139,5 +144,5 @@ const feelScoreData = computed(() => {
   return { bgColor: 'bg-green-500', text: "Let's socialize!" }
 })
 
-onMounted(async () => await userAction.currentUser(currentUserId))
+onMounted(async () => await userStore.currentUser(currentUserId))
 </script>

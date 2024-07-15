@@ -56,6 +56,28 @@ export interface CurrentUserResponse {
   msg: string
   data: CurrentUserData
 }
+
+export type UsersData = {
+  id: string
+  email: string
+  username: string
+  is_admin: boolean
+  is_active: boolean
+  createdAt: string
+}
+
+export interface UserPaginationResponse {
+  users: UsersData[]
+  currentPage: number
+  totalPages: number
+  totalItems: number
+  itemsPerPage: number
+}
+
+export interface UsersResponse {
+  msg: string
+  data: UserPaginationResponse
+}
 // End User Types
 
 // Feedback Types
@@ -83,7 +105,7 @@ export interface FeedbackPaginationResponse {
   itemsPerPage: number
 }
 
-export interface MultiFeedbacksResponse {
+export interface FeedbacksResponse {
   msg: string
   data: FeedbackPaginationResponse
 }

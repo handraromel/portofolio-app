@@ -53,6 +53,17 @@
           </MenuItem>
         </div>
         <div v-else class="px-1 py-1">
+          <MenuItem v-if="authStore.getAdminCheck" v-slot="{ active }">
+            <button
+              @click="openModal('manageUsers')"
+              :class="[
+                active ? 'bg-red-500 text-white' : 'text-gray-900',
+                'group flex w-full items-center rounded-md px-2 py-2 text-sm'
+              ]"
+            >
+              Manage Users
+            </button>
+          </MenuItem>
           <MenuItem v-slot="{ active }">
             <button
               @click="openModal('displayData')"
@@ -91,15 +102,19 @@
   >
     <component
       :is="modal.component"
+      v-bind="modal.props"
       @close="closeModal(modal.name)"
       @info="openModal('info')"
-      @openModal="handleChildModalOpen"
+      @open-modal="handleChildModalOpen"
+      @change-page="handlePageChange"
+      @toggle-user-status="handleToggleUserStatus"
+      @search="handleSearch"
     />
   </Modal>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue'
 import {
   Modal,
@@ -109,11 +124,12 @@ import {
   DisplayData,
   EditProfile,
   UpdatePassword,
-  ForgotPassword
+  ForgotPassword,
+  ManageUsers
 } from '@/components'
 import { useToast } from 'vue-toastification'
 import { storeToRefs } from 'pinia'
-import { useAuthStore } from '@/stores'
+import { useAuthStore, useUserStore } from '@/stores'
 
 type ModalName =
   | 'signIn'
@@ -123,11 +139,18 @@ type ModalName =
   | 'editProfile'
   | 'updatePassword'
   | 'forgotPassword'
+  | 'manageUsers'
+
+const PAGINATION_DISPLAY_LIMIT = 5
 
 const authStore = useAuthStore()
+const userStore = useUserStore()
 const { isAuthenticated, userMessage } = storeToRefs(authStore)
+const { users, currentPage, totalPages, isUserActive } = storeToRefs(useUserStore())
 const toast = useToast()
 
+const isUsersFetching = ref(false)
+const previousSearchTerm = ref('')
 const modalStates = ref({
   signIn: false,
   register: false,
@@ -135,12 +158,14 @@ const modalStates = ref({
   displayData: false,
   editProfile: false,
   updatePassword: false,
-  forgotPassword: false
+  forgotPassword: false,
+  manageUsers: false
 })
 
 const modalSizes: Partial<Record<ModalName, string>> = {
   displayData: 'xl',
-  editProfile: '2xl'
+  editProfile: '2xl',
+  manageUsers: '2xl'
 }
 
 const modals = computed(() =>
@@ -193,6 +218,21 @@ const modals = computed(() =>
       title: 'Forgot Password',
       component: ForgotPassword,
       size: modalSizes.forgotPassword
+    },
+    {
+      name: 'manageUsers' as const,
+      isOpen: modalStates.value.manageUsers,
+      title: 'Users Management (Administrator Only)',
+      component: ManageUsers,
+      size: modalSizes.manageUsers,
+      props: {
+        usersData: users.value,
+        currentPage: currentPage.value,
+        totalPages: totalPages.value,
+        loading: isUsersFetching.value,
+        userStatus: Boolean(isUserActive),
+        searchTerm: userStore.searchTerm
+      }
     }
   ].map((modal) => ({
     ...modal,
@@ -200,10 +240,13 @@ const modals = computed(() =>
   }))
 )
 
-const modalsWithCloseIcon = ['info', 'displayData']
+const modalsWithCloseIcon = ['info', 'displayData', 'manageUsers']
 
 const openModal = (modalName: ModalName) => {
   modalStates.value[modalName] = true
+  if (modalName === 'manageUsers') {
+    fetchUsers()
+  }
 }
 
 const closeModal = (modalName: ModalName) => {
@@ -223,6 +266,44 @@ const handleChildModalOpen = (modalName: ModalName) => {
   openModal(modalName)
 }
 
+const fetchUsers = async (pageNumber: number = 1, search: string = '') => {
+  isUsersFetching.value = true
+  try {
+    await userStore.getUsers(pageNumber, PAGINATION_DISPLAY_LIMIT, search)
+  } catch (error) {
+    console.error('Error fetching users:', error)
+  } finally {
+    isUsersFetching.value = false
+  }
+}
+
+const handlePageChange = (pageNumber: number) => {
+  fetchUsers(pageNumber, userStore.searchTerm)
+}
+
+const handleSearch = (searchTerm: string) => {
+  if (searchTerm !== previousSearchTerm.value) {
+    userStore.setSearchTerm(searchTerm)
+    fetchUsers(1, searchTerm) // Reset to first page when searching
+    previousSearchTerm.value = searchTerm
+  }
+}
+
+const handleToggleUserStatus = async (userId: string) => {
+  isUsersFetching.value = true
+  try {
+    const success = await userStore.toggleUserStatus(userId)
+    if (success) {
+      await fetchUsers(currentPage.value)
+    }
+  } catch (error) {
+    console.error('Error toggling user status:', error)
+    toast.error('Failed to update user status')
+  } finally {
+    isUsersFetching.value = false
+  }
+}
+
 const handleLogout = async () => {
   try {
     if (isAuthenticated.value) {
@@ -234,4 +315,14 @@ const handleLogout = async () => {
     console.error('Logout failed')
   }
 }
+
+watch(
+  () => userStore.searchTerm,
+  (newTerm) => {
+    if (newTerm !== previousSearchTerm.value) {
+      fetchUsers(1, newTerm)
+      previousSearchTerm.value = newTerm
+    }
+  }
+)
 </script>

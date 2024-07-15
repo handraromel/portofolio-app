@@ -1,28 +1,64 @@
 const bcrypt = require('bcryptjs')
+const { Op } = require('sequelize')
+const moment = require('moment')
 const crypto = require('crypto')
 const { sendPasswordResetEmail, logger } = require('@api/utils')
 
 function createUserService(User) {
     return {
-        async getUsers() {
-            return await User.findAll()
-        },
+        async getUsers(page, limit, searchTerm = '', filters = {}) {
+            const offset = (page - 1) * limit
 
-        async getUserById(id) {
-            const user = await User.findByPk(id, {
-                attributes: [
-                    'username',
-                    'email',
-                    'first_name',
-                    'last_name',
-                    'pet_name',
-                    'liked_music_genre',
-                    'most_liked_place',
-                    'feel_score',
+            let startDate, endDate
+            if (filters.dateRange) {
+                ;[startDate, endDate] = filters.dateRange
+                    .split(',')
+                    .map((date) => moment(date.trim()))
+                endDate = endDate.endOf('day')
+            }
+
+            const whereClause = {
+                [Op.and]: [
+                    searchTerm
+                        ? {
+                              [Op.or]: [
+                                  { username: { [Op.like]: `%${searchTerm}%` } },
+                                  { email: { [Op.like]: `%${searchTerm}%` } },
+                              ],
+                          }
+                        : {},
+                    filters.isActive !== undefined ? { is_active: filters.isActive } : {},
+                    filters.isAdmin !== undefined ? { is_admin: filters.isAdmin } : {},
+                    startDate && endDate
+                        ? {
+                              createdAt: {
+                                  [Op.between]: [startDate.toDate(), endDate.toDate()],
+                              },
+                          }
+                        : {},
+                ],
+            }
+
+            const { count, rows } = await User.findAndCountAll({
+                where: whereClause,
+                limit: limit,
+                offset: offset,
+                order: [
+                    ['is_admin', 'DESC'],
+                    ['is_active', 'DESC'],
+                    ['createdAt', 'DESC'],
                 ],
             })
-            if (!user) throw new Error('User not found')
-            return user
+
+            const totalPages = Math.ceil(count / limit)
+
+            return {
+                users: rows,
+                currentPage: page,
+                totalPages: totalPages,
+                totalItems: count,
+                itemsPerPage: limit,
+            }
         },
 
         async toggleUserStatus(id) {

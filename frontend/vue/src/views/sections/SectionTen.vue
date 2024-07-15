@@ -121,7 +121,7 @@ const {
 const { submitFeedbackSchema } = useFormValidation()
 
 const isLoading = ref(false)
-const isFeedbackLoading = ref(false)
+const isFeedbacksFetching = ref(false)
 const isError = ref(false)
 const userMessage = ref('')
 const showMessage = ref(false)
@@ -195,14 +195,14 @@ const handleSubmit = async () => {
 }
 
 const fetchFeedbacks = async (pageNumber: number = 1) => {
-  isFeedbackLoading.value = true
+  isFeedbacksFetching.value = true
   try {
     await feedbackStore.getFeedbacks(currentUserId.value, pageNumber, PAGINATION_DISPLAY_LIMIT)
   } catch (error) {
     console.error('Error fetching feedbacks:', error)
     displayMessage(feedbackMessage.value, true)
   } finally {
-    isFeedbackLoading.value = false
+    isFeedbacksFetching.value = false
   }
 }
 
@@ -241,7 +241,7 @@ const modals = computed(() => [
       feedbackData: feedbacks.value,
       currentPage: currentPage.value,
       totalPages: totalPages.value,
-      loading: isFeedbackLoading.value
+      loading: isFeedbacksFetching.value
     }
   },
   {

@@ -32,7 +32,7 @@ import { storeToRefs } from 'pinia'
 import { useUserStore } from '@/stores'
 import { useFormValidation } from '@/composables'
 
-const userAction = useUserStore()
+const userStore = useUserStore()
 const { userMessage } = storeToRefs(useUserStore())
 const { forgotPasswordSchema } = useFormValidation()
 const isLoading = ref(false)
@@ -58,7 +58,7 @@ const handleSubmit = async () => {
   isLoading.value = true
   try {
     const payload = formData.value
-    const success = await userAction.forgotPassword(payload as ForgotPasswordPayload)
+    const success = await userStore.forgotPassword(payload as ForgotPasswordPayload)
     if (success) {
       toast.success(userMessage.value)
       emit('close')

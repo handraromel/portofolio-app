@@ -1,9 +1,9 @@
 const { createFeedbackService } = require('@api/services')
 const { feedbackDTO } = require('@api/dto/FeedbackDTO')
 const { logger } = require('@api/utils')
-const { Feedback } = require('@api/models')
+const { User, Feedback } = require('@api/models')
 
-const feedbackService = createFeedbackService(Feedback)
+const feedbackService = createFeedbackService(User, Feedback)
 
 module.exports = {
     submitFeedback: async (req, res, next) => {

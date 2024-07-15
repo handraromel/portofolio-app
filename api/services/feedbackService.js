@@ -1,7 +1,4 @@
-const Feedback = require('@api/models/Feedback')
-const User = require('@api/models/User')
-
-function createFeedbackService() {
+function createFeedbackService(User, Feedback) {
     return {
         async submitFeedback(data, userId) {
             const { subject, message } = data
@@ -27,7 +24,7 @@ function createFeedbackService() {
                 where: { userId },
                 limit: limit,
                 offset: offset,
-                order: [['createdAt', 'DESC']], // Assuming you want the most recent feedbacks first
+                order: [['createdAt', 'DESC']],
             })
 
             const totalPages = Math.ceil(count / limit)

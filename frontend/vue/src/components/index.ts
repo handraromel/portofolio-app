@@ -10,7 +10,7 @@ import UserMenu from './UserMenu.vue'
 import Modal from './Modal.vue'
 import Pagination from './Pagination.vue'
 import { SignIn, Register, VerifyEmail, Info } from './Auth'
-import { DisplayData, EditProfile, UpdatePassword, ForgotPassword } from './User'
+import { DisplayData, EditProfile, UpdatePassword, ForgotPassword, ManageUsers } from './User'
 import { Field, Dropdown, Slider, ToggleSwitch } from './Inputs'
 import { FeedbackView, FeedbackDetail } from './Feedback'
 
@@ -38,6 +38,7 @@ export {
   EditProfile,
   UpdatePassword,
   ForgotPassword,
+  ManageUsers,
   FeedbackView,
   FeedbackDetail
 }

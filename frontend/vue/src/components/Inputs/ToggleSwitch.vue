@@ -3,8 +3,12 @@
     <Switch
       :modelValue="modelValue"
       @update:modelValue="$emit('update:modelValue', $event)"
-      class="relative inline-flex h-6 w-11 items-center rounded-full"
-      :class="modelValue ? 'bg-red-500' : 'bg-gray-200'"
+      :class="[
+        'relative inline-flex h-6 w-11 items-center rounded-full',
+        modelValue ? 'bg-red-500' : 'bg-slate-200',
+        disabled && 'bg-slate-200'
+      ]"
+      :disabled="disabled"
     >
       <span class="sr-only">{{ label }}</span>
       <span
@@ -21,7 +25,8 @@ import { Switch } from '@headlessui/vue'
 
 defineProps<{
   modelValue: boolean
-  label: string
+  label?: string
+  disabled?: boolean
 }>()
 defineEmits(['update:modelValue'])
 </script>

@@ -37,14 +37,14 @@ const fields = [
   { model: 'confirm_password', type: 'password', placeholder: 'Confirm Your Password' }
 ] as const
 
-const authAction = useAuthStore()
-const userAction = useUserStore()
+const authStore = useAuthStore()
+const userStore = useUserStore()
 const { userMessage } = storeToRefs(useUserStore())
 const { passwordUpdateSchema } = useFormValidation()
 const isLoading = ref(false)
 
 const toast = useToast()
-const currentUserId = authAction.getUserId
+const currentUserId = authStore.getUserId
 
 const emit = defineEmits<{
   (e: 'close'): void
@@ -67,7 +67,7 @@ const handleSubmit = async () => {
   try {
     const { confirm_password, ...payload } = formData.value
     console.log(payload)
-    const success = await userAction.updatePassword(currentUserId, payload as PasswordUpdatePayload)
+    const success = await userStore.updatePassword(currentUserId, payload as PasswordUpdatePayload)
     if (success) {
       toast.success(userMessage.value)
       emit('close')

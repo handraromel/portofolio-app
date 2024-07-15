@@ -21,7 +21,7 @@ app.use(Vue3SmoothScroll, {
 })
 app.use(Toast, toastrOptions)
 
-const authAction = useAuthStore()
-authAction.verifyToken()
+const authStore = useAuthStore()
+authStore.verifyToken()
 
 app.mount('#app')

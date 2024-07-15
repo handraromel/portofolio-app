@@ -8,8 +8,26 @@ const userService = createUserService(User)
 module.exports = {
     getUsers: async (req, res, next) => {
         try {
-            const users = await userService.getUsers()
-            res.json({ data: users })
+            const page = parseInt(req.query.page) || 1
+            const limit = parseInt(req.query.limit) || 5
+            const searchTerm = req.query.search || ''
+            const filters = {
+                isActive:
+                    req.query.isActive === 'true'
+                        ? true
+                        : req.query.isActive === 'false'
+                          ? false
+                          : undefined,
+                isAdmin:
+                    req.query.isAdmin === 'true'
+                        ? true
+                        : req.query.isAdmin === 'false'
+                          ? false
+                          : undefined,
+                dateRange: req.query.dateRange,
+            }
+            const users = await userService.getUsers(page, limit, searchTerm, filters)
+            res.status(200).json(users)
         } catch (err) {
             logger.error('An error occurred', { error: err })
             next(err)

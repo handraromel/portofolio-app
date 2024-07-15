@@ -129,8 +129,8 @@ const { user, userMessage } = storeToRefs(userStore)
 const { editProfileSchema } = useFormValidation()
 const toast = useToast()
 
-const authUserAction = useAuthStore()
-const currentUserId = authUserAction.getUserId
+const authStore = useAuthStore()
+const currentUserId = authStore.getUserId
 
 const isLoading = ref(false)
 const showPetName = ref(false)

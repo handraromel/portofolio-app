@@ -2,16 +2,14 @@ import { defineStore } from 'pinia'
 import { feedbackApi } from '@/services/api'
 import {
   type FeedbackPayload,
-  type CurrentFeedbackData,
   type FeedbackPaginationResponse,
-  type MultiFeedbacksResponse
+  type FeedbacksResponse
 } from '@/types'
 import { AxiosError } from 'axios'
 
 export const useFeedbackStore = defineStore('feedback', {
   state: () => ({
     feedbacks: null as FeedbackPaginationResponse['feedbacks'] | null,
-    feedback: null as CurrentFeedbackData | null,
     userMessage: '',
     totalPages: 1,
     currentPage: 1,
@@ -21,7 +19,7 @@ export const useFeedbackStore = defineStore('feedback', {
     async submitFeedback(userId: string, payload: FeedbackPayload) {
       try {
         const response = await feedbackApi.submitFeedback(userId, payload)
-        const fetched = response.data as MultiFeedbacksResponse
+        const fetched = response.data as FeedbacksResponse
         this.userMessage = fetched.msg
         return true
       } catch (error) {

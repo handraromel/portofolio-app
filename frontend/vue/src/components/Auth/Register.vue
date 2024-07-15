@@ -40,7 +40,7 @@ const fields = [
 ] as const
 
 const { userMessage } = storeToRefs(useAuthStore())
-const authAction = useAuthStore()
+const authStore = useAuthStore()
 const { registerSchema } = useFormValidation()
 const isLoading = ref(false)
 
@@ -68,7 +68,7 @@ const handleSubmit = async () => {
   isLoading.value = true
   try {
     const { confirm_password, ...payload } = formData.value
-    const success = await authAction.register(payload as RegisterPayload)
+    const success = await authStore.register(payload as RegisterPayload)
     if (success) {
       emit('close')
       emit('info')

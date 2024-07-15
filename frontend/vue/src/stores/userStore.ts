@@ -4,16 +4,44 @@ import {
   type CurrentUserResponse,
   type CurrentUserData,
   type PasswordUpdatePayload,
-  type ForgotPasswordPayload
+  type ForgotPasswordPayload,
+  type UserPaginationResponse
 } from '@/types'
 import { AxiosError } from 'axios'
 
 export const useUserStore = defineStore('user', {
   state: () => ({
     user: null as CurrentUserData | null,
-    userMessage: ''
+    users: null as UserPaginationResponse['users'] | null,
+    userMessage: '',
+    isUserActive: '',
+    totalPages: 1,
+    currentPage: 1,
+    itemsPerPage: 5,
+    searchTerm: ''
   }),
   actions: {
+    setSearchTerm(term: string) {
+      this.searchTerm = term
+    },
+    async getUsers(page?: number, limit?: number, search?: string, filters?: any) {
+      try {
+        const response = await userApi.getUsers(
+          page || this.currentPage,
+          limit || this.itemsPerPage,
+          search || this.searchTerm,
+          filters || {}
+        )
+        const fetched = response.data as UserPaginationResponse
+        this.users = fetched.users
+        this.currentPage = fetched.currentPage
+        this.totalPages = fetched.totalPages
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          this.userMessage = error.response?.data?.msg || 'Failed to fetch users'
+        }
+      }
+    },
     async currentUser(userId: string) {
       try {
         const response = await userApi.currentUser(userId)
@@ -38,6 +66,27 @@ export const useUserStore = defineStore('user', {
       } catch (error) {
         if (error instanceof AxiosError) {
           this.userMessage = error.response?.data?.msg || 'Failed to update profile'
+        }
+        return false
+      }
+    },
+    async toggleUserStatus(userId: string) {
+      try {
+        const response = await userApi.toggleUserStatus(userId)
+        const updatedUser = response.data
+
+        if (this.users) {
+          const index = this.users.findIndex((user) => user.id === userId)
+          if (index !== -1) {
+            this.users[index] = { ...this.users[index], ...updatedUser }
+          }
+        }
+
+        this.isUserActive = updatedUser.is_active
+        return true
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          this.userMessage = error.response?.data?.msg || 'Failed to update user status'
         }
         return false
       }
