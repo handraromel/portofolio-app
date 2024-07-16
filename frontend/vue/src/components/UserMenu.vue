@@ -165,7 +165,7 @@ const modalStates = ref({
 const modalSizes: Partial<Record<ModalName, string>> = {
   displayData: 'xl',
   editProfile: '2xl',
-  manageUsers: '2xl'
+  manageUsers: '3xl'
 }
 
 const modals = computed(() =>

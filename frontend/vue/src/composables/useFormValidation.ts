@@ -19,7 +19,8 @@ export function useFormValidation() {
     passwordStrength:
       'Password must contain at least one uppercase letter, one lowercase letter, and one number',
     passwordMatch: 'Passwords do not match',
-    otherPlace: "Please specify where is this 'Outside'"
+    otherPlace: "Please specify where is this 'Outside'",
+    dateRange: 'Start date must be before or equal to end date'
   }
 
   const passwordStrengthRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/
@@ -125,6 +126,7 @@ export function useFormValidation() {
       required: withMessage(required, messages.required('Message'))
     }
   }
+
   return {
     signInSchema,
     registerSchema,

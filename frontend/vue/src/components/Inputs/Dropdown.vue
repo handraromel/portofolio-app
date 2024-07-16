@@ -78,7 +78,7 @@ import { computed } from 'vue'
 
 const props = defineProps<{
   id: string
-  label: string
+  label?: string
   modelValue: string | null
   options: string[]
   placeholder?: string

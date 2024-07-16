@@ -1,13 +1,30 @@
 <template>
-  <div class="flex min-h-[720px] flex-col justify-between">
+  <div class="flex min-h-[777px] flex-col justify-between">
     <div class="h-full space-y-3">
-      <div class="flex w-full items-end justify-end">
+      <div class="flex w-full max-sm:flex-col sm:items-center sm:space-x-4">
         <Field
           type="text"
           :modelValue="searchTerm"
           @update:modelValue="debounceSearch"
           placeholder="Search users..."
         />
+        <Dropdown
+          id="filter-dropdown"
+          :options="filterOptions"
+          v-model="selectedFilter"
+          placeholder="Filter by"
+          class="mt-1 sm:w-40"
+        />
+        <div v-if="selectedFilter === 'Date'" class="relative flex w-[307px] flex-row space-x-2">
+          <Field type="datepicker" v-model="startDate" placeholder="Start Date" />
+          <Field type="datepicker" v-model="endDate" placeholder="End Date" />
+          <span
+            v-if="dateError"
+            class="absolute -bottom-5 -left-2 text-xs text-red-700 sm:-left-[7px] sm:-top-[12px]"
+          >
+            Start date must be before or equal to end date
+          </span>
+        </div>
       </div>
 
       <transition
@@ -123,7 +140,7 @@ import { ref, watch, computed } from 'vue'
 import { useTimeoutFn, useDebounceFn } from '@vueuse/core'
 import { useUserStore } from '@/stores'
 import { type UsersData } from '@/types'
-import { Pagination, ToggleSwitch, Field } from '@/components'
+import { Pagination, ToggleSwitch, Field, Dropdown } from '@/components'
 import { storeToRefs } from 'pinia'
 
 const props = defineProps<{
@@ -151,27 +168,60 @@ const loading = ref(props.loading)
 const isError = ref(false)
 const lastKnownItemCount = ref(0)
 const toggleLoadingItem = ref<string | null>(null)
-
-const displayItems = computed((): UsersData[] => {
-  if (props.loading) {
-    return Array(lastKnownItemCount.value).fill({})
-  }
-  return props.usersData || []
-})
+const currentFilters = ref<any>({})
+const selectedFilter = ref('')
+const startDate = ref('')
+const endDate = ref('')
+const dateError = ref(false)
 
 const { start: startErrorTimeout } = useTimeoutFn(() => {
   isError.value = false
   userStore.$patch({ userMessage: '' })
 }, 5000)
 
+const applyFilter = async (page: number = 1) => {
+  currentFilters.value = {}
+
+  switch (selectedFilter.value) {
+    case 'Date':
+      if (startDate.value && endDate.value) {
+        dateError.value = false
+        currentFilters.value.dateRange = `${startDate.value},${endDate.value}`
+        if (startDate.value > endDate.value) {
+          dateError.value = true
+        }
+      }
+      break
+    case 'Active User':
+      currentFilters.value.isActive = true
+      break
+    case 'Inactive User':
+      currentFilters.value.isActive = false
+      break
+    case 'Administrator':
+      currentFilters.value.isAdmin = true
+      break
+    case 'Clear Filter':
+      selectedFilter.value = ''
+      startDate.value = ''
+      endDate.value = ''
+      dateError.value = false
+      break
+  }
+
+  userStore.getUsers(page, MAX_PAGE_ITEM, props.searchTerm, currentFilters.value)
+}
+
 const debounceSearch = useDebounceFn((term: string) => {
   emit('search', term)
+  applyFilter()
 }, 300)
 
 const changePage = (newPage: number) => {
   if (newPage >= 1 && newPage <= props.totalPages && !loading.value) {
     lastKnownItemCount.value = MAX_PAGE_ITEM
     emit('change-page', newPage)
+    userStore.getUsers(newPage, MAX_PAGE_ITEM, props.searchTerm, currentFilters.value)
   }
 }
 
@@ -203,6 +253,33 @@ const toggleUserStatus = async (user: UsersData) => {
     toggleLoadingItem.value = null
   }
 }
+
+const filterOptions = computed(() => {
+  const options = ['Date', 'Active User', 'Inactive User', 'Administrator']
+  if (Object.keys(currentFilters.value).length > 0) {
+    options.unshift('Clear Filter')
+  }
+  return options
+})
+
+const displayItems = computed((): UsersData[] => {
+  if (props.loading) {
+    return Array(lastKnownItemCount.value).fill({})
+  }
+  return props.usersData || []
+})
+
+watch(selectedFilter, (newValue) => {
+  if (newValue !== 'Date') {
+    applyFilter()
+  }
+})
+
+watch([startDate, endDate], ([newStartDate, newEndDate]) => {
+  if (selectedFilter.value === 'Date' && newStartDate && newEndDate) {
+    applyFilter()
+  }
+})
 
 watch(
   () => props.loading,
