@@ -93,13 +93,14 @@
       @close="closeModal(modal.name)"
       @open-modal="openModal"
       @change-page="handlePageChange"
+      @update-search="handleSearch"
     />
   </Modal>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
-import { useTimeoutFn } from '@vueuse/core'
+import { useTimeoutFn, useDebounceFn } from '@vueuse/core'
 import useVuelidate from '@vuelidate/core'
 import { Decoration, Button, Field, Modal, FeedbackView, FeedbackDetail } from '@/components'
 import { type FeedbackFormData, type FeedbackPayload, type CurrentFeedbackData } from '@/types'
@@ -125,6 +126,7 @@ const isFeedbacksFetching = ref(false)
 const isError = ref(false)
 const userMessage = ref('')
 const showMessage = ref(false)
+const previousSearchTerm = ref('')
 const selectedFeedback = ref<CurrentFeedbackData | null>(null)
 
 const formData = ref<FeedbackFormData>({
@@ -194,10 +196,19 @@ const handleSubmit = async () => {
   }
 }
 
-const fetchFeedbacks = async (pageNumber: number = 1) => {
+const fetchFeedbacks = async (
+  pageNumber: number = 1,
+  search: string = feedbackStore.searchTerm
+) => {
+  if (isFeedbacksFetching.value) return
   isFeedbacksFetching.value = true
   try {
-    await feedbackStore.getFeedbacks(currentUserId.value, pageNumber, PAGINATION_DISPLAY_LIMIT)
+    await feedbackStore.getFeedbacks(
+      currentUserId.value,
+      pageNumber,
+      PAGINATION_DISPLAY_LIMIT,
+      search
+    )
   } catch (error) {
     console.error('Error fetching feedbacks:', error)
     displayMessage(feedbackMessage.value, true)
@@ -207,8 +218,15 @@ const fetchFeedbacks = async (pageNumber: number = 1) => {
 }
 
 const handlePageChange = (pageNumber: number) => {
-  fetchFeedbacks(pageNumber)
+  fetchFeedbacks(pageNumber, feedbackStore.searchTerm)
 }
+
+const handleSearch = useDebounceFn((searchTerm: string) => {
+  if (searchTerm !== feedbackStore.searchTerm) {
+    feedbackStore.setSearchTerm(searchTerm)
+    fetchFeedbacks(1, searchTerm) // Reset to first page when searching
+  }
+}, 300)
 
 const openModal = (modalName: ModalName, data?: CurrentFeedbackData) => {
   if (modalName === 'feedbackDetail' && data) {
@@ -236,12 +254,14 @@ const modals = computed(() => [
     title: 'Your Submitted Messages',
     component: FeedbackView,
     showCloseIcon: true,
-    size: '2xl',
+    size: '3xl',
     props: {
       feedbackData: feedbacks.value,
       currentPage: currentPage.value,
       totalPages: totalPages.value,
-      loading: isFeedbacksFetching.value
+      loading: isFeedbacksFetching.value,
+      currentUserId: currentUserId.value,
+      searchTerm: feedbackStore.searchTerm
     }
   },
   {

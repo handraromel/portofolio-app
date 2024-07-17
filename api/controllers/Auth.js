@@ -14,7 +14,7 @@ module.exports = {
             if (error) return res.status(400).json({ msg: error.details[0].message })
 
             const message = await authService.register(req.body)
-            res.json({ msg: message })
+            res.status(201).json({ msg: message })
         } catch (err) {
             logger.error('An error occurred during registration', { error: err })
             next(err)
@@ -24,7 +24,7 @@ module.exports = {
         try {
             const { token } = req.params
             const message = await authService.activateUser(token)
-            res.json({ msg: message })
+            res.status(200).json({ msg: message })
         } catch (err) {
             logger.error('An error occurred during email verification', { error: err })
             next(err)
@@ -43,7 +43,7 @@ module.exports = {
                 priority: 'high',
             })
 
-            res.json({
+            res.status(200).json({
                 msg: "You're now logged in!",
                 data: {
                     id: user.id,
@@ -64,7 +64,7 @@ module.exports = {
             if (!token) return res.status(401).json({ msg: 'No token found, authorization denied' })
 
             const user = await authService.verifyToken(token)
-            res.json({
+            res.status(200).json({
                 msg: 'Token is valid',
                 data: {
                     id: user.id,
@@ -84,6 +84,6 @@ module.exports = {
             secure: nodeEnv === 'production',
             sameSite: 'strict',
         })
-        res.json({ msg: "You're now logged out" })
+        res.status(200).json({ msg: "You're now logged out" })
     },
 }

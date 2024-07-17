@@ -1,6 +1,30 @@
 <template>
-  <div class="flex min-h-[720px] flex-col justify-between">
+  <div class="flex min-h-[777px] flex-col justify-between">
     <div class="h-full space-y-3">
+      <div class="flex w-full max-sm:flex-col sm:items-center sm:space-x-4">
+        <Field
+          type="text"
+          :modelValue="searchTerm"
+          @update:modelValue="debounceSearch"
+          placeholder="Search users..."
+        />
+        <div class="relative flex w-[307px] flex-row space-x-2">
+          <Field type="datepicker" v-model="startDate" placeholder="Start Date" />
+          <Field type="datepicker" v-model="endDate" placeholder="End Date" />
+          <span
+            v-if="dateError"
+            class="absolute -bottom-5 -left-2 -z-10 text-xs text-red-700 sm:-left-[7px] sm:-top-[12px]"
+          >
+            Start date must be before or equal to end date
+          </span>
+          <span
+            v-else
+            class="absolute -bottom-5 -left-2 -z-10 text-xs text-slate-700 sm:-left-[7px] sm:-top-[12px]"
+          >
+            Filter messages by date
+          </span>
+        </div>
+      </div>
       <div
         v-for="(item, index) in displayItems"
         :key="index"
@@ -59,8 +83,8 @@
       v-if="displayItems.length < 1 && !loading"
       class="flex flex-col items-center justify-center"
     >
-      <p class="text-3xl font-bold">OOPS...</p>
-      <p class="mt-3 text-lg italic">Seems you don't have any messages yet</p>
+      <p class="text-3xl font-bold">HMM...</p>
+      <p class="mt-3 text-lg italic">Nothing to see here.</p>
     </div>
 
     <div class="mt-7">
@@ -76,8 +100,10 @@
 
 <script setup lang="ts">
 import { ref, watch, computed } from 'vue'
+import { useDebounceFn } from '@vueuse/core'
+import { useFeedbackStore } from '@/stores'
+import { Pagination, Field, Dropdown } from '@/components'
 import { type CurrentFeedbackData } from '@/types'
-import { Pagination, Button } from '@/components'
 import { truncateMessage } from '@/utils/common'
 
 const props = defineProps<{
@@ -85,23 +111,93 @@ const props = defineProps<{
   currentPage: number
   totalPages: number
   loading: boolean
+  searchTerm: string
+  currentUserId: string
 }>()
 
 const emit = defineEmits<{
   (e: 'change-page', page: number): void
   (e: 'open-modal', modalName: string, data: CurrentFeedbackData): void
+  (e: 'update-search', term: string): void // Change 'search' to 'update-search'
 }>()
+
+const feedbackStore = useFeedbackStore()
 
 const MAX_PAGE_ITEM = 5
 
 const loading = ref(props.loading)
+const isFilteringOrSearching = ref(false)
 const lastKnownItemCount = ref(0)
+const currentFilters = ref<any>({})
+const startDate = ref('')
+const endDate = ref('')
+const dateError = ref(false)
 
 const displayItems = computed((): CurrentFeedbackData[] => {
   if (props.loading) {
     return Array(lastKnownItemCount.value).fill({})
   }
   return props.feedbackData || []
+})
+
+const applyFilterAndSearch = async (page: number = 1) => {
+  if (isFilteringOrSearching.value) return
+  isFilteringOrSearching.value = true
+
+  currentFilters.value = {}
+
+  if (startDate.value && endDate.value) {
+    dateError.value = false
+    currentFilters.value.dateRange = `${startDate.value},${endDate.value}`
+    if (startDate.value > endDate.value) {
+      dateError.value = true
+      isFilteringOrSearching.value = false
+      return
+    }
+  } else if (!startDate.value && !endDate.value) {
+    dateError.value = false
+    currentFilters.value = {}
+  }
+
+  await feedbackStore.getFeedbacks(
+    props.currentUserId,
+    page,
+    MAX_PAGE_ITEM,
+    props.searchTerm,
+    currentFilters.value
+  )
+
+  isFilteringOrSearching.value = false
+}
+
+const debounceSearch = useDebounceFn((term: string) => {
+  emit('update-search', term)
+}, 300)
+
+const changePage = (newPage: number) => {
+  if (
+    newPage >= 1 &&
+    newPage <= props.totalPages &&
+    !loading.value &&
+    !isFilteringOrSearching.value
+  ) {
+    lastKnownItemCount.value = MAX_PAGE_ITEM
+    emit('change-page', newPage)
+    applyFilterAndSearch(newPage)
+  }
+}
+
+const formatDate = (dateString: string) => {
+  return new Date(dateString).toLocaleString()
+}
+
+watch([startDate, endDate], ([newStartDate, newEndDate], [oldStartDate, oldEndDate]) => {
+  if (
+    (newStartDate && newEndDate && (newStartDate !== oldStartDate || newEndDate !== oldEndDate)) ||
+    (!newStartDate && !newEndDate && (oldStartDate || oldEndDate))
+  ) {
+    applyFilterAndSearch()
+  }
 })
 
 watch(
@@ -119,15 +215,4 @@ watch(
     }
   }
 )
-
-const changePage = (newPage: number) => {
-  if (newPage >= 1 && newPage <= props.totalPages && !loading.value) {
-    lastKnownItemCount.value = MAX_PAGE_ITEM
-    emit('change-page', newPage)
-  }
-}
-
-const formatDate = (dateString: string) => {
-  return new Date(dateString).toLocaleString()
-}
 </script>

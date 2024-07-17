@@ -13,7 +13,9 @@ export const useFeedbackStore = defineStore('feedback', {
     userMessage: '',
     totalPages: 1,
     currentPage: 1,
-    itemsPerPage: 5
+    itemsPerPage: 5,
+    searchTerm: '',
+    isLoading: false
   }),
   actions: {
     async submitFeedback(userId: string, payload: FeedbackPayload) {
@@ -31,21 +33,38 @@ export const useFeedbackStore = defineStore('feedback', {
         return false
       }
     },
-    async getFeedbacks(userId: string, page?: number, limit?: number) {
+    setSearchTerm(term: string) {
+      this.searchTerm = term
+    },
+    async getFeedbacks(
+      userId: string,
+      page?: number,
+      limit?: number,
+      search?: string,
+      filters?: any
+    ) {
+      if (this.isLoading) return
+
+      this.isLoading = true
       try {
         const response = await feedbackApi.getFeedbacks(
           userId,
           page || this.currentPage,
-          limit || this.itemsPerPage
+          limit || this.itemsPerPage,
+          search !== undefined ? search : this.searchTerm,
+          filters || {}
         )
         const fetched = response.data as FeedbackPaginationResponse
         this.feedbacks = fetched.feedbacks
         this.currentPage = fetched.currentPage
         this.totalPages = fetched.totalPages
+        if (search !== undefined) this.searchTerm = search
       } catch (error) {
         if (error instanceof AxiosError) {
-          this.userMessage = error.response?.data?.msg || 'Failed to update profile'
+          this.userMessage = error.response?.data?.msg || 'Failed to fetch feedbacks'
         }
+      } finally {
+        this.isLoading = false
       }
     }
   }

@@ -12,7 +12,7 @@ module.exports = {
             if (error) throw new Error(error.details[0].message)
 
             const feedbackData = await feedbackService.submitFeedback(req.body, req.params.userId)
-            res.status(200).json({
+            res.status(201).json({
                 msg: 'Thank you! Your feedback is recorded.',
                 data: feedbackData,
             })
@@ -26,7 +26,18 @@ module.exports = {
         try {
             const page = parseInt(req.query.page) || 1
             const limit = parseInt(req.query.limit) || 5
-            const feedbackData = await feedbackService.getFeedbacks(req.params.userId, page, limit)
+            const searchTerm = req.query.search || ''
+            const filters = {
+                dateRange: req.query.dateRange,
+            }
+
+            const feedbackData = await feedbackService.getFeedbacks(
+                req.params.userId,
+                page,
+                limit,
+                searchTerm,
+                filters
+            )
             res.status(200).json(feedbackData)
         } catch (err) {
             logger.error('Error getting feedbacks:', { err })

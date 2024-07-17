@@ -37,7 +37,7 @@ module.exports = {
     getUserById: async (req, res, next) => {
         try {
             const user = await userService.getUserById(req.params.id)
-            res.json({ data: user })
+            res.status(200).json({ data: user })
         } catch (err) {
             logger.error('An error occurred', { error: err })
             next(err)
@@ -47,7 +47,7 @@ module.exports = {
     toggleUserStatus: async (req, res, next) => {
         try {
             const isActive = await userService.toggleUserStatus(req.params.id)
-            res.json({
+            res.status(200).json({
                 msg: `User status is currently ${isActive ? 'active' : 'inactive'}`,
                 data: { is_active: isActive },
             })
@@ -60,7 +60,7 @@ module.exports = {
     toggleUserAsAdmin: async (req, res, next) => {
         try {
             const isAdmin = await userService.toggleUserAsAdmin(req.params.id)
-            res.json({
+            res.status(200).json({
                 msg: `${isAdmin ? 'User is currently an administrator' : 'Administrator rights revoked!'}`,
                 data: { is_admin: isAdmin },
             })
@@ -76,7 +76,7 @@ module.exports = {
 
         try {
             const updatedUser = await userService.updateUser(req.params.id, req.body)
-            res.json({
+            res.status(200).json({
                 msg: 'Your data has been updated',
                 data: updatedUser,
             })
@@ -97,7 +97,7 @@ module.exports = {
                 old_password,
                 new_password
             )
-            res.json({ msg: message })
+            res.status(200).json({ msg: message })
         } catch (err) {
             logger.error('An error occurred', { error: err })
             next(err)
@@ -111,7 +111,7 @@ module.exports = {
         try {
             const { email } = req.body
             const message = await userService.forgotPassword(email)
-            res.json({ msg: message })
+            res.status(200).json({ msg: message })
         } catch (err) {
             logger.error('An error occurred', { error: err })
             next(err)
@@ -121,7 +121,7 @@ module.exports = {
     deleteUser: async (req, res, next) => {
         try {
             const message = await userService.deleteUser(req.params.id)
-            res.json({ msg: message })
+            res.status(200).json({ msg: message })
         } catch (err) {
             logger.error('An error occurred while trying to delete user', { error: err })
             next(err)

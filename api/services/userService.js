@@ -17,7 +17,7 @@ function createUserService(User) {
                 endDate = endDate.endOf('day')
             }
 
-            const whereClause = {
+            const seekAndFilter = {
                 [Op.and]: [
                     searchTerm
                         ? {
@@ -40,7 +40,7 @@ function createUserService(User) {
             }
 
             const { count, rows } = await User.findAndCountAll({
-                where: whereClause,
+                where: seekAndFilter,
                 limit: limit,
                 offset: offset,
                 order: [

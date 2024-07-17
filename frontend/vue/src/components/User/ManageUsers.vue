@@ -147,7 +147,6 @@ const props = defineProps<{
   usersData: UsersData[] | null
   currentPage: number
   totalPages: number
-  userStatus: boolean
   loading: boolean
   searchTerm: string
 }>()
