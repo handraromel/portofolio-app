@@ -9,7 +9,15 @@
       <div class="mb-24 flex justify-center">
         <Decoration />
       </div>
-      <div class="flex justify-center gap-8 max-sm:flex-wrap">
+      <div
+        class="flex justify-center gap-8 max-sm:flex-wrap"
+        v-scroll-animation="{
+          animationType: 'zoomIn',
+          duration: 1.2,
+          delay: 0.2,
+          replay: true
+        }"
+      >
         <Price
           v-for="(plan, index) in plans"
           :key="index"

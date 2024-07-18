@@ -17,3 +17,8 @@
 #app {
   font-family: 'Jakarta', Arial, Helvetica, sans-serif;
 }
+
+.scroll-animation-hidden {
+  opacity: 0;
+  visibility: hidden;
+}

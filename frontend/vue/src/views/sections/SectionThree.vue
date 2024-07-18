@@ -2,7 +2,15 @@
   <div id="history" class="my-24 flex items-center justify-center text-slate-500">
     <div class="container mx-auto px-4">
       <div class="flex flex-wrap p-6">
-        <div class="mb-20 flex w-full justify-center px-5 sm:px-20 lg:mb-0 lg:w-1/2">
+        <div
+          class="mb-20 flex w-full justify-center px-5 sm:px-20 lg:mb-0 lg:w-1/2"
+          v-scroll-animation="{
+            animationType: 'slideInLeft',
+            duration: 1.2,
+            delay: 0.2,
+            replay: true
+          }"
+        >
           <img
             src="/assets/section_3/monitor.png"
             alt="iMac displaying website"

@@ -28,7 +28,15 @@
         </div>
       </div>
     </div>
-    <div class="absolute bottom-0 right-0 top-0 w-5/12 max-lg:hidden">
+    <div
+      class="absolute bottom-0 right-0 top-0 w-5/12 max-lg:hidden"
+      v-scroll-animation="{
+        animationType: 'slideInRight',
+        duration: 1.2,
+        delay: 0.5,
+        replay: true
+      }"
+    >
       <img
         src="/assets/section_4/r-side.jpg"
         alt="Services illustration"

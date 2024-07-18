@@ -5,13 +5,37 @@
   >
     <div class="container mx-auto px-4 text-center max-sm:mb-10">
       <div class="flex flex-col gap-9 max-sm:gap-6">
-        <div id="header-subtitle" class="mx-5 text-xl lg:text-3xl">
+        <div
+          id="header-subtitle"
+          class="mx-5 text-xl lg:text-3xl"
+          v-scroll-animation="{
+            animationType: 'fadeIn',
+            duration: 1,
+            delay: 0.2
+          }"
+        >
           <p>Our Clients Are Our First Priority</p>
         </div>
-        <div id="header-title" class="mx-5 text-5xl font-semibold tracking-widest xl:text-7xl">
+        <div
+          id="header-title"
+          class="mx-5 text-5xl font-semibold tracking-widest xl:text-7xl"
+          v-scroll-animation="{
+            animationType: 'fadeIn',
+            duration: 1.2,
+            delay: 0.5
+          }"
+        >
           WELCOME TO SOME WEB
         </div>
-        <div v-if="isAuthenticated" id="display-username">
+        <div
+          v-if="isAuthenticated"
+          id="display-username"
+          v-scroll-animation="{
+            animationType: 'fadeIn',
+            duration: 1.5,
+            delay: 1
+          }"
+        >
           <p class="text-3xl uppercase tracking-wider text-red-500 lg:text-5xl">
             {{ displayName }}
           </p>
@@ -19,7 +43,15 @@
         <div id="header-separator" class="flex justify-center">
           <Decoration />
         </div>
-        <div id="header-desc" class="mx-8 pb-14 text-lg max-sm:pb-4 lg:mx-48 xl:mx-[22rem]">
+        <div
+          id="header-desc"
+          class="mx-8 pb-14 text-lg max-sm:pb-4 lg:mx-48 xl:mx-[22rem]"
+          v-scroll-animation="{
+            animationType: 'fadeIn',
+            duration: 2,
+            delay: 1.5
+          }"
+        >
           <p class="leading-9 max-sm:leading-7">
             Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum
             has been the industry's standard dummy text ever since the 1500s, when an unknown

@@ -8,7 +8,16 @@
       <div class="mb-20 flex justify-center">
         <Decoration />
       </div>
-      <div class="flex flex-wrap">
+      <div
+        class="flex flex-wrap"
+        v-scroll-animation="{
+          animationType: 'slideUp',
+          duration: 1.2,
+          delay: 0.75,
+          replay: true,
+          stagger: 0.15
+        }"
+      >
         <div
           v-for="(content, index) in blogContent"
           :key="index"

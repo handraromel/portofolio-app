@@ -2,17 +2,20 @@
   <nav
     :class="[
       'fixed z-[100] w-full transition-all duration-300 ease-in-out',
-      scrolled || mobileMenuOpen ? 'max-h-full bg-gray-800 pt-0' : 'max-h-0 bg-transparent pt-5'
+      scrolled || mobileMenuOpen ? 'max-h-full bg-gray-800 pt-0' : 'max-h-0 bg-transparent pt-5',
+      isHidden && !isHovered ? '-translate-y-full' : 'translate-y-0'
     ]"
+    @mouseenter="handleMouseEnter"
+    @mouseleave="handleMouseLeave"
   >
     <div class="container mx-auto px-4">
       <div class="flex items-center justify-between py-4">
-        <div class="logo flex w-3/12 pt-5 md:w-2/12 lg:w-1/12 lg:justify-end">
+        <div class="logo flex w-3/12 pt-5 lg:w-1/12 lg:justify-start">
           <img class="h-20 w-20 object-contain" src="/favicon.svg" alt="Navbar Logo" />
         </div>
 
         <div
-          class="hidden md:flex md:w-9/12 md:flex-wrap md:justify-end md:gap-x-8 md:gap-y-4 lg:w-10/12 xl:gap-x-3 xl:gap-y-8"
+          class="hidden lg:flex lg:w-10/12 lg:flex-wrap lg:justify-end lg:gap-x-8 lg:gap-y-4 xl:gap-x-3 xl:gap-y-8"
         >
           <a
             v-for="item in menuItems"
@@ -29,7 +32,7 @@
           </a>
         </div>
 
-        <div class="flex w-8/12 justify-end pr-5 md:hidden">
+        <div class="flex w-8/12 justify-end pr-5 lg:hidden">
           <button @click="toggleMobileMenu" class="text-white focus:outline-none">
             <svg
               class="h-10 w-10"
@@ -48,7 +51,7 @@
           </button>
         </div>
 
-        <div class="flex justify-end md:w-1/12">
+        <div class="flex flex-col items-end justify-end lg:w-1/12">
           <UserMenu />
         </div>
       </div>
@@ -57,7 +60,7 @@
     <!-- Mobile Menu Dropdown -->
     <div
       :class="[
-        'overflow-hidden transition-all duration-300 ease-in-out md:hidden',
+        'overflow-hidden transition-all duration-300 ease-in-out lg:hidden',
         mobileMenuOpen ? 'max-h-[50rem]' : 'max-h-0'
       ]"
     >
@@ -78,72 +81,20 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
-import { hyphenize } from '@/utils/common'
 import { UserMenu } from '@/components'
-import { useScroll, useIntersectionObserver } from '@vueuse/core'
-import { useRouteHash } from '@vueuse/router'
+import { menuItems } from '@/constant'
+import { useNavbarBehavior } from '@/composables/useNavbarBehavior'
+import { hyphenize } from '@/utils/common'
 
-const { y: scrollY } = useScroll(window)
-const scrolled = computed(() => scrollY.value > 50)
-const mobileMenuOpen = ref(false)
-const currentHash = useRouteHash()
-
-const menuItems = [
-  'HOME',
-  'ADVANTAGE',
-  'HISTORY',
-  'SERVICES',
-  'WORKS',
-  'CASE STUDY',
-  'ACHIEVEMENTS',
-  'PRICING',
-  'OUR BLOG',
-  'CONTACT'
-]
-
-const updateHashAndActiveItem = (item: string, updateHash: boolean = true) => {
-  if (updateHash) {
-    const hash = '#' + hyphenize(item)
-    history.pushState(null, '', hash)
-  }
-  currentHash.value = '#' + hyphenize(item)
-}
-
-const activeItem = computed(() => {
-  const hash = currentHash.value?.slice(1) // Remove the leading '#'
-  const matchingItem = menuItems.find(
-    (item) => hyphenize(item).toLowerCase() === hash?.toLowerCase()
-  )
-  return matchingItem || 'HOME'
-})
-
-const toggleMobileMenu = () => {
-  mobileMenuOpen.value = !mobileMenuOpen.value
-}
-
-const setupIntersectionObservers = () => {
-  menuItems.forEach((item) => {
-    const targetId = hyphenize(item)
-    const target = document.getElementById(targetId)
-    if (target) {
-      useIntersectionObserver(
-        target,
-        ([{ isIntersecting }]) => {
-          if (isIntersecting) {
-            updateHashAndActiveItem(item, false)
-          }
-        },
-        {
-          rootMargin: '-50% 0px -50% 0px',
-          threshold: 0
-        }
-      )
-    }
-  })
-}
-
-onMounted(() => {
-  setupIntersectionObservers()
-})
+const {
+  scrolled,
+  mobileMenuOpen,
+  isHidden,
+  isHovered,
+  activeItem,
+  updateHashAndActiveItem,
+  toggleMobileMenu,
+  handleMouseEnter,
+  handleMouseLeave
+} = useNavbarBehavior()
 </script>

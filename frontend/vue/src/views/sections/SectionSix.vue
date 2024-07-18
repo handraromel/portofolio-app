@@ -32,7 +32,15 @@
             </Carousel>
           </div>
         </div>
-        <div class="w-full shadow-lg max-sm:shadow-none lg:w-1/2 xl:w-5/12">
+        <div
+          class="w-full shadow-lg max-sm:shadow-none lg:w-1/2 xl:w-5/12"
+          v-scroll-animation="{
+            animationType: 'fadeIn',
+            duration: 1.5,
+            delay: 0.2,
+            replay: true
+          }"
+        >
           <img
             src="/assets/section_6/r-side.jpg"
             alt="Case Study Image"
