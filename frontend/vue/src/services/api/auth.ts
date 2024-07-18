@@ -1,5 +1,5 @@
 import api from '.'
-import { type SignInPayload, type RegisterPayload } from '@/types'
+import { type SignInPayload, type RegisterPayload } from '@/components/Auth/types'
 
 export const authApi = {
   register: (payload: RegisterPayload) => api.post('/auth/register', payload),

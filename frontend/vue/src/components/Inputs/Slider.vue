@@ -38,27 +38,15 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import { type SliderInputProps } from '@/types'
 
-const props = withDefaults(
-  defineProps<{
-    id?: string
-    label?: string
-    modelValue: number
-    min?: number
-    max?: number
-    step?: number
-    colorizeBg?: boolean
-    displayValue?: boolean
-    error?: string
-  }>(),
-  {
-    min: 0,
-    max: 100,
-    step: 1,
-    colorizeBg: false,
-    displayValue: false
-  }
-)
+const props = withDefaults(defineProps<SliderInputProps>(), {
+  min: 0,
+  max: 100,
+  step: 1,
+  colorizeBg: false,
+  displayValue: false
+})
 
 const emit = defineEmits(['update:modelValue'])
 

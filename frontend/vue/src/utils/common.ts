@@ -10,6 +10,9 @@ export const checkFormErrors = (errors: Record<string, string | undefined>) => {
 
 //Converts value name with kebab case into formal formats
 export const formalizeKebabCase = (field: string): string => {
+  if (!field) {
+    return ''
+  }
   return field
     .split('_')
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))

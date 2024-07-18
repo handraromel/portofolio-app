@@ -65,7 +65,7 @@
         id="liked_music_genre"
         label="Liked Music Genre"
         v-model="formData.liked_music_genre"
-        :options="musicGenres"
+        :options="musicGenreOptions"
         placeholder="Select a music genre"
         :error="v$.liked_music_genre.$errors[0]?.$message"
       />
@@ -77,7 +77,7 @@
         id="most_liked_place"
         label="Most Liked Place"
         v-model="formData.most_liked_place"
-        :options="places"
+        :options="placeOptions"
         placeholder="Select a place"
         :error="v$.most_liked_place.$errors[0]?.$message"
       />
@@ -122,7 +122,13 @@ import { useFormValidation } from '@/composables'
 import { storeToRefs } from 'pinia'
 import { useUserStore, useAuthStore } from '@/stores'
 import { useToast } from 'vue-toastification'
-import type { CurrentUserData } from '@/types'
+import { musicGenres, places } from './constant'
+import type { CurrentUserData } from './types'
+
+interface DropdownOption {
+  value: string
+  label: string
+}
 
 const userStore = useUserStore()
 const { user, userMessage } = storeToRefs(userStore)
@@ -162,28 +168,13 @@ const rules = editProfileSchema(
 
 const v$ = useVuelidate<CurrentUserData>(rules, formData, { $autoDirty: true })
 
-const musicGenres = [
-  'Just Normal Metal',
-  'Death Metal With Clean Vocal',
-  'Accoustic Death Metal With Growling',
-  'Mathematical Metal (Need to write it down to understand the song)',
-  'No Metal, Just Unicorn',
-  'Metal With Spit Fire',
-  'Gloomy Metal',
-  'Metal While Hugging Your Adorable Cat',
-  'Cannibal Corpse'
-]
+const musicGenreOptions = computed((): DropdownOption[] =>
+  musicGenres.map((genre) => ({ value: genre, label: genre }))
+)
 
-const places = [
-  'Kitchen',
-  'Living Room',
-  'Your Room',
-  'Balcony',
-  'Backyard',
-  'Terrace',
-  'Shower',
-  'Outside'
-]
+const placeOptions = computed((): DropdownOption[] =>
+  places.map((place) => ({ value: place, label: place }))
+)
 
 watch(
   [showPetName, showLikedMusicGenre, showMostLikedPlace],

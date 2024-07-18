@@ -11,7 +11,7 @@
 
 <script setup lang="ts">
 import { defineProps } from 'vue'
-import { type CurrentFeedbackData } from '@/types'
+import { type CurrentFeedbackData } from './types'
 
 defineProps<{
   feedback: CurrentFeedbackData | null

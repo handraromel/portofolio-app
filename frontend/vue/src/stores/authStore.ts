@@ -5,7 +5,7 @@ import {
   type AuthUserData,
   type SignInPayload,
   type RegisterPayload
-} from '@/types'
+} from '@/components/Auth/types'
 import { AxiosError } from 'axios'
 
 export const useAuthStore = defineStore('auth', {

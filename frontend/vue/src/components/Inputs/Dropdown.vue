@@ -9,7 +9,7 @@
           class="relative w-full cursor-default rounded-lg bg-white py-2 pl-3 pr-10 text-left shadow-md ring-1 ring-gray-300 focus:outline-none focus-visible:border-red-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-red-300 sm:text-sm"
         >
           <span class="block truncate">
-            {{ selectedValue || placeholder }}
+            {{ formalizeKebabCase(selectedValue as string) || placeholder }}
           </span>
           <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
             <svg
@@ -36,9 +36,9 @@
             class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
           >
             <ListboxOption
-              v-for="option in options"
-              :key="option"
-              :value="option"
+              v-for="(option, index) in options"
+              :key="index"
+              :value="option.value"
               v-slot="{ active, selected }"
             >
               <li
@@ -48,7 +48,7 @@
                 ]"
               >
                 <span :class="[selected ? 'font-medium' : 'font-normal', 'block truncate']">
-                  {{ option }}
+                  {{ option.label }}
                 </span>
                 <span
                   v-if="selected"
@@ -73,17 +73,12 @@
 </template>
 
 <script setup lang="ts">
-import { Listbox, ListboxButton, ListboxOptions, ListboxOption } from '@headlessui/vue'
 import { computed } from 'vue'
+import { Listbox, ListboxButton, ListboxOptions, ListboxOption } from '@headlessui/vue'
+import { formalizeKebabCase } from '@/utils/common'
+import { type DropdownProps } from '@/types'
 
-const props = defineProps<{
-  id: string
-  label?: string
-  modelValue: string | null
-  options: string[]
-  placeholder?: string
-  error?: string
-}>()
+const props = defineProps<DropdownProps>()
 
 const emit = defineEmits(['update:modelValue'])
 

@@ -102,9 +102,10 @@
 import { ref, watch, computed } from 'vue'
 import { useDebounceFn } from '@vueuse/core'
 import { useFeedbackStore } from '@/stores'
-import { Pagination, Field, Dropdown } from '@/components'
-import { type CurrentFeedbackData } from '@/types'
+import { Pagination, Field } from '@/components'
+import { type CurrentFeedbackData } from './types'
 import { truncateMessage } from '@/utils/common'
+import { MAX_PAGE_ITEM, DEFAULT_TIMEOUT_BUFFER } from '@/constant'
 
 const props = defineProps<{
   feedbackData: CurrentFeedbackData[] | null
@@ -118,12 +119,10 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: 'change-page', page: number): void
   (e: 'open-modal', modalName: string, data: CurrentFeedbackData): void
-  (e: 'update-search', term: string): void // Change 'search' to 'update-search'
+  (e: 'update-search', term: string): void
 }>()
 
 const feedbackStore = useFeedbackStore()
-
-const MAX_PAGE_ITEM = 5
 
 const loading = ref(props.loading)
 const isFilteringOrSearching = ref(false)
@@ -172,7 +171,7 @@ const applyFilterAndSearch = async (page: number = 1) => {
 
 const debounceSearch = useDebounceFn((term: string) => {
   emit('update-search', term)
-}, 300)
+}, DEFAULT_TIMEOUT_BUFFER)
 
 const changePage = (newPage: number) => {
   if (

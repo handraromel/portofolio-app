@@ -15,12 +15,12 @@
           placeholder="Filter by"
           class="mt-1 sm:w-40"
         />
-        <div v-if="selectedFilter === 'Date'" class="relative flex w-[307px] flex-row space-x-2">
+        <div v-if="selectedFilter === 'date'" class="relative flex w-[307px] flex-row space-x-2">
           <Field type="datepicker" v-model="startDate" placeholder="Start Date" />
           <Field type="datepicker" v-model="endDate" placeholder="End Date" />
           <span
             v-if="dateError"
-            class="absolute -bottom-5 -left-2 text-xs text-red-700 sm:-left-[7px] sm:-top-[12px]"
+            class="absolute -bottom-5 -left-2 -z-10 text-xs text-red-700 sm:-left-[7px] sm:-top-[12px]"
           >
             Start date must be before or equal to end date
           </span>
@@ -87,15 +87,15 @@
                   <span>Status: </span>
                   <span
                     :class="{
-                      'text-emerald-700': getItemStatus(item) === 'active',
-                      'text-red-700': getItemStatus(item) === 'inactive',
-                      'text-sky-500': getItemStatus(item) === 'loading'
+                      'text-emerald-700': itemStatus(item) === 'active',
+                      'text-red-700': itemStatus(item) === 'inactive',
+                      'text-sky-500': itemStatus(item) === 'loading'
                     }"
                   >
                     {{
-                      getItemStatus(item) === 'loading'
+                      itemStatus(item) === 'loading'
                         ? 'Updating...'
-                        : getItemStatus(item) === 'active'
+                        : itemStatus(item) === 'active'
                           ? 'Active'
                           : 'Inactive'
                     }}
@@ -139,7 +139,9 @@
 import { ref, watch, computed } from 'vue'
 import { useTimeoutFn, useDebounceFn } from '@vueuse/core'
 import { useUserStore } from '@/stores'
-import { type UsersData } from '@/types'
+import { type UsersData, type Filters } from './types'
+import { FilterOption } from './constant'
+import { MAX_PAGE_ITEM, DEFAULT_TIMEOUT_BUFFER, FIVES_TIMEOUT_BUFFER } from '@/constant'
 import { Pagination, ToggleSwitch, Field, Dropdown } from '@/components'
 import { storeToRefs } from 'pinia'
 
@@ -152,37 +154,34 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'change-page', page: number): void
   (e: 'toggle-user-status', userId: string): void
   (e: 'open-modal', modalName: string, data: UsersData): void
   (e: 'search', term: string): void
 }>()
 
-const userStore = useUserStore()
-const { userMessage } = storeToRefs(useUserStore())
-
-const MAX_PAGE_ITEM = 5
-
 const loading = ref(props.loading)
 const isError = ref(false)
 const lastKnownItemCount = ref(0)
 const toggleLoadingItem = ref<string | null>(null)
-const currentFilters = ref<any>({})
+const currentFilters = ref<Filters>({})
 const selectedFilter = ref('')
 const startDate = ref('')
 const endDate = ref('')
 const dateError = ref(false)
 
+const userStore = useUserStore()
+const { userMessage } = storeToRefs(useUserStore())
+
 const { start: startErrorTimeout } = useTimeoutFn(() => {
   isError.value = false
   userStore.$patch({ userMessage: '' })
-}, 5000)
+}, FIVES_TIMEOUT_BUFFER)
 
 const applyFilter = async (page: number = 1) => {
   currentFilters.value = {}
 
   switch (selectedFilter.value) {
-    case 'Date':
+    case FilterOption.Date:
       if (startDate.value && endDate.value) {
         dateError.value = false
         currentFilters.value.dateRange = `${startDate.value},${endDate.value}`
@@ -191,45 +190,43 @@ const applyFilter = async (page: number = 1) => {
         }
       }
       break
-    case 'Active User':
+    case FilterOption.ActiveUser:
       currentFilters.value.isActive = true
       break
-    case 'Inactive User':
+    case FilterOption.InactiveUser:
       currentFilters.value.isActive = false
       break
-    case 'Administrator':
+    case FilterOption.Administrator:
       currentFilters.value.isAdmin = true
       break
-    case 'Clear Filter':
+    case FilterOption.ClearFilter:
       selectedFilter.value = ''
       startDate.value = ''
       endDate.value = ''
       dateError.value = false
-      break
+      return
   }
 
-  userStore.getUsers(page, MAX_PAGE_ITEM, props.searchTerm, currentFilters.value)
+  await userStore.getUsers(page, MAX_PAGE_ITEM, props.searchTerm, currentFilters.value)
 }
 
 const debounceSearch = useDebounceFn((term: string) => {
   emit('search', term)
-  applyFilter()
-}, 300)
+}, DEFAULT_TIMEOUT_BUFFER)
 
 const changePage = (newPage: number) => {
   if (newPage >= 1 && newPage <= props.totalPages && !loading.value) {
     lastKnownItemCount.value = MAX_PAGE_ITEM
-    emit('change-page', newPage)
     userStore.getUsers(newPage, MAX_PAGE_ITEM, props.searchTerm, currentFilters.value)
   }
 }
 
-const getItemStatus = (item: UsersData) => {
+const itemStatus = computed(() => (item: UsersData) => {
   if (toggleLoadingItem.value === item.id) {
     return 'loading'
   }
   return item.is_active ? 'active' : 'inactive'
-}
+})
 
 const formatDate = (dateString: string) => {
   return new Date(dateString).toLocaleString()
@@ -254,9 +251,14 @@ const toggleUserStatus = async (user: UsersData) => {
 }
 
 const filterOptions = computed(() => {
-  const options = ['Date', 'Active User', 'Inactive User', 'Administrator']
+  const options = [
+    { value: FilterOption.Date, label: 'Date' },
+    { value: FilterOption.ActiveUser, label: 'Active User' },
+    { value: FilterOption.InactiveUser, label: 'Inactive User' },
+    { value: FilterOption.Administrator, label: 'Administrator' }
+  ]
   if (Object.keys(currentFilters.value).length > 0) {
-    options.unshift('Clear Filter')
+    options.unshift({ value: FilterOption.ClearFilter, label: 'Clear Filter' })
   }
   return options
 })
@@ -269,13 +271,16 @@ const displayItems = computed((): UsersData[] => {
 })
 
 watch(selectedFilter, (newValue) => {
-  if (newValue !== 'Date') {
+  if (newValue !== FilterOption.Date) {
     applyFilter()
   }
 })
 
-watch([startDate, endDate], ([newStartDate, newEndDate]) => {
-  if (selectedFilter.value === 'Date' && newStartDate && newEndDate) {
+watch([startDate, endDate], ([newStartDate, newEndDate], [oldStartDate, oldEndDate]) => {
+  if (
+    (newStartDate && newEndDate && (newStartDate !== oldStartDate || newEndDate !== oldEndDate)) ||
+    (!newStartDate && !newEndDate && (oldStartDate || oldEndDate))
+  ) {
     applyFilter()
   }
 })

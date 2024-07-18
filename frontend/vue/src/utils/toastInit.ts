@@ -1,8 +1,9 @@
 import { type PluginOptions, POSITION } from 'vue-toastification'
+import { FIVES_TIMEOUT_BUFFER } from '@/constant'
 
 export const toastrOptions: PluginOptions = {
   position: POSITION.TOP_RIGHT,
-  timeout: 5000,
+  timeout: FIVES_TIMEOUT_BUFFER,
   closeOnClick: true,
   pauseOnFocusLoss: false,
   pauseOnHover: false,

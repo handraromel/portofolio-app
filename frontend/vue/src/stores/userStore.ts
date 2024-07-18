@@ -6,7 +6,7 @@ import {
   type PasswordUpdatePayload,
   type ForgotPasswordPayload,
   type UserPaginationResponse
-} from '@/types'
+} from '@/components/User/types'
 import { AxiosError } from 'axios'
 
 export const useUserStore = defineStore('user', {

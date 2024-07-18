@@ -1,5 +1,5 @@
 import api from '.'
-import { type FeedbackPayload } from '@/types'
+import { type FeedbackPayload } from '@/components/Feedback/types'
 
 export const feedbackApi = {
   submitFeedback: (userId: string, payload: FeedbackPayload) =>

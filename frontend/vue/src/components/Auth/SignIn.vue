@@ -36,7 +36,7 @@
 import { ref } from 'vue'
 import { useVuelidate } from '@vuelidate/core'
 import { Field, Button } from '@/components'
-import { type SignInFormData } from '@/types'
+import { type SignInFormData } from './types'
 import { storeToRefs } from 'pinia'
 import { useAuthStore } from '@/stores'
 import { useToast } from 'vue-toastification'

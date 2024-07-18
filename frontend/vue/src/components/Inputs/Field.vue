@@ -31,21 +31,10 @@
 import { computed, ref, watch } from 'vue'
 import Editor from '@tinymce/tinymce-vue'
 import Datepicker from '@vuepic/vue-datepicker'
+import { type FieldInputProps } from '@/types'
 import '@vuepic/vue-datepicker/dist/main.css'
 
-type inputType = 'text' | 'email' | 'password' | 'textarea' | 'datepicker'
-
-const props = defineProps<{
-  id?: string
-  label?: string
-  name?: string
-  type: inputType
-  modelValue: string | Date
-  placeholder?: string
-  error?: string
-  isTextarea?: boolean
-  rows?: number
-}>()
+const props = defineProps<FieldInputProps>()
 
 const apiKey = import.meta.env.VITE_EDITOR_KEY
 

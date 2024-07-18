@@ -3,7 +3,7 @@ import {
   type CurrentUserData,
   type PasswordUpdatePayload,
   type ForgotPasswordPayload
-} from '@/types'
+} from '@/components/User/types'
 
 export const userApi = {
   getUsers: (page: number, limit: number, search: string = '', filters: any = {}) =>

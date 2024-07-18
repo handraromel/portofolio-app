@@ -106,7 +106,6 @@
       @close="closeModal(modal.name)"
       @info="openModal('info')"
       @open-modal="handleChildModalOpen"
-      @change-page="handlePageChange"
       @toggle-user-status="handleToggleUserStatus"
       @search="handleSearch"
     />
@@ -130,18 +129,8 @@ import {
 import { useToast } from 'vue-toastification'
 import { storeToRefs } from 'pinia'
 import { useAuthStore, useUserStore } from '@/stores'
-
-type ModalName =
-  | 'signIn'
-  | 'register'
-  | 'info'
-  | 'displayData'
-  | 'editProfile'
-  | 'updatePassword'
-  | 'forgotPassword'
-  | 'manageUsers'
-
-const PAGINATION_DISPLAY_LIMIT = 5
+import { type ModalName } from '@/types'
+import { MAX_PAGE_ITEM } from '@/constant'
 
 const authStore = useAuthStore()
 const userStore = useUserStore()
@@ -269,16 +258,12 @@ const handleChildModalOpen = (modalName: ModalName) => {
 const fetchUsers = async (pageNumber: number = 1, search: string = '') => {
   isUsersFetching.value = true
   try {
-    await userStore.getUsers(pageNumber, PAGINATION_DISPLAY_LIMIT, search)
+    await userStore.getUsers(pageNumber, MAX_PAGE_ITEM, search)
   } catch (error) {
     console.error('Error fetching users:', error)
   } finally {
     isUsersFetching.value = false
   }
-}
-
-const handlePageChange = (pageNumber: number) => {
-  fetchUsers(pageNumber, userStore.searchTerm)
 }
 
 const handleSearch = (searchTerm: string) => {

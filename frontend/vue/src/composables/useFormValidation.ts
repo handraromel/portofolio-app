@@ -1,7 +1,7 @@
 import { computed, type ComputedRef } from 'vue'
 import { required, email, minLength, maxLength, helpers } from '@vuelidate/validators'
 import type { ValidationRule } from '@vuelidate/core'
-import type { CurrentUserData } from '@/types'
+import type { CurrentUserData } from '@/components/User/types'
 
 export function useFormValidation() {
   const withMessage = (

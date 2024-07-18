@@ -22,11 +22,8 @@
 
 <script setup lang="ts">
 import { Switch } from '@headlessui/vue'
+import { type SwitchInputProps } from '@/types'
 
-defineProps<{
-  modelValue: boolean
-  label?: string
-  disabled?: boolean
-}>()
+defineProps<SwitchInputProps>()
 defineEmits(['update:modelValue'])
 </script>

@@ -4,7 +4,7 @@ import {
   type FeedbackPayload,
   type FeedbackPaginationResponse,
   type FeedbacksResponse
-} from '@/types'
+} from '@/components/Feedback/types'
 import { AxiosError } from 'axios'
 
 export const useFeedbackStore = defineStore('feedback', {

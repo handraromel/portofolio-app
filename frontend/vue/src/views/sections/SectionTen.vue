@@ -103,7 +103,12 @@ import { ref, computed, watch } from 'vue'
 import { useTimeoutFn, useDebounceFn } from '@vueuse/core'
 import useVuelidate from '@vuelidate/core'
 import { Decoration, Button, Field, Modal, FeedbackView, FeedbackDetail } from '@/components'
-import { type FeedbackFormData, type FeedbackPayload, type CurrentFeedbackData } from '@/types'
+import {
+  type FeedbackFormData,
+  type FeedbackPayload,
+  type CurrentFeedbackData
+} from '@/components/Feedback/types'
+import { DEFAULT_TIMEOUT_BUFFER, FIVES_TIMEOUT_BUFFER } from '@/constant'
 import { storeToRefs } from 'pinia'
 import { useAuthStore, useFeedbackStore } from '@/stores'
 import { useFormValidation } from '@/composables'
@@ -152,7 +157,7 @@ const { start: startMessageTimeout, stop: stopMessageTimeout } = useTimeoutFn(
   () => {
     showMessage.value = false
   },
-  5000,
+  FIVES_TIMEOUT_BUFFER,
   { immediate: false }
 )
 
@@ -226,7 +231,7 @@ const handleSearch = useDebounceFn((searchTerm: string) => {
     feedbackStore.setSearchTerm(searchTerm)
     fetchFeedbacks(1, searchTerm) // Reset to first page when searching
   }
-}, 300)
+}, DEFAULT_TIMEOUT_BUFFER)
 
 const openModal = (modalName: ModalName, data?: CurrentFeedbackData) => {
   if (modalName === 'feedbackDetail' && data) {

@@ -61,6 +61,23 @@ function createUserService(User) {
             }
         },
 
+        async getUserById(id) {
+            const user = await User.findByPk(id, {
+                attributes: [
+                    'username',
+                    'email',
+                    'first_name',
+                    'last_name',
+                    'pet_name',
+                    'liked_music_genre',
+                    'most_liked_place',
+                    'feel_score',
+                ],
+            })
+            if (!user) throw new Error('User not found')
+            return user
+        },
+
         async toggleUserStatus(id) {
             const user = await User.findByPk(id)
             if (!user) throw new Error('User not found')

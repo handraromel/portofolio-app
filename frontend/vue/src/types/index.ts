@@ -1,115 +1,12 @@
-export type BaseAuthType = {
-  email: string
-  password: string
-}
-
-// Auth Types
-export type AuthUserData = {
-  id: string
-  email: string
-  username: string
-  is_admin: string
-  is_active: string
-}
-
-export interface AuthUserResponse {
-  msg: string
-  data: AuthUserData
-}
-
-export type SignInFormData = BaseAuthType
-export type SignInPayload = BaseAuthType
-
-export type RegisterFormData = SignInFormData & {
-  username: string
-  confirm_password: string
-}
-
-export type RegisterPayload = Omit<RegisterFormData, 'confirm_password'>
-// End Auth Types
-
-// User Types
-export type CurrentUserData = {
-  username: string
-  email: string
-  first_name?: string | null
-  last_name?: string | null
-  pet_name?: string | null
-  liked_music_genre?: string | null
-  most_liked_place?: string | null
-  other_place?: string | null
-  feel_score: number
-}
-
-export type PasswordUpdateFormData = {
-  old_password: string
-  new_password: string
-  confirm_password: string
-}
-
-export type ForgotPasswordFormData = Omit<BaseAuthType, 'password'>
-
-export type PasswordUpdatePayload = Omit<PasswordUpdateFormData, 'confirm_password'>
-export type ForgotPasswordPayload = ForgotPasswordFormData
-
-export interface CurrentUserResponse {
-  msg: string
-  data: CurrentUserData
-}
-
-export type UsersData = {
-  id: string
-  email: string
-  username: string
-  is_admin: boolean
-  is_active: boolean
-  createdAt: string
-}
-
-export interface UserPaginationResponse {
-  users: UsersData[]
-  currentPage: number
-  totalPages: number
-  totalItems: number
-  itemsPerPage: number
-}
-
-export interface UsersResponse {
-  msg: string
-  data: UserPaginationResponse
-}
-// End User Types
-
-// Feedback Types
-export type CurrentFeedbackData = {
-  id: number
-  subject: string
-  message: string
-  userId: string
-  createdAt: string
-  updatedAt: string
-}
-
-export type FeedbackFormData = {
-  subject: string
-  message: string
-}
-
-export type FeedbackPayload = FeedbackFormData
-
-export interface FeedbackPaginationResponse {
-  feedbacks: CurrentFeedbackData[]
-  currentPage: number
-  totalPages: number
-  totalItems: number
-  itemsPerPage: number
-}
-
-export interface FeedbacksResponse {
-  msg: string
-  data: FeedbackPaginationResponse
-}
-// End Feedback Types
+export type ModalName =
+  | 'signIn'
+  | 'register'
+  | 'info'
+  | 'displayData'
+  | 'editProfile'
+  | 'updatePassword'
+  | 'forgotPassword'
+  | 'manageUsers'
 
 export interface AdvantageCardProps {
   iconSrc: string
@@ -174,4 +71,49 @@ export interface BlogPost {
   topSubtitle: string
   title: string
   description: string
+}
+
+//Inputs types
+export interface DropdownOption {
+  value: string
+  label: string
+}
+export interface DropdownProps {
+  id: string
+  label?: string
+  modelValue: string | null
+  options: DropdownOption[]
+  placeholder?: string
+  error?: string
+}
+
+export type FieldInputType = 'text' | 'email' | 'password' | 'textarea' | 'datepicker'
+export interface FieldInputProps {
+  id?: string
+  label?: string
+  name?: string
+  type: FieldInputType
+  modelValue: string | Date
+  placeholder?: string
+  error?: string
+  isTextarea?: boolean
+  rows?: number
+}
+
+export interface SliderInputProps {
+  id?: string
+  label?: string
+  modelValue: number
+  min?: number
+  max?: number
+  step?: number
+  colorizeBg?: boolean
+  displayValue?: boolean
+  error?: string
+}
+
+export interface SwitchInputProps {
+  modelValue: boolean
+  label?: string
+  disabled?: boolean
 }

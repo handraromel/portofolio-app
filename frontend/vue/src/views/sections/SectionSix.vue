@@ -11,7 +11,7 @@
           <div
             class="absolute -right-10 -top-72 z-50 h-[568px] w-full bg-white px-12 py-8 shadow-2xl max-lg:right-0 max-lg:top-0 max-lg:shadow max-sm:px-1 max-sm:py-0 xl:w-10/12"
           >
-            <Carousel :items-to-show="1" :wrap-around="true" :autoplay="5000">
+            <Carousel :items-to-show="1" :wrap-around="true" :autoplay="FIVES_TIMEOUT_BUFFER">
               <Slide v-for="(card, index) in advantageCards" :key="index">
                 <div class="p-10">
                   <AdvantageCard
@@ -46,6 +46,7 @@
 
 <script setup lang="ts">
 import { AdvantageCard } from '@/components'
+import { FIVES_TIMEOUT_BUFFER } from '@/constant'
 import { Carousel, Navigation, Pagination, Slide } from 'vue3-carousel'
 import 'vue3-carousel/dist/carousel.css'
 
