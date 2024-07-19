@@ -1,7 +1,7 @@
 <template>
-  <Menu as="div" class="relative inline-block text-left">
+  <Menu as="div" id="menu-root" class="relative inline-block text-left" :key="menuKey">
     <div>
-      <MenuButton class="flex items-center">
+      <MenuButton class="flex items-center" @click="toggleMenu">
         <svg
           class="h-10 w-10 fill-white transition-all duration-500 hover:fill-red-500"
           viewBox="0 0 24 24"
@@ -26,7 +26,9 @@
       leave-to-class="transform scale-95 opacity-0"
     >
       <MenuItems
+        v-if="internalOpen"
         class="absolute right-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+        @click="closeMenu"
       >
         <div v-if="!isAuthenticated" class="px-1 py-1">
           <MenuItem v-slot="{ active }">
@@ -113,7 +115,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue'
 import {
   Modal,
@@ -132,11 +134,56 @@ import { useAuthStore, useUserStore } from '@/stores'
 import { type ModalName } from '@/types'
 import { MAX_PAGE_ITEM } from '@/constant'
 
-const authStore = useAuthStore()
-const userStore = useUserStore()
-const { isAuthenticated, userMessage } = storeToRefs(authStore)
-const { users, currentPage, totalPages, isUserActive } = storeToRefs(useUserStore())
-const toast = useToast()
+const props = defineProps<{
+  open: boolean
+  forceClose: boolean
+}>()
+
+const emit = defineEmits(['update:open', 'modalStateChange'])
+
+const internalOpen = ref(props.open)
+const menuKey = ref(0)
+
+const updateOpen = (value: boolean) => {
+  internalOpen.value = value
+  emit('update:open', value)
+  if (!value) {
+    menuKey.value += 1
+  }
+}
+
+const toggleMenu = () => {
+  updateOpen(!internalOpen.value)
+}
+
+const closeMenu = () => {
+  updateOpen(false)
+}
+
+watch(
+  () => props.forceClose,
+  (shouldClose) => {
+    if (shouldClose) {
+      closeMenu()
+    }
+  }
+)
+
+// Close menu when clicking outside
+const handleClickOutside = (event: MouseEvent) => {
+  const menu = document.getElementById('menu-root')
+  if (menu && !menu.contains(event.target as Node)) {
+    closeMenu()
+  }
+}
+
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('click', handleClickOutside)
+})
 
 const isUsersFetching = ref(false)
 const previousSearchTerm = ref('')
@@ -150,6 +197,12 @@ const modalStates = ref({
   forgotPassword: false,
   manageUsers: false
 })
+
+const authStore = useAuthStore()
+const userStore = useUserStore()
+const { isAuthenticated, userMessage } = storeToRefs(authStore)
+const { users, currentPage, totalPages, isUserActive } = storeToRefs(useUserStore())
+const toast = useToast()
 
 const modalSizes: Partial<Record<ModalName, string>> = {
   displayData: 'xl',
@@ -233,6 +286,7 @@ const modalsWithCloseIcon = ['info', 'displayData', 'manageUsers']
 
 const openModal = (modalName: ModalName) => {
   modalStates.value[modalName] = true
+  emit('modalStateChange', true)
   if (modalName === 'manageUsers') {
     fetchUsers()
   }
@@ -240,6 +294,7 @@ const openModal = (modalName: ModalName) => {
 
 const closeModal = (modalName: ModalName) => {
   modalStates.value[modalName] = false
+  emit('modalStateChange', false)
   if (modalName === 'editProfile' || modalName === 'updatePassword') {
     openModal('displayData')
   }

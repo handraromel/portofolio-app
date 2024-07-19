@@ -7,13 +7,13 @@ import router from './router'
 import { useAuthStore } from './stores'
 import Vue3SmoothScroll from 'vue3-smooth-scroll'
 import Toast from 'vue-toastification'
-import vScrollAnimation from './directives/scrollAnimation'
+import vScrollUtilities from './directives/scrollUtilities'
 import { toastrOptions } from '@/utils/toastInit'
 import 'vue-toastification/dist/index.css'
 
 const app = createApp(App)
 
-app.directive('scroll-animation', vScrollAnimation)
+app.directive('scroll-utilities', vScrollUtilities)
 
 app.use(createPinia())
 app.use(router)

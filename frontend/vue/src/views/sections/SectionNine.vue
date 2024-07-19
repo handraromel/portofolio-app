@@ -10,7 +10,8 @@
       </div>
       <div
         class="flex flex-wrap"
-        v-scroll-animation="{
+        v-scroll-utilities="{
+          type: 'animation',
           animationType: 'slideUp',
           duration: 1.2,
           delay: 0.75,
@@ -24,7 +25,12 @@
           class="group relative flex w-full p-2 max-sm:flex-col xl:w-1/2"
         >
           <div class="relative z-10 w-1/2 max-sm:w-full">
-            <img :src="content.image" :alt="content.title" class="h-full w-full object-cover" />
+            <img
+              v-scroll-utilities="{ type: 'lazyLoad' }"
+              :data-src="content.image"
+              :alt="content.title"
+              class="h-full w-full object-cover"
+            />
           </div>
           <div
             class="z-30 flex w-1/2 flex-col justify-center overflow-hidden bg-red-500 p-8 text-white max-sm:w-full"
@@ -52,7 +58,7 @@
             <img
               class="h-20 w-20 rotate-180 max-sm:-rotate-90"
               src="/assets/section_10/play.svg"
-              alt=""
+              alt="Decoration"
             />
           </div>
         </div>
@@ -76,7 +82,12 @@
     :show-close-icon="true"
   >
     <div v-if="selectedPost">
-      <img :src="selectedPost.image" :alt="selectedPost.title" class="mb-4 w-full object-cover" />
+      <img
+        v-scroll-utilities="{ type: 'lazyLoad' }"
+        :data-src="selectedPost.image"
+        :alt="selectedPost.title"
+        class="mb-4 w-full object-cover"
+      />
       <p class="mb-2 text-sm uppercase text-gray-500">{{ selectedPost.topSubtitle }}</p>
       <p class="text-gray-700">{{ selectedPost.description }}</p>
     </div>

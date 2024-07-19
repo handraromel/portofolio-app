@@ -1,5 +1,9 @@
 <template>
   <div>
-    <img src="/assets/decoration/decoration.png" alt="header-separator" />
+    <img
+      v-scroll-utilities="{ type: 'lazyLoad' }"
+      data-src="/assets/decoration/decoration.png"
+      alt="separator"
+    />
   </div>
 </template>

@@ -12,7 +12,7 @@
             class="absolute -right-10 -top-72 z-50 h-[568px] w-full bg-white px-12 py-8 shadow-2xl max-lg:right-0 max-lg:top-0 max-lg:shadow max-sm:px-1 max-sm:py-0 xl:w-10/12"
           >
             <Carousel :items-to-show="1" :wrap-around="true" :autoplay="FIVES_TIMEOUT_BUFFER">
-              <Slide v-for="(card, index) in advantageCards" :key="index">
+              <Slide v-for="(card, index) in caseStudyContent" :key="index">
                 <div class="p-10">
                   <AdvantageCard
                     :icon-src="card.iconSrc"
@@ -34,15 +34,17 @@
         </div>
         <div
           class="w-full shadow-lg max-sm:shadow-none lg:w-1/2 xl:w-5/12"
-          v-scroll-animation="{
-            animationType: 'fadeIn',
+          v-scroll-utilities="{
+            type: 'animation',
+            animationType: 'slideInRight',
             duration: 1.5,
             delay: 0.2,
             replay: true
           }"
         >
           <img
-            src="/assets/section_6/r-side.jpg"
+            v-scroll-utilities="{ type: 'lazyLoad' }"
+            data-src="/assets/section_6/r-side.jpg"
             alt="Case Study Image"
             class="h-[824px] w-full object-cover max-lg:h-[536px]"
           />
@@ -54,30 +56,10 @@
 
 <script setup lang="ts">
 import { AdvantageCard } from '@/components'
+import { caseStudyContent } from '@/constant'
 import { FIVES_TIMEOUT_BUFFER } from '@/constant'
 import { Carousel, Navigation, Pagination, Slide } from 'vue3-carousel'
 import 'vue3-carousel/dist/carousel.css'
-
-const advantageCards = [
-  {
-    iconSrc: '/assets/section_6/photography.svg',
-    title: 'sleek design',
-    description:
-      'Lorem Ipsum is simply dummy text of the printing and typesetting let. Lorem Ipsum has been the industry.'
-  },
-  {
-    iconSrc: '/assets/section_6/lamp.svg',
-    title: 'creative solutions',
-    description:
-      'Our team develops innovative and creative solutions to tackle complex business challenges.'
-  },
-  {
-    iconSrc: '/assets/section_6/print.svg',
-    title: 'targeted approach',
-    description:
-      'We use a targeted approach to ensure our strategies align perfectly with your business goals.'
-  }
-]
 </script>
 
 <style>

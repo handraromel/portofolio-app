@@ -30,7 +30,8 @@
     </div>
     <div
       class="absolute bottom-0 right-0 top-0 w-5/12 max-lg:hidden"
-      v-scroll-animation="{
+      v-scroll-utilities="{
+        type: 'animation',
         animationType: 'slideInRight',
         duration: 1.2,
         delay: 0.5,
@@ -38,9 +39,10 @@
       }"
     >
       <img
-        src="/assets/section_4/r-side.jpg"
-        alt="Services illustration"
+        v-scroll-utilities="{ type: 'lazyLoad' }"
+        data-src="/assets/section_4/r-side.jpg"
         class="h-full w-full object-cover"
+        alt="Services illustration"
       />
     </div>
   </div>

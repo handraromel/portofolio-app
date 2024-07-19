@@ -30,7 +30,7 @@
               <span class="px-2 text-white">{{ userMessage }}</span>
             </div>
           </transition>
-          <form @submit.prevent="handleSubmit">
+          <form @submit.prevent="handleSubmit" v-scroll-utilities="{ type: 'lazyLoad' }">
             <div v-for="(field, index) in fields" :key="index" class="mb-4">
               <Field
                 :type="field.type"
@@ -131,7 +131,6 @@ const isFeedbacksFetching = ref(false)
 const isError = ref(false)
 const userMessage = ref('')
 const showMessage = ref(false)
-const previousSearchTerm = ref('')
 const selectedFeedback = ref<CurrentFeedbackData | null>(null)
 
 const formData = ref<FeedbackFormData>({
@@ -281,7 +280,6 @@ const modals = computed(() => [
     }
   }
 ])
-
 watch(isAuthenticated, async (newValue) => {
   if (!newValue) {
     displayMessage(authMessage.value, true)

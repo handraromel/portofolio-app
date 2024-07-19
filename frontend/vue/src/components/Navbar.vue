@@ -52,7 +52,11 @@
         </div>
 
         <div class="flex flex-col items-end justify-end lg:w-1/12">
-          <UserMenu />
+          <UserMenu
+            v-model:open="userMenuOpen"
+            :force-close="isHidden || isScrolling"
+            @modal-state-change="updateModalState"
+          />
         </div>
       </div>
     </div>
@@ -81,10 +85,16 @@
 </template>
 
 <script setup lang="ts">
+import { ref, watch, onMounted } from 'vue'
 import { UserMenu } from '@/components'
 import { menuItems } from '@/constant'
 import { useNavbarBehavior } from '@/composables/useNavbarBehavior'
 import { hyphenize } from '@/utils/common'
+import { useWindowScroll } from '@vueuse/core'
+
+const userMenuOpen = ref(false)
+const isModalOpen = ref(false)
+const isScrolling = ref(false)
 
 const {
   scrolled,
@@ -95,6 +105,30 @@ const {
   updateHashAndActiveItem,
   toggleMobileMenu,
   handleMouseEnter,
-  handleMouseLeave
-} = useNavbarBehavior()
+  handleMouseLeave,
+  resetNavbarBehavior
+} = useNavbarBehavior(isModalOpen)
+
+const { y } = useWindowScroll()
+
+let scrollTimeout: number | null = null
+watch(y, () => {
+  isScrolling.value = true
+  userMenuOpen.value = false
+
+  if (scrollTimeout) {
+    clearTimeout(scrollTimeout)
+  }
+
+  scrollTimeout = setTimeout(() => {
+    isScrolling.value = false
+  }, 150) as unknown as number
+})
+
+const updateModalState = (isOpen: boolean) => {
+  isModalOpen.value = isOpen
+  if (!isOpen) {
+    resetNavbarBehavior()
+  }
+}
 </script>

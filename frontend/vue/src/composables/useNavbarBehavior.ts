@@ -1,10 +1,10 @@
-import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch, type Ref } from 'vue'
 import { useScroll, useIntersectionObserver } from '@vueuse/core'
 import { useRouteHash } from '@vueuse/router'
 import { hyphenize } from '@/utils/common'
 import { menuItems, THREES_TIMEOUT_BUFFER } from '@/constant'
 
-export function useNavbarBehavior() {
+export function useNavbarBehavior(isModalOpen: Ref<boolean>) {
   const { y: scrollY } = useScroll(window)
   const scrolled = computed(() => scrollY.value > 50)
   const mobileMenuOpen = ref(false)
@@ -58,7 +58,7 @@ export function useNavbarBehavior() {
   const startHideTimer = () => {
     if (hideTimer) clearTimeout(hideTimer)
     hideTimer = setTimeout(() => {
-      if (scrolled.value && !mobileMenuOpen.value && !isHovered.value) {
+      if (scrolled.value && !mobileMenuOpen.value && !isHovered.value && !isModalOpen.value) {
         isHidden.value = true
       }
     }, THREES_TIMEOUT_BUFFER)
@@ -67,7 +67,7 @@ export function useNavbarBehavior() {
   const resetHideTimer = () => {
     if (hideTimer) clearTimeout(hideTimer)
     isHidden.value = false
-    if (scrolled.value) {
+    if (scrolled.value && !isModalOpen.value) {
       startHideTimer()
     }
   }
@@ -80,14 +80,28 @@ export function useNavbarBehavior() {
 
   const handleMouseLeave = () => {
     isHovered.value = false
-    if (scrolled.value) {
+    if (scrolled.value && !isModalOpen.value) {
+      startHideTimer()
+    }
+  }
+
+  const resetNavbarBehavior = () => {
+    isHidden.value = false
+    isHovered.value = false
+    if (scrolled.value && !isModalOpen.value) {
       startHideTimer()
     }
   }
 
   watch(scrollY, (newScrollY, oldScrollY) => {
-    if (newScrollY !== oldScrollY) {
+    if (newScrollY !== oldScrollY && !isModalOpen.value) {
       resetHideTimer()
+    }
+  })
+
+  watch(isModalOpen, (newValue) => {
+    if (!newValue) {
+      resetNavbarBehavior()
     }
   })
 
@@ -110,6 +124,7 @@ export function useNavbarBehavior() {
     updateHashAndActiveItem,
     toggleMobileMenu,
     handleMouseEnter,
-    handleMouseLeave
+    handleMouseLeave,
+    resetNavbarBehavior
   }
 }

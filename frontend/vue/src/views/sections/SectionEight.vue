@@ -11,7 +11,8 @@
       </div>
       <div
         class="flex justify-center gap-8 max-sm:flex-wrap"
-        v-scroll-animation="{
+        v-scroll-utilities="{
+          type: 'animation',
           animationType: 'zoomIn',
           duration: 1.2,
           delay: 0.2,
@@ -19,7 +20,7 @@
         }"
       >
         <Price
-          v-for="(plan, index) in plans"
+          v-for="(plan, index) in plansContent"
           :key="index"
           :planName="plan.name"
           :price="plan.price"
@@ -60,6 +61,7 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { Decoration, Price, Modal } from '@/components'
 import { type PriceContent } from '@/types'
+import { plansContent } from '@/constant'
 
 const isModalOpen = ref(false)
 const selectedContent = ref<PriceContent | null>(null)
@@ -108,37 +110,4 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener('resize', handleResize)
 })
-
-const plans: PriceContent[] = [
-  {
-    name: 'STARTER',
-    price: 19,
-    features: [
-      'Competition Analysis Methods',
-      'All Ranked URLs',
-      'International Support System',
-      'Social Media Tracking'
-    ]
-  },
-  {
-    name: 'PREMIUM',
-    price: 39,
-    features: [
-      'Competition Analysis Methods',
-      'All Ranked URLs',
-      'International Support System',
-      'Social Media Tracking'
-    ]
-  },
-  {
-    name: 'BUSINESS',
-    price: 99,
-    features: [
-      'Competition Analysis Methods',
-      'All Ranked URLs',
-      'International Support System',
-      'Social Media Tracking'
-    ]
-  }
-]
 </script>

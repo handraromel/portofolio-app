@@ -2,7 +2,8 @@
   <div id="advantage" class="my-24 flex items-center justify-center text-slate-500">
     <div class="container mx-auto px-4">
       <div
-        v-scroll-animation="{
+        v-scroll-utilities="{
+          type: 'animation',
           animationType: 'slideUp',
           duration: 1.2,
           delay: 0.2,

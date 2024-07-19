@@ -4,17 +4,19 @@
       <div class="flex flex-wrap p-6">
         <div
           class="mb-20 flex w-full justify-center px-5 sm:px-20 lg:mb-0 lg:w-1/2"
-          v-scroll-animation="{
-            animationType: 'slideInLeft',
+          v-scroll-utilities="{
+            type: 'animation',
+            animationType: 'fadeIn',
             duration: 1.2,
             delay: 0.2,
             replay: true
           }"
         >
           <img
-            src="/assets/section_3/monitor.png"
-            alt="iMac displaying website"
+            v-scroll-utilities="{ type: 'lazyLoad' }"
+            data-src="/assets/section_3/monitor.png"
             class="h-auto w-full object-contain"
+            alt="iMac displaying website"
           />
         </div>
 

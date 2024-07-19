@@ -8,7 +8,8 @@
         <div
           id="header-subtitle"
           class="mx-5 text-xl lg:text-3xl"
-          v-scroll-animation="{
+          v-scroll-utilities="{
+            type: 'animation',
             animationType: 'fadeIn',
             duration: 1,
             delay: 0.2
@@ -19,7 +20,8 @@
         <div
           id="header-title"
           class="mx-5 text-5xl font-semibold tracking-widest xl:text-7xl"
-          v-scroll-animation="{
+          v-scroll-utilities="{
+            type: 'animation',
             animationType: 'fadeIn',
             duration: 1.2,
             delay: 0.5
@@ -30,7 +32,8 @@
         <div
           v-if="isAuthenticated"
           id="display-username"
-          v-scroll-animation="{
+          v-scroll-utilities="{
+            type: 'animation',
             animationType: 'fadeIn',
             duration: 1.5,
             delay: 1
@@ -46,7 +49,8 @@
         <div
           id="header-desc"
           class="mx-8 pb-14 text-lg max-sm:pb-4 lg:mx-48 xl:mx-[22rem]"
-          v-scroll-animation="{
+          v-scroll-utilities="{
+            type: 'animation',
             animationType: 'fadeIn',
             duration: 2,
             delay: 1.5
