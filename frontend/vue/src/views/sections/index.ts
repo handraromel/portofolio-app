@@ -8,6 +8,7 @@ import SectionSeven from './SectionSeven.vue'
 import SectionEight from './SectionEight.vue'
 import SectionNine from './SectionNine.vue'
 import SectionTen from './SectionTen.vue'
+import IndexView from './IndexView.vue'
 
 export {
   SectionOne,
@@ -19,5 +20,6 @@ export {
   SectionSeven,
   SectionEight,
   SectionNine,
-  SectionTen
+  SectionTen,
+  IndexView
 }

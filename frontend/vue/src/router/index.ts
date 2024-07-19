@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import IndexView from '@/views/IndexView.vue'
+import HomeView from '@/HomeView.vue'
+import { IndexView } from '@/views/sections'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -7,6 +8,11 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
+      component: HomeView
+    },
+    {
+      path: '/vue-express-portofolio/',
+      name: 'portofolio',
       component: IndexView
     },
     {

@@ -77,7 +77,7 @@ const singleToken = computed(() => {
 
 const closeVerificationModal = () => {
   isVerificationModalOpen.value = false
-  router.push('/')
+  router.push('/vue-express-portofolio')
 }
 
 const { start: startCloseTimeout } = useTimeoutFn(() => {
