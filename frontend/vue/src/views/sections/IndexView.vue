@@ -16,6 +16,9 @@ import { storeToRefs } from 'pinia'
 import { useAuthStore } from '@/stores'
 
 const { isAuthenticated } = storeToRefs(useAuthStore())
+
+const authStore = useAuthStore()
+authStore.verifyToken()
 </script>
 
 <template>

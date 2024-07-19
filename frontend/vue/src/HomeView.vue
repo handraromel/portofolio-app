@@ -1,8 +1,120 @@
 <template>
-  <div
-    class="flex h-screen items-center justify-center text-7xl font-bold tracking-widest text-sky-800"
-  >
-    HOMEPAGE INTENDED
+  <div class="flex min-h-screen items-center justify-center bg-gray-700 p-4">
+    <div class="mx-auto flex w-full max-w-7xl flex-col bg-black text-white lg:flex-row">
+      <!-- Left section -->
+      <div
+        class="flex w-full flex-row items-center justify-between bg-white p-5 text-black lg:w-1/5 lg:flex-col lg:items-start"
+      >
+        <img class="h-16 w-16 object-contain lg:h-20 lg:w-20" src="/favicon.svg" alt="Logo" />
+        <div class="mt-4 flex flex-col text-sm lg:mt-0">
+          <span class="mb-1">Get in touch!</span>
+          <a
+            href="mailto:handromel@gmail.com"
+            target="_blank"
+            class="animate-pulse-glow boxShadow-glow inline-block text-blue-600 transition-colors duration-300 hover:text-blue-800"
+          >
+            handromel@gmail.com
+          </a>
+        </div>
+      </div>
+
+      <!-- Right section -->
+      <div
+        class="flex w-full flex-col bg-[url('/assets/homepage/bg.jpg')] bg-cover bg-center p-6 lg:w-4/5 lg:flex-row lg:p-10"
+      >
+        <div class="mb-6 w-full pr-0 lg:mb-0 lg:w-1/2 lg:pr-6">
+          <div class="mb-5 w-full">
+            <h1 class="mb-2 text-3xl font-bold lg:text-4xl">Handra Romel</h1>
+            <h2 class="mb-5 text-xl text-slate-400 lg:text-2xl">Software Engineer (Web)</h2>
+            <p class="lg:text-md mb-5 text-justify text-sm">
+              Welcome to my professional portfolio. This page showcases my expertise in web
+              application development and highlights the technologies I specialize in. Whether
+              you're a potential client or employer, I hope this overview provides valuable insights
+              into my capabilities as a software engineer.
+            </p>
+          </div>
+          <div v-for="(item, index) in items" :key="index">
+            <div class="my-6 w-full lg:my-9">
+              <h3 class="mb-2 text-lg font-semibold lg:text-xl">{{ item.title }}</h3>
+              <p class="mb-2 text-justify text-xs text-slate-400 lg:text-sm">
+                {{ item.description }}
+              </p>
+              <table class="mb-4 w-full items-start text-xs lg:mb-7 lg:text-sm">
+                <tr class="align-top">
+                  <td class="py-2 pr-4 font-semibold">Stacks:</td>
+                  <td class="py-2">
+                    <span class="inline-flex flex-wrap gap-2">
+                      <span
+                        v-for="(stack, index) in item.stacks.split(',')"
+                        :key="index"
+                        class="rounded-full bg-gray-700 px-2 py-1 text-xs font-medium text-white transition-transform duration-300 hover:scale-110"
+                      >
+                        {{ stack.trim() }}
+                      </span>
+                    </span>
+                  </td>
+                </tr>
+              </table>
+              <a
+                :href="item.url"
+                :target="item.target"
+                rel="noopener noreferrer"
+                class="group relative inline-block cursor-pointer overflow-hidden bg-gray-700 px-4 py-2 text-sm text-white transition-all duration-300 ease-in-out hover:text-black hover:shadow-lg lg:px-6 lg:text-base"
+              >
+                <span class="relative z-10 font-semibold">Check it out!</span>
+                <span
+                  class="absolute inset-0 translate-x-[-100%] transform bg-white transition-transform duration-300 ease-in-out group-hover:translate-x-0"
+                ></span>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="flex w-full items-center justify-center sm:justify-end lg:w-1/2 lg:items-start">
+          <img
+            src="/assets/homepage/profile.jpg"
+            alt="Handra Romel"
+            class="h-[375px] w-[375px] object-contain grayscale filter transition-all duration-500 hover:filter-none lg:h-[450px] lg:w-[450px]"
+          />
+        </div>
+      </div>
+    </div>
   </div>
 </template>
-<script setup lang="ts"></script>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const items = ref([
+  {
+    title: 'A Landing Page',
+    description:
+      'Landing page featuring user authentication, account management, profile customization, and a feedback system. Intended to showcase an example of an informative page with a focus on user experience.',
+    stacks: 'Vue 3, Tailwind CSS, Headless UI, Express.js, Sequelize, MySQL',
+    url: '/vue-express-portofolio/',
+    target: '_blank'
+  },
+  {
+    title: 'Simple Web Application',
+    description: 'Upcoming project',
+    stacks: 'React.js, Tailwind CSS, Headless UI, Flask',
+    url: '#',
+    target: ''
+  }
+])
+</script>
+
+<style>
+@keyframes pulse-glow {
+  0%,
+  100% {
+    text-shadow: 0 0 5px rgba(59, 130, 246, 0.5);
+  }
+  50% {
+    text-shadow: 0 0 20px rgba(59, 130, 246, 0.8);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s infinite;
+}
+</style>

@@ -4,7 +4,6 @@ import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
-import { useAuthStore } from './stores'
 import Vue3SmoothScroll from 'vue3-smooth-scroll'
 import Toast from 'vue-toastification'
 import vScrollUtilities from './directives/scrollUtilities'
@@ -23,8 +22,5 @@ app.use(Vue3SmoothScroll, {
   duration: 500
 })
 app.use(Toast, toastrOptions)
-
-const authStore = useAuthStore()
-authStore.verifyToken()
 
 app.mount('#app')
