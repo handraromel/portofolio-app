@@ -21,21 +21,6 @@ jobs:
       - name: Build and push Docker images
         env:
           DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-          WHITELISTED_DOMAINS: ${{ secrets.WHITELISTED_DOMAINS }}
-          APP_URL: ${{ secrets.APP_URL }}
-          DB_NAME: ${{ secrets.DB_NAME }}
-          DB_USER: ${{ secrets.DB_USER }}
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          DB_HOST: ${{ secrets.DB_HOST }}
-          DB_PORT: ${{ secrets.DB_PORT }}
-          JWT_SECRET: ${{ secrets.JWT_SECRET }}
-          NODE_ENV: ${{ secrets.NODE_ENV }}
-          EMAIL: ${{ secrets.EMAIL }}
-          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
-          EMAIL_SERVICE: ${{ secrets.EMAIL_SERVICE }}
-          VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
-          VITE_EDITOR_KEY: ${{ secrets.VITE_EDITOR_KEY }}
-          DB_ROOT_PASSWORD: ${{ secrets.DB_PASSWORD }}
         run: |
           docker compose build
           docker compose push
@@ -58,7 +43,7 @@ jobs:
             DB_NAME=${{ secrets.DB_NAME }}
             DB_USER=${{ secrets.DB_USER }}
             DB_PASSWORD=${{ secrets.DB_PASSWORD }}
-            DB_HOST=${{ secrets.DB_HOST }}
+            DB_HOST=db
             DB_PORT=${{ secrets.DB_PORT }}
             JWT_SECRET=${{ secrets.JWT_SECRET }}
             NODE_ENV=${{ secrets.NODE_ENV }}
@@ -73,7 +58,14 @@ jobs:
             docker compose pull
             docker compose up -d --build
 
-      - name: Run database migrations
+            # Wait for database to be ready
+            echo "Waiting for database to be ready..."
+            docker compose exec db sh -c 'while ! mysql -u"$MYSQL_USER" -p"$MYSQL_PASSWORD" -e "SELECT 1" >/dev/null 2>&1; do sleep 1; done'
+
+            # Run migrations
+            docker compose exec backend pnpm db:run-migration
+
+      - name: Verify deployment
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
@@ -82,4 +74,5 @@ jobs:
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
           script: |
             cd /home/opc/portofolio-app/
-            docker compose exec -T backend pnpm db:run-migration
+            docker compose ps
+            docker compose logs --tail=50
