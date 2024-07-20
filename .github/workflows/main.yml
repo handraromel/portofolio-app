@@ -21,7 +21,6 @@ jobs:
       - name: Build and push Docker images
         env:
           DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
           WHITELISTED_DOMAINS: ${{ secrets.WHITELISTED_DOMAINS }}
           APP_URL: ${{ secrets.APP_URL }}
           DB_NAME: ${{ secrets.DB_NAME }}
