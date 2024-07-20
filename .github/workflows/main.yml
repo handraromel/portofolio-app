@@ -36,7 +36,7 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd /handraromel/portofolio-app
+            cd /home/opc/portofolio-app/
             git pull origin main
             docker-compose pull
             docker-compose up -d
@@ -48,5 +48,5 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd /handraromel/portofolio-app
+            cd /home/opc/portofolio-app/
             docker-compose exec -T backend pnpm db:run-migration
