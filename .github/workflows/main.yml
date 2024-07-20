@@ -50,8 +50,28 @@ jobs:
           script: |
             cd /home/opc/portofolio-app/
             git pull origin master
-            docker compose pull
-            docker compose up -d
+
+            # Create .env file
+            cat << EOF > .env
+            WHITELISTED_DOMAINS=${{ secrets.WHITELISTED_DOMAINS }}
+            APP_URL=${{ secrets.APP_URL }}
+            DB_NAME=${{ secrets.DB_NAME }}
+            DB_USER=${{ secrets.DB_USER }}
+            DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+            DB_HOST=${{ secrets.DB_HOST }}
+            DB_PORT=${{ secrets.DB_PORT }}
+            JWT_SECRET=${{ secrets.JWT_SECRET }}
+            NODE_ENV=${{ secrets.NODE_ENV }}
+            EMAIL=${{ secrets.EMAIL }}
+            EMAIL_PASSWORD=${{ secrets.EMAIL_PASSWORD }}
+            EMAIL_SERVICE=${{ secrets.EMAIL_SERVICE }}
+            VITE_API_BASE_URL=${{ secrets.VITE_API_BASE_URL }}
+            VITE_EDITOR_KEY=${{ secrets.VITE_EDITOR_KEY }}
+            EOF
+
+            # Pull and start containers
+            docker-compose pull
+            docker-compose up -d --build
 
       - name: Run database migrations
         uses: appleboy/ssh-action@master
