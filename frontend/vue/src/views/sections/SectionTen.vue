@@ -91,9 +91,9 @@
       :is="modal.component"
       v-bind="modal.props"
       @close="closeModal(modal.name)"
-      @open-modal="openModal"
-      @change-page="handlePageChange"
-      @update-search="handleSearch"
+      @open-modal="handleOpenModalEvent"
+      @change-page="handlePageChangeEvent"
+      @update-search="handleSearchEvent"
     />
   </Modal>
 </template>
@@ -250,6 +250,10 @@ const closeModal = (modalName: ModalName) => {
     modalStates.value.feedbackList = true
   }
 }
+
+const handleOpenModalEvent = openModal as (...args: unknown[]) => void
+const handlePageChangeEvent = handlePageChange as (...args: unknown[]) => void
+const handleSearchEvent = handleSearch as (...args: unknown[]) => void
 
 const modals = computed(() => [
   {

@@ -108,7 +108,7 @@
       v-else
       :is="modal.component"
       @close="closeModal(modal.name)"
-      @openModal="handleChildModalOpen"
+      @openModal="handleChildModalOpenEvent"
     />
   </Modal>
 </template>
@@ -126,8 +126,6 @@ defineProps<{
 }>()
 
 const { getAdminCheck, getUsername } = storeToRefs(useAuthStore())
-
-// const isSignInModalOpen = ref(false)
 
 const displayName = computed(() => {
   if (getAdminCheck.value) {
@@ -176,6 +174,8 @@ const handleChildModalOpen = (modalName: ModalName) => {
   if (modalName === 'forgotPassword') closeModal('signIn')
   openModal(modalName)
 }
+
+const handleChildModalOpenEvent = handleChildModalOpen as (...args: unknown[]) => void
 
 const { scrollToElement } = useSmoothScroll()
 

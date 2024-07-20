@@ -107,9 +107,9 @@
       v-bind="modal.props"
       @close="closeModal(modal.name)"
       @info="openModal('info')"
-      @open-modal="handleChildModalOpen"
-      @toggle-user-status="handleToggleUserStatus"
-      @search="handleSearch"
+      @open-modal="handleChildModalOpenEvent"
+      @toggle-user-status="handleToggleUserStatusEvent"
+      @search="handleSearchEvent"
     />
   </Modal>
 </template>
@@ -301,15 +301,6 @@ const closeModal = (modalName: ModalName) => {
   if (modalName === 'forgotPassword') openModal('signIn')
 }
 
-const handleChildModalOpen = (modalName: ModalName) => {
-  if (modalName === 'editProfile' || modalName === 'updatePassword') {
-    closeModal('displayData')
-  }
-
-  if (modalName === 'forgotPassword') closeModal('signIn')
-  openModal(modalName)
-}
-
 const fetchUsers = async (pageNumber: number = 1, search: string = '') => {
   isUsersFetching.value = true
   try {
@@ -319,6 +310,15 @@ const fetchUsers = async (pageNumber: number = 1, search: string = '') => {
   } finally {
     isUsersFetching.value = false
   }
+}
+
+const handleChildModalOpen = (modalName: ModalName) => {
+  if (modalName === 'editProfile' || modalName === 'updatePassword') {
+    closeModal('displayData')
+  }
+
+  if (modalName === 'forgotPassword') closeModal('signIn')
+  openModal(modalName)
 }
 
 const handleSearch = (searchTerm: string) => {
@@ -343,6 +343,10 @@ const handleToggleUserStatus = async (userId: string) => {
     isUsersFetching.value = false
   }
 }
+
+const handleChildModalOpenEvent = handleChildModalOpen as (...args: unknown[]) => void
+const handleToggleUserStatusEvent = handleToggleUserStatus as (...args: unknown[]) => void
+const handleSearchEvent = handleSearch as (...args: unknown[]) => void
 
 const handleLogout = async () => {
   try {
