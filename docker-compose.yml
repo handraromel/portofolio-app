@@ -41,10 +41,3 @@ services:
       - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
     volumes:
       - mysql_data:/var/lib/mysql
-    command:
-      - --character-set-server=utf8mb4
-      - --collation-server=utf8mb4_unicode_ci
-      - --pid-file=/var/lib/mysql/mysqld.pid
-
-volumes:
-  mysql_data:
