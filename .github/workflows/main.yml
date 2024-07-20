@@ -40,18 +40,35 @@ jobs:
           docker-compose build
           docker-compose push
 
-      - name: Deploy to server
-        uses: appleboy/ssh-action@master
+      - name: Install ssh-agent
+        uses: webfactory/ssh-agent@v0.8.0
         with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          passphrase: ${{ secrets.SSH_PASSPHRASE }}
-          script: |
-            cd /home/opc/portofolio-app/
-            git pull origin main
-            docker-compose pull
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Add known hosts
+        run: ssh-keyscan -H ${{ secrets.HOST }} >> ~/.ssh/known_hosts
+
+      - name: Deploy to server
+        run: |
+          ssh ${{ secrets.USERNAME }}@${{ secrets.HOST }} '
+            cd /home/opc/portofolio-app/ &&
+            git pull origin main &&
+            docker-compose pull &&
             docker-compose up -d
+          '
+
+      # - name: Deploy to server
+      #   uses: appleboy/ssh-action@master
+      #   with:
+      #     host: ${{ secrets.HOST }}
+      #     username: ${{ secrets.USERNAME }}
+      #     key: ${{ secrets.SSH_PRIVATE_KEY }}
+      #     passphrase: ${{ secrets.SSH_PASSPHRASE }}
+      #     script: |
+      #       cd /home/opc/portofolio-app/
+      #       git pull origin main
+      #       docker-compose pull
+      #       docker-compose up -d
 
       - name: Run database migrations
         uses: appleboy/ssh-action@master
