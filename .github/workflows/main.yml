@@ -40,38 +40,18 @@ jobs:
           docker-compose build
           docker-compose push
 
-      - name: Start ssh-agent and add key
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          SSH_PASSPHRASE: ${{ secrets.SSH_PASSPHRASE }}
-        run: |
-          eval $(ssh-agent -s)
-          echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - <<< "$SSH_PASSPHRASE"
-
-      - name: Add known hosts
-        run: ssh-keyscan -H ${{ secrets.HOST }} >> ~/.ssh/known_hosts
-
       - name: Deploy to server
-        run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.USERNAME }}@${{ secrets.HOST }} '
-            cd /home/opc/portofolio-app/ &&
-            git pull origin main &&
-            docker-compose pull &&
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          passphrase: ${{ secrets.SSH_PASSPHRASE }}
+          script: |
+            cd /home/opc/portofolio-app/
+            git pull origin main
+            docker-compose pull
             docker-compose up -d
-          '
-
-      # - name: Deploy to server
-      #   uses: appleboy/ssh-action@master
-      #   with:
-      #     host: ${{ secrets.HOST }}
-      #     username: ${{ secrets.USERNAME }}
-      #     key: ${{ secrets.SSH_PRIVATE_KEY }}
-      #     passphrase: ${{ secrets.SSH_PASSPHRASE }}
-      #     script: |
-      #       cd /home/opc/portofolio-app/
-      #       git pull origin main
-      #       docker-compose pull
-      #       docker-compose up -d
 
       - name: Run database migrations
         uses: appleboy/ssh-action@master
