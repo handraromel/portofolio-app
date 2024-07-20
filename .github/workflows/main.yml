@@ -70,8 +70,8 @@ jobs:
             EOF
 
             # Pull and start containers
-            docker-compose pull
-            docker-compose up -d --build
+            docker compose pull
+            docker compose up -d --build
 
       - name: Run database migrations
         uses: appleboy/ssh-action@master
