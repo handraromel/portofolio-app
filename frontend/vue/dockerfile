@@ -14,6 +14,8 @@ COPY . .
 
 RUN pnpm run build
 
+RUN pnpm add -g http-server
+
 EXPOSE 8080
 
-CMD ["pnpm", "dev"]
+CMD ["http-server", "dist", "-p", "8080"]
