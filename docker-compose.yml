@@ -1,11 +1,14 @@
 version: "3"
+
 services:
   backend:
-    build: ./api
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
     ports:
       - "3000:3000"
     environment:
-      - PORT=${PORT}
+      - PORT=3000
       - WHITELISTED_DOMAINS=${WHITELISTED_DOMAINS}
       - APP_URL=${APP_URL}
       - DB_NAME=${DB_NAME}
@@ -18,17 +21,28 @@ services:
       - EMAIL=${EMAIL}
       - EMAIL_PASSWORD=${EMAIL_PASSWORD}
       - EMAIL_SERVICE=${EMAIL_SERVICE}
-    volumes:
-      - ./api:/usr/src/app
-      - /usr/src/app/node_modules
+    depends_on:
+      - db
 
   frontend:
-    build: ./frontend/vue
+    build:
+      context: ./frontend/vue
+      dockerfile: Dockerfile
     ports:
       - "80:5173"
     environment:
       - VITE_API_BASE_URL=${VITE_API_BASE_URL}
       - VITE_EDITOR_KEY=${VITE_EDITOR_KEY}
+
+  db:
+    image: mysql:8
+    environment:
+      - MYSQL_DATABASE=${DB_NAME}
+      - MYSQL_USER=${DB_USER}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
     volumes:
-      - ./frontend/vue:/usr/src/app
-      - /usr/src/app/node_modules
+      - mysql_data:/var/lib/mysql
+
+volumes:
+  mysql_data:

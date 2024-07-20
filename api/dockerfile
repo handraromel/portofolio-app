@@ -2,12 +2,11 @@ FROM node:20
 
 WORKDIR /usr/src/app
 
-COPY package*.json ./
-COPY pnpm-lock.yaml ./
+COPY api/package*.json ./
 
 RUN pnpm install
 
-COPY . .
+COPY api/ .
 
 EXPOSE 3000
 
