@@ -21,6 +21,22 @@ jobs:
       - name: Build and push Docker images
         env:
           DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          WHITELISTED_DOMAINS: ${{ secrets.WHITELISTED_DOMAINS }}
+          APP_URL: ${{ secrets.APP_URL }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_PORT: ${{ secrets.DB_PORT }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          NODE_ENV: ${{ secrets.NODE_ENV }}
+          EMAIL: ${{ secrets.EMAIL }}
+          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+          EMAIL_SERVICE: ${{ secrets.EMAIL_SERVICE }}
+          VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
+          VITE_EDITOR_KEY: ${{ secrets.VITE_EDITOR_KEY }}
+          DB_ROOT_PASSWORD: ${{ secrets.DB_PASSWORD }}
         run: |
           docker-compose build
           docker-compose push
