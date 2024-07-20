@@ -1,0 +1,43 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '20'
+        
+    - name: Install dependencies and build (Backend)
+      run: |
+        cd api
+        pnpm install
+        pnpm start
+        
+    - name: Install dependencies and build (Frontend)
+      run: |
+        cd frontend/vue
+        pnpm install
+        pnpm dev
+        
+    - name: Deploy to server
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        script: |
+          cd /handraromel/portofolio-app
+          git pull origin main
+          docker-compose down
+          docker-compose up --build -d
