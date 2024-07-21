@@ -21,7 +21,6 @@ services:
       - EMAIL_SERVICE=${EMAIL_SERVICE}
     depends_on:
       - db
-    network_mode: "host"
 
   frontend:
     build:
@@ -32,7 +31,6 @@ services:
     environment:
       - VITE_API_BASE_URL=${VITE_API_BASE_URL}
       - VITE_EDITOR_KEY=${VITE_EDITOR_KEY}
-    network_mode: "host"
 
   db:
     image: mysql:8
@@ -43,7 +41,10 @@ services:
       - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
     volumes:
       - mysql_data:/var/lib/mysql
-    network_mode: "host"
 
 volumes:
   mysql_data:
+
+networks:
+  default:
+    driver: bridge
