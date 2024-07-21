@@ -77,7 +77,7 @@ jobs:
             docker compose exec db sh -c 'while ! mysqladmin ping -h"db" -u"$MYSQL_USER" -p"$MYSQL_PASSWORD" --silent; do sleep 1; done'
 
             # Run migrations
-            docker compose exec backend sh -c 'pnpm db:run-migration'
+            docker compose exec backend sh -c 'npx sequelize-cli db:migrate'
 
       - name: Verify deployment
         uses: appleboy/ssh-action@master
