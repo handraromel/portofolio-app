@@ -10,8 +10,6 @@ COPY package*.json ./
 
 RUN pnpm install
 
-RUN pnpm add -g sequelize-cli
-
 COPY . .
 
 EXPOSE 3000
