@@ -16,4 +16,4 @@ RUN pnpm run build
 
 EXPOSE 8080
 
-CMD ["pnpm", "preview"]
+CMD ["pnpm", "preview", "--host", "0.0.0.0"]
