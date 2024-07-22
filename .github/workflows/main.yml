@@ -61,9 +61,10 @@ jobs:
             DB_PORT=${{ secrets.DB_PORT }}
             JWT_SECRET=${{ secrets.JWT_SECRET }}
             NODE_ENV=${{ secrets.NODE_ENV }}
-            EMAIL=${{ secrets.EMAIL }}
+            EMAIL_HOST=${{ secrets.EMAIL_HOST }}
+            EMAIL_PORT=${{ secrets.EMAIL_PORT }}
+            EMAIL_USER=${{ secrets.EMAIL_USER }}
             EMAIL_PASSWORD=${{ secrets.EMAIL_PASSWORD }}
-            EMAIL_SERVICE=${{ secrets.EMAIL_SERVICE }}
             VITE_API_BASE_URL=${{ secrets.VITE_API_BASE_URL }}
             VITE_EDITOR_KEY=${{ secrets.VITE_EDITOR_KEY }}
             EOF

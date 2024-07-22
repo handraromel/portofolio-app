@@ -3,7 +3,7 @@
     id="home"
     class="flex h-screen items-center justify-center bg-[url('/assets/section_1/background.jpg')] bg-cover bg-center text-white"
   >
-    <div class="container mx-auto px-4 text-center max-sm:mb-10">
+    <div class="container mx-auto px-4 text-center max-sm:mt-10">
       <div class="flex flex-col gap-9 max-sm:gap-6">
         <div
           id="header-subtitle"
@@ -19,7 +19,7 @@
         </div>
         <div
           id="header-title"
-          class="mx-5 text-5xl font-semibold tracking-widest xl:text-7xl"
+          class="mx-5 text-4xl font-semibold tracking-widest md:text-6xl xl:text-7xl"
           v-scroll-utilities="{
             type: 'animation',
             animationType: 'fadeIn',
@@ -39,7 +39,7 @@
             delay: 1
           }"
         >
-          <p class="text-3xl uppercase tracking-wider text-red-500 lg:text-5xl">
+          <p class="text-2xl uppercase tracking-wider text-red-500 sm:text-5xl">
             {{ displayName }}
           </p>
         </div>
@@ -48,7 +48,7 @@
         </div>
         <div
           id="header-desc"
-          class="mx-8 pb-14 text-lg max-sm:pb-4 lg:mx-48 xl:mx-[22rem]"
+          class="mx-2 pb-14 text-lg max-sm:pb-4 lg:mx-48 xl:mx-[22rem]"
           v-scroll-utilities="{
             type: 'animation',
             animationType: 'fadeIn',
@@ -57,9 +57,12 @@
           }"
         >
           <p class="leading-9 max-sm:leading-7">
-            Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum
-            has been the industry's standard dummy text ever since the 1500s, when an unknown
-            printer took a galley of type and scrambled it to make a type specimen book.
+            Welcome to my web development portfolio! This site features Vue.js, Tailwind CSS,
+            Headless UI, and a RESTful API with Express.js, Sequelize, and MySQL. Register and log
+            in via the user icon to update your profile and change your password. Feel free to
+            explore and leave a message
+            <a href="/#contact" v-smooth-scroll class="font-bold text-sky-700 underline">here</a>.
+            Enjoy!
           </p>
         </div>
         <div id="buttons" class="flex justify-center">

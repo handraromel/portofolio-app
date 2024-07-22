@@ -1,16 +1,28 @@
 const nodemailer = require('nodemailer')
 const { appConfig } = require('@api/config')
 
-const { emailServer, emailServerPassword } = appConfig
+const { emailServer, emailServerPassword, nodeEnv, emailHost, emailService, emailPort } = appConfig
 
 const createTransporter = () => {
-    return nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-            user: emailServer,
-            pass: emailServerPassword,
-        },
-    })
+    if (nodeEnv !== 'development') {
+        return nodemailer.createTransport({
+            host: emailHost,
+            port: emailPort,
+            secure: false,
+            auth: {
+                user: emailServer,
+                pass: emailServerPassword,
+            },
+        })
+    } else {
+        return nodemailer.createTransport({
+            service: emailService,
+            auth: {
+                user: emailServer,
+                pass: emailServerPassword,
+            },
+        })
+    }
 }
 
 const sendVerificationEmail = (userEmail, verificationLink, logger) => {

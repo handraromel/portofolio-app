@@ -1,5 +1,20 @@
 <template>
   <form @submit.prevent="handleSubmit">
+    <Transition
+      enter-active-class="transition ease-out duration-300"
+      enter-from-class="transform opacity-0 scale-95"
+      enter-to-class="transform opacity-100 scale-100"
+      leave-active-class="transition ease-in duration-200"
+      leave-from-class="transform opacity-100 scale-100"
+      leave-to-class="transform opacity-0 scale-95"
+    >
+      <div
+        v-if="isError"
+        class="mb-4 rounded-md border border-red-500 bg-red-100 px-2 py-1 text-sm text-red-700"
+      >
+        <p>{{ userMessage }}</p>
+      </div>
+    </Transition>
     <div v-for="(field, index) in fields" :key="index" class="mb-4">
       <Field
         :type="field.type"
@@ -33,14 +48,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { useVuelidate } from '@vuelidate/core'
 import { Field, Button } from '@/components'
 import { type SignInFormData } from './types'
 import { storeToRefs } from 'pinia'
 import { useAuthStore } from '@/stores'
-import { useToast } from 'vue-toastification'
 import { useFormValidation } from '@/composables'
+import { useTimeoutFn } from '@vueuse/core'
 
 const fields = [
   { model: 'email', type: 'email', placeholder: 'Email' },
@@ -51,7 +66,7 @@ const authStore = useAuthStore()
 const { userMessage } = storeToRefs(useAuthStore())
 const { signInSchema } = useFormValidation()
 const isLoading = ref(false)
-const toast = useToast()
+const isError = ref(false)
 
 const emit = defineEmits<{
   (e: 'close'): void
@@ -75,21 +90,34 @@ const handleSubmit = async () => {
   if (!isFormCorrect) return
 
   isLoading.value = true
+  isError.value = false
   try {
     const payload = formData.value
     const success = await authStore.login(payload)
     if (success) {
-      toast.success(userMessage.value)
       emit('close')
     } else {
-      toast.error(userMessage.value)
-      emit('close')
+      isError.value = true
+      useTimeoutFn(() => {
+        isError.value = false
+      }, 5000)
     }
   } catch (err) {
-    emit('close')
-    toast.error('An error occurred. Please try again.')
+    isError.value = true
+    useTimeoutFn(() => {
+      isError.value = false
+    }, 5000)
   } finally {
     isLoading.value = false
   }
 }
+
+watch(userMessage, (newMessage) => {
+  if (newMessage) {
+    isError.value = true
+    useTimeoutFn(() => {
+      isError.value = false
+    }, 5000)
+  }
+})
 </script>

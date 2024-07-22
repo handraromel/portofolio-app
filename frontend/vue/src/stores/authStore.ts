@@ -38,9 +38,9 @@ export const useAuthStore = defineStore('auth', {
         this.isAuthenticated = true
         this.userMessage = loginResponse.msg
         return true
-      } catch (error) {
-        console.error('Login failed')
-        this.userMessage = 'Login failed'
+      } catch (error: any) {
+        this.userMessage =
+          error.response?.data?.msg || 'Something went wrong while attempting to log in'
         return false
       }
     },

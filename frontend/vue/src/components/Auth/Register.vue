@@ -1,5 +1,26 @@
 <template>
   <form @submit.prevent="handleSubmit">
+    <Transition
+      enter-active-class="transition ease-out duration-300"
+      enter-from-class="transform opacity-0 scale-95"
+      enter-to-class="transform opacity-100 scale-100"
+      leave-active-class="transition ease-in duration-200"
+      leave-from-class="transform opacity-100 scale-100"
+      leave-to-class="transform opacity-0 scale-95"
+    >
+      <div
+        v-if="showMessage"
+        class="mb-4 rounded-md border px-2 py-1 text-sm transition-colors duration-300"
+        :class="
+          isError
+            ? 'border-red-500 bg-red-100 text-red-700'
+            : 'border-blue-500 bg-blue-100 text-blue-700'
+        "
+      >
+        <p v-if="isError">{{ userMessage }}</p>
+        <p v-else>Please use dummy/personal data as this site is for showcase only.</p>
+      </div>
+    </Transition>
     <div v-for="(field, index) in fields" :key="index" class="mb-4">
       <Field
         :type="field.type"
@@ -23,14 +44,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { useVuelidate } from '@vuelidate/core'
-import { useToast } from 'vue-toastification'
 import { Field, Button } from '@/components'
 import { type RegisterFormData, type RegisterPayload } from './types'
 import { storeToRefs } from 'pinia'
 import { useAuthStore } from '@/stores'
 import { useFormValidation } from '@/composables'
+import { useTimeoutFn } from '@vueuse/core'
 
 const fields = [
   { model: 'username', type: 'text', placeholder: 'Username' },
@@ -43,8 +64,8 @@ const { userMessage } = storeToRefs(useAuthStore())
 const authStore = useAuthStore()
 const { registerSchema } = useFormValidation()
 const isLoading = ref(false)
-
-const toast = useToast()
+const isError = ref(false)
+const showMessage = ref(true)
 
 const emit = defineEmits<{
   (e: 'close'): void
@@ -66,21 +87,45 @@ const handleSubmit = async () => {
   if (!isFormCorrect) return
 
   isLoading.value = true
+  isError.value = false
+  showMessage.value = false
   try {
     const { confirm_password, ...payload } = formData.value
     const success = await authStore.register(payload as RegisterPayload)
     if (success) {
       emit('close')
       emit('info')
+      useTimeoutFn(() => {
+        showMessage.value = true
+      }, 5000)
     } else {
-      toast.error(userMessage.value)
-      emit('close')
+      isError.value = true
+      showMessage.value = true
+      useTimeoutFn(() => {
+        isError.value = false
+        showMessage.value = true
+      }, 5000)
     }
   } catch (err) {
-    emit('close')
-    toast.error((err as Error).message || userMessage.value)
+    isError.value = true
+    showMessage.value = true
+    useTimeoutFn(() => {
+      isError.value = false
+      showMessage.value = true
+    }, 5000)
   } finally {
     isLoading.value = false
   }
 }
+
+watch(userMessage, (newMessage) => {
+  if (newMessage) {
+    isError.value = true
+    showMessage.value = true
+    useTimeoutFn(() => {
+      isError.value = false
+      showMessage.value = true
+    }, 5000)
+  }
+})
 </script>
