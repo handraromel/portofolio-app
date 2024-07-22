@@ -6,20 +6,8 @@
     <div class="container mx-auto px-4 text-center max-sm:mt-10">
       <div class="flex flex-col gap-9 max-sm:gap-6">
         <div
-          id="header-subtitle"
-          class="mx-5 text-xl lg:text-3xl"
-          v-scroll-utilities="{
-            type: 'animation',
-            animationType: 'fadeIn',
-            duration: 1,
-            delay: 0.2
-          }"
-        >
-          <p>Our Clients Are Our First Priority</p>
-        </div>
-        <div
           id="header-title"
-          class="mx-5 text-4xl font-semibold tracking-widest md:text-6xl xl:text-7xl"
+          class="mx-1 text-2xl font-semibold tracking-widest md:text-4xl xl:text-5xl"
           v-scroll-utilities="{
             type: 'animation',
             animationType: 'fadeIn',
@@ -27,7 +15,7 @@
             delay: 0.5
           }"
         >
-          WELCOME TO SOME WEB
+          WELCOME TO MY PORTOFOLIO WEBSITE
         </div>
         <div
           v-if="isAuthenticated"
@@ -48,7 +36,7 @@
         </div>
         <div
           id="header-desc"
-          class="mx-2 pb-14 text-lg max-sm:pb-4 lg:mx-48 xl:mx-[22rem]"
+          class="lg:mx-45 mx-2 pb-14 text-lg max-sm:pb-4 xl:mx-[17rem]"
           v-scroll-utilities="{
             type: 'animation',
             animationType: 'fadeIn',
@@ -56,12 +44,12 @@
             delay: 1.5
           }"
         >
-          <p class="leading-9 max-sm:leading-7">
+          <p class="max-sm:text-md leading-9 max-sm:leading-7">
             Welcome to my web development portfolio! This site features Vue.js, Tailwind CSS,
             Headless UI, and a RESTful API with Express.js, Sequelize, and MySQL. Register and log
             in via the user icon to update your profile and change your password. Feel free to
             explore and leave a message
-            <a href="/#contact" v-smooth-scroll class="font-bold text-sky-700 underline">here</a>.
+            <a href="#contact" v-smooth-scroll class="font-bold text-red-500 underline">here</a>.
             Enjoy!
           </p>
         </div>

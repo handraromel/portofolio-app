@@ -51,6 +51,7 @@
 import { ref, watch } from 'vue'
 import { useVuelidate } from '@vuelidate/core'
 import { Field, Button } from '@/components'
+import { useToast } from 'vue-toastification'
 import { type SignInFormData } from './types'
 import { storeToRefs } from 'pinia'
 import { useAuthStore } from '@/stores'
@@ -62,9 +63,11 @@ const fields = [
   { model: 'password', type: 'password', placeholder: 'Password' }
 ] as const
 
+const toast = useToast()
 const authStore = useAuthStore()
 const { userMessage } = storeToRefs(useAuthStore())
 const { signInSchema } = useFormValidation()
+
 const isLoading = ref(false)
 const isError = ref(false)
 
@@ -96,6 +99,7 @@ const handleSubmit = async () => {
     const success = await authStore.login(payload)
     if (success) {
       emit('close')
+      toast.success(userMessage.value)
     } else {
       isError.value = true
       useTimeoutFn(() => {

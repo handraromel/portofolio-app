@@ -11,7 +11,7 @@
         <div
           v-for="(item, index) in achievementContent"
           :key="index"
-          class="flex w-1/2 flex-col items-center p-4 sm:w-1/2 md:w-1/3 lg:w-1/5"
+          class="flex w-1/2 flex-col items-center p-4 text-center sm:w-1/2 md:w-1/3 lg:w-1/5"
         >
           <div class="mb-2 rounded-full border border-white p-4">
             <CircledIcon :icon-src="item.iconSrc" :is-transparent="true" size="large" />

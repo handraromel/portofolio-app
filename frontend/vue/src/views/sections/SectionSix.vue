@@ -70,4 +70,8 @@ import 'vue3-carousel/dist/carousel.css'
 .carousel__next {
   right: -10px;
 }
+
+.carousel__pagination {
+  margin: -10px;
+}
 </style>

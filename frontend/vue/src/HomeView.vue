@@ -1,7 +1,6 @@
 <template>
   <div class="flex min-h-screen items-center justify-center bg-gray-700 p-4">
     <div class="mx-auto flex w-full max-w-7xl flex-col bg-black text-white lg:flex-row">
-      <!-- Left section -->
       <div
         class="flex w-full flex-row items-center justify-between bg-white p-5 text-black lg:w-1/5 lg:flex-col lg:items-start"
       >
@@ -11,14 +10,13 @@
           <a
             href="mailto:handromel@gmail.com"
             target="_blank"
-            class="animate-pulse-glow boxShadow-glow inline-block text-blue-600 transition-colors duration-300 hover:text-blue-800"
+            class="boxShadow-glow inline-block animate-pulse-glow text-blue-600 transition-colors duration-300 hover:text-blue-800"
           >
             handromel@gmail.com
           </a>
         </div>
       </div>
 
-      <!-- Right section -->
       <div
         class="flex w-full flex-col bg-[url('/assets/homepage/bg.jpg')] bg-cover bg-center p-6 lg:w-4/5 lg:flex-row lg:p-10"
       >
@@ -26,7 +24,7 @@
           <div class="mb-5 w-full">
             <h1 class="mb-2 text-3xl font-bold lg:text-4xl">Handra Romel</h1>
             <h2 class="mb-5 text-xl text-slate-400 lg:text-2xl">Software Engineer (Web)</h2>
-            <p class="lg:text-md mb-5 text-justify text-sm">
+            <p class="lg:text-md mb-5 text-sm">
               Welcome to my professional portfolio. This page showcases my expertise in web
               application development and highlights the technologies I specialize in. Whether
               you're a potential client or employer, I hope this overview provides valuable insights
@@ -36,7 +34,7 @@
           <div v-for="(item, index) in items" :key="index">
             <div class="my-6 w-full lg:my-9">
               <h3 class="mb-2 text-lg font-semibold lg:text-xl">{{ item.title }}</h3>
-              <p class="mb-2 text-justify text-xs text-slate-400 lg:text-sm">
+              <p class="mb-2 text-sm text-slate-300">
                 {{ item.description }}
               </p>
               <table class="mb-4 w-full items-start text-xs lg:mb-7 lg:text-sm">
