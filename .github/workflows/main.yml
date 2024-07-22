@@ -51,8 +51,8 @@ jobs:
             cd /home/opc/portofolio-app/
             git pull origin master
 
-            # Create .env file
-            cat << EOF > .env
+            # Create .env file for backend
+            cat << EOF > ./api/.env
             WHITELISTED_DOMAINS=${{ secrets.WHITELISTED_DOMAINS }}
             APP_URL=${{ secrets.APP_URL }}
             DB_NAME=${{ secrets.DB_NAME }}
@@ -66,6 +66,10 @@ jobs:
             EMAIL_PORT=${{ secrets.EMAIL_PORT }}
             EMAIL_USER=${{ secrets.EMAIL_USER }}
             EMAIL_PASSWORD=${{ secrets.EMAIL_PASSWORD }}
+            EOF
+
+            # Create .env file for frontend
+            cat << EOF > ./frontend/vue/.env
             VITE_API_BASE_URL=${{ secrets.VITE_API_BASE_URL }}
             VITE_EDITOR_KEY=${{ secrets.VITE_EDITOR_KEY }}
             EOF

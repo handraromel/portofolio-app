@@ -5,21 +5,8 @@ services:
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
-    environment:
-      - PORT=3000
-      - WHITELISTED_DOMAINS=${WHITELISTED_DOMAINS}
-      - APP_URL=${APP_URL}
-      - DB_NAME=${DB_NAME}
-      - DB_USER=${DB_USER}
-      - DB_PASSWORD=${DB_PASSWORD}
-      - DB_HOST=db
-      - DB_PORT=${DB_PORT}
-      - JWT_SECRET=${JWT_SECRET}
-      - NODE_ENV=${NODE_ENV}
-      - EMAIL_HOST=${EMAIL_HOST}
-      - EMAIL_PORT=${EMAIL_PORT}
-      - EMAIL_USER=${EMAIL_USER}
-      - EMAIL_PASSWORD=${EMAIL_PASSWORD}
+    env_file:
+      - ./api/.env
     depends_on:
       - db
     networks:
@@ -31,9 +18,8 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8080:8080"
-    environment:
-      - VITE_API_BASE_URL=${VITE_API_BASE_URL}
-      - VITE_EDITOR_KEY=${VITE_EDITOR_KEY}
+    env_file:
+      - ./frontend/vue/.env
     networks:
       - portofolio_app_network
 
