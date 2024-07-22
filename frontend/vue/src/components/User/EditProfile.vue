@@ -31,7 +31,7 @@
             label="First Name"
             name="first_name"
             type="text"
-            v-model="formData.first_name"
+            v-model="formData.first_name as string"
           />
         </div>
 
@@ -41,7 +41,7 @@
             label="Last Name"
             name="last_name"
             type="text"
-            v-model="formData.last_name"
+            v-model="formData.last_name as string"
           />
         </div>
       </div>
@@ -54,7 +54,7 @@
         label="Pet Name"
         name="pet_name"
         type="text"
-        v-model="formData.pet_name"
+        v-model="formData.pet_name as string"
         :error="v$.pet_name.$errors[0]?.$message"
       />
 
@@ -64,7 +64,7 @@
         v-if="showLikedMusicGenre"
         id="liked_music_genre"
         label="Liked Music Genre"
-        v-model="formData.liked_music_genre"
+        v-model="formData.liked_music_genre as string"
         :options="musicGenreOptions"
         placeholder="Select a music genre"
         :error="v$.liked_music_genre.$errors[0]?.$message"
@@ -76,7 +76,7 @@
         v-if="showMostLikedPlace"
         id="most_liked_place"
         label="Most Liked Place"
-        v-model="formData.most_liked_place"
+        v-model="formData.most_liked_place as string"
         :options="placeOptions"
         placeholder="Select a place"
         :error="v$.most_liked_place.$errors[0]?.$message"
@@ -88,7 +88,7 @@
         label="Other Place"
         name="other_place"
         type="text"
-        v-model="formData.other_place"
+        v-model="formData.other_place as string"
         :error="v$.other_place.$errors[0]?.$message"
       />
 
