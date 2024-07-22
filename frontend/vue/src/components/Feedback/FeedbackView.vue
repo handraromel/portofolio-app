@@ -102,7 +102,7 @@
 import { ref, watch, computed } from 'vue'
 import { useDebounceFn } from '@vueuse/core'
 import { useFeedbackStore } from '@/stores'
-import { Pagination, Field } from '@/components'
+import { Pagination, Field, Button } from '@/components'
 import { type CurrentFeedbackData } from './types'
 import { truncateMessage } from '@/utils/common'
 import { MAX_PAGE_ITEM, DEFAULT_TIMEOUT_BUFFER } from '@/constant'
