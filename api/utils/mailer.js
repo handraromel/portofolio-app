@@ -13,6 +13,9 @@ const createTransporter = () => {
                 user: emailUser,
                 pass: emailPassword,
             },
+            tls: {
+                ciphers: 'SSLv3',
+            },
         })
     } else {
         return nodemailer.createTransport({
