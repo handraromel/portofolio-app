@@ -53,17 +53,47 @@
                   </td>
                 </tr>
               </table>
-              <a
-                :href="item.url"
-                :target="item.target"
-                rel="noopener noreferrer"
-                class="group relative inline-block cursor-pointer overflow-hidden bg-gray-700 px-4 py-2 text-sm text-white transition-all duration-300 ease-in-out hover:text-black hover:shadow-lg lg:px-6 lg:text-base"
-              >
-                <span class="relative z-10 font-semibold">Check it out!</span>
-                <span
-                  class="absolute inset-0 translate-x-[-100%] transform bg-white transition-transform duration-300 ease-in-out group-hover:translate-x-0"
-                ></span>
-              </a>
+              <div class="flex space-x-2">
+                <a
+                  :href="item.url"
+                  :target="item.target"
+                  rel="noopener noreferrer"
+                  class="group relative inline-block cursor-pointer overflow-hidden bg-gray-700 px-4 py-2 text-sm text-white transition-all duration-300 ease-in-out hover:text-black hover:shadow-lg lg:px-6 lg:text-base"
+                >
+                  <span class="relative z-10 font-semibold">Check it out!</span>
+                  <span
+                    class="absolute inset-0 translate-x-[-100%] transform bg-white transition-transform duration-300 ease-in-out group-hover:translate-x-0"
+                  ></span>
+                </a>
+                <a
+                  :href="item.github"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="group relative inline-flex cursor-pointer items-center justify-center overflow-hidden bg-gray-700 px-3 py-2 text-sm text-white transition-all duration-300 ease-in-out hover:text-black hover:shadow-lg lg:text-base"
+                >
+                  <span class="relative z-10">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      class="transition-colors duration-100 ease-in-out"
+                    >
+                      <path
+                        d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"
+                      ></path>
+                    </svg>
+                  </span>
+                  <span
+                    class="absolute inset-0 translate-x-[-100%] transform bg-white transition-transform duration-300 ease-in-out group-hover:translate-x-0"
+                  ></span>
+                </a>
+              </div>
             </div>
           </div>
         </div>
@@ -89,14 +119,16 @@ const items = ref([
       'Landing page featuring user authentication, account management, profile customization, and a feedback system. Intended to showcase an example of an informative page with a focus on user experience.',
     stacks: 'Vue 3, Tailwind CSS, Headless UI, Express.js, Sequelize, MySQL',
     url: '/vue-express-portofolio/',
-    target: '_blank'
+    target: '_blank',
+    github: 'https://github.com/handraromel/portofolio-app'
   },
   {
     title: 'Simple Web Application',
     description: 'Upcoming project',
     stacks: 'React.js, Tailwind CSS, Headless UI, Flask',
     url: '#',
-    target: ''
+    target: '',
+    github: 'https://github.com/handraromel'
   }
 ])
 </script>
