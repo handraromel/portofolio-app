@@ -10,7 +10,7 @@ module.exports = {
     nodeEnv: processEnv.NODE_ENV,
     emailHost: processEnv.EMAIL_HOST,
     emailService: processEnv.EMAIL_SERVICE,
-    emailServer: processEnv.EMAIL_USER,
+    emailUser: processEnv.EMAIL_USER,
     emailPort: processEnv.EMAIL_PORT,
-    emailServerPassword: processEnv.EMAIL_PASSWORD,
+    emailPassword: processEnv.EMAIL_PASSWORD,
 }

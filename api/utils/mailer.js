@@ -1,7 +1,7 @@
 const nodemailer = require('nodemailer')
 const { appConfig } = require('@api/config')
 
-const { emailServer, emailServerPassword, nodeEnv, emailHost, emailService, emailPort } = appConfig
+const { emailUser, emailPassword, nodeEnv, emailHost, emailService, emailPort } = appConfig
 
 const createTransporter = () => {
     if (nodeEnv !== 'development') {
@@ -10,16 +10,16 @@ const createTransporter = () => {
             port: emailPort,
             secure: false,
             auth: {
-                user: emailServer,
-                pass: emailServerPassword,
+                user: emailUser,
+                pass: emailPassword,
             },
         })
     } else {
         return nodemailer.createTransport({
             service: emailService,
             auth: {
-                user: emailServer,
-                pass: emailServerPassword,
+                user: emailUser,
+                pass: emailPassword,
             },
         })
     }
@@ -29,7 +29,7 @@ const sendVerificationEmail = (userEmail, verificationLink, logger) => {
     const transporter = createTransporter()
 
     const mailOptions = {
-        from: `"No Reply" <${emailServer}>`,
+        from: `"No Reply" <${emailUser}>`,
         to: userEmail,
         subject: 'Verify Your Email',
         html: `
@@ -56,7 +56,7 @@ const sendPasswordResetEmail = (userEmail, newPassword, logger) => {
     const transporter = createTransporter()
 
     const mailOptions = {
-        from: `"No Reply" <${emailServer}>`,
+        from: `"No Reply" <${emailUser}>`,
         to: userEmail,
         subject: 'Your new password',
         text: `Your new password is: ${newPassword}`,
