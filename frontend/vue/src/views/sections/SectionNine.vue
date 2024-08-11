@@ -25,12 +25,7 @@
           class="group relative flex w-full p-2 max-sm:flex-col xl:w-1/2"
         >
           <div class="relative z-10 w-1/2 max-sm:w-full">
-            <img
-              v-scroll-utilities="{ type: 'lazyLoad' }"
-              :data-src="content.image"
-              :alt="content.title"
-              class="h-full w-full object-cover"
-            />
+            <img :src="content.image" :alt="content.title" class="h-full w-full object-cover" />
           </div>
           <div
             class="z-30 flex w-1/2 flex-col justify-center overflow-hidden bg-red-500 p-8 text-white max-sm:w-full"
@@ -83,7 +78,6 @@
   >
     <div v-if="selectedPost">
       <img
-        v-scroll-utilities="{ type: 'lazyLoad' }"
         :data-src="selectedPost.image"
         :alt="selectedPost.title"
         class="mb-4 w-full object-cover"

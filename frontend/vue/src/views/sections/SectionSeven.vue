@@ -1,9 +1,7 @@
 <template>
   <div
     id="achievements"
-    v-scroll-utilities="{ type: 'lazyLoad' }"
-    data-src="/assets/section_7/background.jpg"
-    class="relative mb-24 flex h-screen items-center justify-center bg-cover bg-center text-white md:h-[65vh]"
+    class="relative mb-24 flex h-screen items-center justify-center bg-[url('/assets/section_7/background.jpg')] bg-cover bg-center text-white md:h-[65vh]"
   >
     <div class="absolute inset-0 bg-black opacity-50"></div>
     <div class="container relative z-10 mx-auto px-4">

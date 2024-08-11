@@ -39,8 +39,7 @@
       }"
     >
       <img
-        v-scroll-utilities="{ type: 'lazyLoad' }"
-        data-src="/assets/section_4/r-side.jpg"
+        src="/assets/section_4/r-side.jpg"
         class="h-full w-full object-cover"
         alt="Services illustration"
       />

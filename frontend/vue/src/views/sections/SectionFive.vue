@@ -15,12 +15,7 @@
           :key="index"
           class="group relative w-full overflow-hidden sm:w-6/12 lg:w-3/12"
         >
-          <img
-            v-scroll-utilities="{ type: 'lazyLoad' }"
-            :data-src="work.image"
-            :alt="work.title"
-            class="h-96 w-full object-cover"
-          />
+          <img :src="work.image" :alt="work.title" class="h-96 w-full object-cover" />
           <div
             class="absolute inset-0 flex flex-col items-center justify-center bg-red-500 bg-opacity-75 text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100"
           >

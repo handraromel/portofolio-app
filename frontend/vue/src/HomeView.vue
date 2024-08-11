@@ -116,19 +116,20 @@ const items = ref([
   {
     title: 'A Landing Page',
     description:
-      'Landing page featuring user authentication, account management, profile customization, and a feedback system. Intended to showcase an example of an informative page with a focus on user experience.',
+      'A Landing page that features user authentication, account management, profile customization, and a feedback system. Intended to showcase an example of an informative page with a focus on user experience.',
     stacks: 'Vue 3, Tailwind CSS, Headless UI, Express.js, Sequelize, MySQL',
     url: '/vue-express-portofolio/',
     target: '_blank',
     github: 'https://github.com/handraromel/portofolio-app'
   },
   {
-    title: 'Simple Web Application',
-    description: 'Upcoming project',
-    stacks: 'React.js, Tailwind CSS, Headless UI, Flask',
-    url: '#',
-    target: '',
-    github: 'https://github.com/handraromel'
+    title: 'Savory Script (Work In Progress)',
+    description:
+      "This mini project is to showcase a bit more complex functionalities within an app, by using dashboard style and SPA, this project's intended to manage recipe of daily meals like a cookbook.",
+    stacks: 'React.js, Tailwind CSS, Headless UI, Flask, PostgreSQL',
+    url: 'https://savoryscript.handraromel.website',
+    target: '_blank',
+    github: 'https://github.com/handraromel/portofolio-app-2'
   }
 ])
 </script>

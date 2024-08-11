@@ -43,8 +43,7 @@
           }"
         >
           <img
-            v-scroll-utilities="{ type: 'lazyLoad' }"
-            data-src="/assets/section_6/r-side.jpg"
+            src="/assets/section_6/r-side.jpg"
             alt="Case Study Image"
             class="h-[824px] w-full object-cover max-lg:h-[536px]"
           />

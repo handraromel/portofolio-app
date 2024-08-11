@@ -13,8 +13,7 @@
           }"
         >
           <img
-            v-scroll-utilities="{ type: 'lazyLoad' }"
-            data-src="/assets/section_3/monitor.png"
+            src="/assets/section_3/monitor.png"
             class="h-auto w-full object-contain"
             alt="iMac displaying website"
           />

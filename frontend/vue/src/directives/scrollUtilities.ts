@@ -4,7 +4,7 @@
  * <div v-scroll-utilities="{ type: 'animation', animationType: 'slideInRight', duration: 1.5, delay: 0.2, replay: true }" />
  * LAZYLOAD
  * Image:
- * <img v-scroll-utilities="{ type: 'lazyLoad' }" src:'/path/to/image.jpg' alt="Lazy loaded image" />
+ * <img v-scroll-utilities="{ type: 'lazyLoad' }" data-src:'/path/to/image.jpg' alt="Lazy loaded image" />
  */
 
 import { type Directive, watch, onUnmounted } from 'vue'

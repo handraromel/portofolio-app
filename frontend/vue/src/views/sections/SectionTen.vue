@@ -30,7 +30,7 @@
               <span class="px-2 text-white">{{ userMessage }}</span>
             </div>
           </transition>
-          <form @submit.prevent="handleSubmit" v-scroll-utilities="{ type: 'lazyLoad' }">
+          <form @submit.prevent="handleSubmit">
             <div v-for="(field, index) in fields" :key="index" class="mb-4">
               <Field
                 :type="field.type"
