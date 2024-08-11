@@ -116,7 +116,7 @@ const items = ref([
   {
     title: 'A Landing Page',
     description:
-      'A Landing page that features user authentication, account management, profile customization, and a feedback system. Intended to showcase an example of an informative page with a focus on user experience.',
+      'This page intended to showcase an example of an informative landing page with a focus on user experience, features user authentication, account management, profile customization, and a feedback system.',
     stacks: 'Vue 3, Tailwind CSS, Headless UI, Express.js, Sequelize, MySQL',
     url: '/vue-express-portofolio/',
     target: '_blank',
