@@ -114,20 +114,20 @@ import { ref } from 'vue'
 
 const items = ref([
   {
-    title: 'A Landing Page',
+    title: 'Company Landing Page',
     description:
-      'This page intended to showcase an example of an informative landing page with a focus on user experience, features user authentication, account management, profile customization, and a feedback system.',
+      'This page intended to showcase an example of an informative landing page with a focus on user experience, featured with user authentication, account management, profile customization, and a feedback system.',
     stacks: 'Vue 3, Tailwind CSS, Headless UI, Express.js, Sequelize, MySQL',
     url: '/vue-express-portofolio/',
     target: '_blank',
     github: 'https://github.com/handraromel/portofolio-app'
   },
   {
-    title: 'Savory Script (Work In Progress)',
+    title: 'User Auth SPA',
     description:
-      "This mini project is to showcase a bit more complex functionalities within an app, by using dashboard style and SPA, this project's intended to manage recipe of daily meals like a cookbook.",
-    stacks: 'React.js, Tailwind CSS, Headless UI, Flask, PostgreSQL',
-    url: 'https://savoryscript.handraromel.website',
+      'This mini project is to showcase a bit more complex functionalities within an app, by using dashboard style and SPA.',
+    stacks: 'React.js, Tailwind CSS, Headless UI, Prime React, Flask, PostgreSQL',
+    url: 'https://cheppy-dsc.biz.id/',
     target: '_blank',
     github: 'https://github.com/handraromel/portofolio-app-2'
   }

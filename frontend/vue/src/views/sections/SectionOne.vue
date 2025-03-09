@@ -1,7 +1,8 @@
 <template>
   <div
     id="home"
-    class="flex h-screen items-center justify-center bg-[url('/assets/section_1/background.jpg')] bg-cover bg-center text-white"
+    class="flex h-screen items-center justify-center bg-slate-500 bg-cover bg-center text-white"
+    :style="{ backgroundImage: `url(${publicAssets[0].section1[0].background})` }"
   >
     <div class="container mx-auto px-4 text-center max-sm:mt-10">
       <div class="flex flex-col gap-9 max-sm:gap-6">
@@ -74,9 +75,9 @@
         </div>
       </div>
     </div>
-    <div class="absolute bottom-[-0.9%]">
+    <div class="absolute bottom-[-0.1%]">
       <a href="#advantage" v-smooth-scroll>
-        <CircledIcon icon-src="/assets/section_1/anchor.png" :is-button="true" />
+        <CircledIcon :icon-src="`${publicAssets[0].section1[0].anchor}`" :is-button="true" />
       </a>
     </div>
   </div>
@@ -91,7 +92,7 @@
   >
     <div v-if="isAuthenticated" class="text-center">
       <div class="-mt-5 mb-5 flex w-full justify-center">
-        <img class="h-20 w-20" src="/assets/stats/info.svg" alt="info" />
+        <img class="h-20 w-20" :src="`${publicAssets[0].stats[0].info}`" alt="info" />
       </div>
       <p class="text-sky-600">You're Currently Signed In, Please Enjoy.</p>
     </div>
@@ -111,6 +112,7 @@ import { Modal, SignIn, ForgotPassword } from '@/components'
 import { storeToRefs } from 'pinia'
 import { useAuthStore } from '@/stores'
 import { useSmoothScroll } from '@/composables'
+import { publicAssets } from '@/constant'
 
 defineProps<{
   isAuthenticated: boolean

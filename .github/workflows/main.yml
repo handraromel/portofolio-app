@@ -99,8 +99,8 @@ jobs:
             VITE_EDITOR_KEY=${{ secrets.VITE_EDITOR_KEY }}
             EOF
 
-            # Pull and start containers
-            docker compose pull
+             # Stop, rebuild, and start containers
+            docker compose down
             docker compose up -d --build
 
             # Wait for database to be ready
@@ -109,6 +109,11 @@ jobs:
 
             # Run migrations
             docker compose exec backend sh -c 'pnpm db:run-migration'
+
+            # Clean up unused Docker resources
+            echo "Cleaning up unused Docker resources..."
+            docker image prune -af --filter "until=24h"
+            docker volume prune -f --filter "label!=keep"
 
       - name: Verify deployment
         uses: appleboy/ssh-action@master
