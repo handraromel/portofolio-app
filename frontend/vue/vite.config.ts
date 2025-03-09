@@ -12,14 +12,7 @@ export default defineConfig({
     }
   },
   preview: {
-    port: 8080
-  },
-  server: {
-    cors: {
-      origin: ['https://handraromel.website', 'http://localhost:5173'],
-      methods: ['GET', 'POST'],
-      allowedHeaders: ['Content-Type']
-    },
-    allowedHosts: ['https://handraromel.website']
+    port: 8080,
+    allowedHosts: ['handraromel.website']
   }
 })
