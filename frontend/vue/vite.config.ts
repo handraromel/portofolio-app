@@ -20,6 +20,6 @@ export default defineConfig({
       methods: ['GET', 'POST'],
       allowedHeaders: ['Content-Type']
     },
-    allowedHosts: ['mysubdomain.domain.io']
+    allowedHosts: ['https://handraromel.website']
   }
 })
