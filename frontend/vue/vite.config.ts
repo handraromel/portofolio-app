@@ -13,6 +13,6 @@ export default defineConfig({
   },
   preview: {
     port: 8080,
-    allowedHosts: ['handraromel.website']
+    allowedHosts: ['handraromel.site']
   }
 })
