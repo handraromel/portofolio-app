@@ -78,7 +78,7 @@ jobs:
             cd ~/portfolio-app
 
             # Create production environment file
-            cat << 'EOF' > .env.prod
+            cat > .env.prod << EOF
             DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}
             WHITELISTED_DOMAINS=${{ secrets.WHITELISTED_DOMAINS }}
             APP_URL=${{ secrets.APP_URL }}
@@ -96,7 +96,7 @@ jobs:
             EOF
 
             # Create docker-compose.yaml directly on server
-            cat << 'EOF' > docker-compose.yaml
+            cat > docker-compose.yaml << EOF
             services:
               backend:
                 image: ${{ secrets.DOCKERHUB_USERNAME }}/portfolio-backend:latest
@@ -104,19 +104,19 @@ jobs:
                   - "3000:3000"
                 environment:
                   - PORT=3000
-                  - WHITELISTED_DOMAINS=${WHITELISTED_DOMAINS}
-                  - APP_URL=${APP_URL}
-                  - DB_NAME=${DB_NAME}
-                  - DB_USER=${DB_USER}
-                  - DB_PASSWORD=${DB_PASSWORD}
+                  - WHITELISTED_DOMAINS=\${WHITELISTED_DOMAINS}
+                  - APP_URL=\${APP_URL}
+                  - DB_NAME=\${DB_NAME}
+                  - DB_USER=\${DB_USER}
+                  - DB_PASSWORD=\${DB_PASSWORD}
                   - DB_HOST=db
-                  - DB_PORT=${DB_PORT}
-                  - JWT_SECRET=${JWT_SECRET}
-                  - NODE_ENV=${NODE_ENV}
-                  - EMAIL_HOST=${EMAIL_HOST}
-                  - EMAIL_PORT=${EMAIL_PORT}
-                  - EMAIL_USER=${EMAIL_USER}
-                  - EMAIL_PASSWORD=${EMAIL_PASSWORD}
+                  - DB_PORT=\${DB_PORT}
+                  - JWT_SECRET=\${JWT_SECRET}
+                  - NODE_ENV=\${NODE_ENV}
+                  - EMAIL_HOST=\${EMAIL_HOST}
+                  - EMAIL_PORT=\${EMAIL_PORT}
+                  - EMAIL_USER=\${EMAIL_USER}
+                  - EMAIL_PASSWORD=\${EMAIL_PASSWORD}
                 depends_on:
                   - db
                 networks:
@@ -137,21 +137,21 @@ jobs:
               db:
                 image: mysql:8
                 environment:
-                  - MYSQL_DATABASE=${DB_NAME}
-                  - MYSQL_USER=${DB_USER}
-                  - MYSQL_PASSWORD=${DB_PASSWORD}
-                  - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+                  - MYSQL_DATABASE=\${DB_NAME}
+                  - MYSQL_USER=\${DB_USER}
+                  - MYSQL_PASSWORD=\${DB_PASSWORD}
+                  - MYSQL_ROOT_PASSWORD=\${DB_PASSWORD}
                 volumes:
                   - mysql_data:/var/lib/mysql
                 networks:
-                  - portofolio_app_network
+                  - portfolio_app_network
                 restart: always
 
             volumes:
               mysql_data:
 
             networks:
-              portofolio_app_network:
+              portfolio_app_network:
                 driver: bridge
             EOF
 

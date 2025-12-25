@@ -12,6 +12,11 @@ RUN pnpm install
 
 COPY . .
 
+ARG VITE_API_BASE_URL
+ARG VITE_EDITOR_KEY
+RUN printf "VITE_API_BASE_URL=%s\nVITE_EDITOR_KEY=%s\n" \
+    "$VITE_API_BASE_URL" "$VITE_EDITOR_KEY" > .env
+
 RUN pnpm run build
 
 EXPOSE 8080
