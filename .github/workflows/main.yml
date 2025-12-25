@@ -7,8 +7,8 @@ on:
     branches: [main, master]
 
 env:
-  DOCKER_BACKEND_IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/portfolio-backend
-  DOCKER_FRONTEND_IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/portfolio-frontend
+  DOCKER_BACKEND_IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/portofolio-backend
+  DOCKER_FRONTEND_IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/portofolio-frontend
 
 jobs:
   build-and-push:
@@ -74,8 +74,8 @@ jobs:
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
           script: |
             # Create and navigate to project directory
-            mkdir -p ~/portfolio-app
-            cd ~/portfolio-app
+            mkdir -p ~/portofolio-app
+            cd ~/portofolio-app
 
             # Create production environment file
             cat > .env.prod << EOF
@@ -99,7 +99,7 @@ jobs:
             cat > docker-compose.yaml << EOF
             services:
               backend:
-                image: ${{ secrets.DOCKERHUB_USERNAME }}/portfolio-backend:latest
+                image: ${{ secrets.DOCKERHUB_USERNAME }}/portofolio-backend:latest
                 ports:
                   - "3000:3000"
                 environment:
@@ -124,7 +124,7 @@ jobs:
                 restart: always
 
               frontend:
-                image: ${{ secrets.DOCKERHUB_USERNAME }}/portfolio-frontend:latest
+                image: ${{ secrets.DOCKERHUB_USERNAME }}/portofolio-frontend:latest
                 ports:
                   - "8080:8080"
                 networks:
@@ -159,8 +159,8 @@ jobs:
             echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
 
             # Pull latest images
-            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/portfolio-backend:latest
-            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/portfolio-frontend:latest
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/portofolio-backend:latest
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/portofolio-frontend:latest
 
             # Stop and remove old containers
             docker compose --env-file .env.prod down || true
@@ -197,7 +197,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
           script: |
-            cd ~/portfolio-app
+            cd ~/portofolio-app
 
             # Wait for services to be healthy
             echo "Waiting for services to be healthy..."
