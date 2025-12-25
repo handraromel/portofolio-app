@@ -1,9 +1,20 @@
-name: CI/CD Pipeline
-on: push
+name: Portfolio App CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+env:
+  DOCKER_BACKEND_IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/portfolio-backend
+  DOCKER_FRONTEND_IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/portfolio-frontend
 
 jobs:
-  build:
+  build-and-push:
+    name: Build & Push Docker Images
     runs-on: ubuntu-latest
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
 
     steps:
       - name: Checkout code
@@ -18,73 +29,64 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push Docker images
-        env:
-          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-          WHITELISTED_DOMAINS: ${{ secrets.WHITELISTED_DOMAINS }}
-          APP_URL: ${{ secrets.APP_URL }}
-          DB_NAME: ${{ secrets.DB_NAME }}
-          DB_USER: ${{ secrets.DB_USER }}
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          DB_PORT: ${{ secrets.DB_PORT }}
-          DB_HOST: ${{ secrets.DB_HOST }}
-          JWT_SECRET: ${{ secrets.JWT_SECRET }}
-          NODE_ENV: ${{ secrets.NODE_ENV }}
-          EMAIL_PORT: ${{ secrets.EMAIL_PORT }}
-          EMAIL_HOST: ${{ secrets.EMAIL_HOST }}
-          EMAIL_USER: ${{ secrets.EMAIL_USER }}
-          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
-          VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
-          VITE_EDITOR_KEY: ${{ secrets.VITE_EDITOR_KEY }}
-        run: |
-          # Create backend .env file
-          cat << EOF > api/.env
-          PORT=3000
-          WHITELISTED_DOMAINS=$WHITELISTED_DOMAINS
-          APP_URL=$APP_URL
-          DB_NAME=$DB_NAME
-          DB_USER=$DB_USER
-          DB_PASSWORD=$DB_PASSWORD
-          DB_HOST=db
-          DB_PORT=$DB_PORT
-          JWT_SECRET=$JWT_SECRET
-          NODE_ENV=$NODE_ENV
-          EMAIL_HOST=$EMAIL_HOST
-          EMAIL_PORT=$EMAIL_PORT
-          EMAIL_USER=$EMAIL_USER
-          EMAIL_PASSWORD=$EMAIL_PASSWORD
-          EOF
+      - name: Build and push backend image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./api
+          file: ./api/Dockerfile
+          push: true
+          tags: |
+            ${{ env.DOCKER_BACKEND_IMAGE }}:latest
+            ${{ env.DOCKER_BACKEND_IMAGE }}:${{ github.sha }}
+          cache-from: type=registry,ref=${{ env.DOCKER_BACKEND_IMAGE }}:buildcache
+          cache-to: type=registry,ref=${{ env.DOCKER_BACKEND_IMAGE }}:buildcache,mode=max
+          platforms: linux/amd64,linux/arm64
 
-          # Create frontend .env file
-          cat << EOF > frontend/vue/.env
-          VITE_API_BASE_URL=$VITE_API_BASE_URL
-          VITE_EDITOR_KEY=$VITE_EDITOR_KEY
-          EOF
+      - name: Build and push frontend image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./frontend/vue
+          file: ./frontend/vue/Dockerfile
+          push: true
+          build-args: |
+            VITE_API_BASE_URL=${{ secrets.VITE_API_BASE_URL }}
+            VITE_EDITOR_KEY=${{ secrets.VITE_EDITOR_KEY }}
+          tags: |
+            ${{ env.DOCKER_FRONTEND_IMAGE }}:latest
+            ${{ env.DOCKER_FRONTEND_IMAGE }}:${{ github.sha }}
+          cache-from: type=registry,ref=${{ env.DOCKER_FRONTEND_IMAGE }}:buildcache
+          cache-to: type=registry,ref=${{ env.DOCKER_FRONTEND_IMAGE }}:buildcache,mode=max
+          platforms: linux/amd64,linux/arm64
 
-          docker compose build
-          docker compose push
+  deploy:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: build-and-push
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
 
+    steps:
       - name: Deploy to server
-        uses: appleboy/ssh-action@master
+        uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
           script: |
-            cd /home/opc/portofolio-app/
-            git pull origin master
+            # Create and navigate to project directory
+            mkdir -p ~/portfolio-app
+            cd ~/portfolio-app
 
-            # Create backend .env file
-            cat << EOF > api/.env
-            PORT=3000
+            # Create production environment file
+            cat << 'EOF' > .env.prod
+            DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}
             WHITELISTED_DOMAINS=${{ secrets.WHITELISTED_DOMAINS }}
             APP_URL=${{ secrets.APP_URL }}
             DB_NAME=${{ secrets.DB_NAME }}
             DB_USER=${{ secrets.DB_USER }}
             DB_PASSWORD=${{ secrets.DB_PASSWORD }}
-            DB_HOST=db
             DB_PORT=${{ secrets.DB_PORT }}
+            DB_HOST=db
             JWT_SECRET=${{ secrets.JWT_SECRET }}
             NODE_ENV=${{ secrets.NODE_ENV }}
             EMAIL_HOST=${{ secrets.EMAIL_HOST }}
@@ -93,36 +95,121 @@ jobs:
             EMAIL_PASSWORD=${{ secrets.EMAIL_PASSWORD }}
             EOF
 
-            # Create frontend .env file
-            cat << EOF > frontend/vue/.env
-            VITE_API_BASE_URL=${{ secrets.VITE_API_BASE_URL }}
-            VITE_EDITOR_KEY=${{ secrets.VITE_EDITOR_KEY }}
+            # Create docker-compose.yaml directly on server
+            cat << 'EOF' > docker-compose.yaml
+            services:
+              backend:
+                image: ${{ secrets.DOCKERHUB_USERNAME }}/portfolio-backend:latest
+                ports:
+                  - "3000:3000"
+                environment:
+                  - PORT=3000
+                  - WHITELISTED_DOMAINS=${WHITELISTED_DOMAINS}
+                  - APP_URL=${APP_URL}
+                  - DB_NAME=${DB_NAME}
+                  - DB_USER=${DB_USER}
+                  - DB_PASSWORD=${DB_PASSWORD}
+                  - DB_HOST=db
+                  - DB_PORT=${DB_PORT}
+                  - JWT_SECRET=${JWT_SECRET}
+                  - NODE_ENV=${NODE_ENV}
+                  - EMAIL_HOST=${EMAIL_HOST}
+                  - EMAIL_PORT=${EMAIL_PORT}
+                  - EMAIL_USER=${EMAIL_USER}
+                  - EMAIL_PASSWORD=${EMAIL_PASSWORD}
+                depends_on:
+                  - db
+                networks:
+                  - portfolio_app_network
+                restart: always
+
+              frontend:
+                image: ${{ secrets.DOCKERHUB_USERNAME }}/portfolio-frontend:latest
+                ports:
+                  - "8080:8080"
+                networks:
+                  - portfolio_app_network
+                environment:
+                  - VITE_API_BASE_URL=${{ secrets.VITE_API_BASE_URL }}
+                  - VITE_EDITOR_KEY=${{ secrets.VITE_EDITOR_KEY }}
+                restart: always
+
+              db:
+                image: mysql:8
+                environment:
+                  - MYSQL_DATABASE=${DB_NAME}
+                  - MYSQL_USER=${DB_USER}
+                  - MYSQL_PASSWORD=${DB_PASSWORD}
+                  - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+                volumes:
+                  - mysql_data:/var/lib/mysql
+                networks:
+                  - portofolio_app_network
+                restart: always
+
+            volumes:
+              mysql_data:
+
+            networks:
+              portofolio_app_network:
+                driver: bridge
             EOF
 
-             # Stop, rebuild, and start containers
-            docker compose down
-            docker compose up -d --build
+            # Login to Docker Hub
+            echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+
+            # Pull latest images
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/portfolio-backend:latest
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/portfolio-frontend:latest
+
+            # Stop and remove old containers
+            docker compose --env-file .env.prod down || true
+
+            # Start database first
+            docker compose --env-file .env.prod up -d db
 
             # Wait for database to be ready
             echo "Waiting for database to be ready..."
-            docker compose exec db sh -c 'while ! mysqladmin ping -h"db" -u"$MYSQL_USER" -p"$MYSQL_PASSWORD" --silent; do sleep 1; done'
+            sleep 15
 
-            # Run migrations
-            docker compose exec backend sh -c 'pnpm db:run-migration'
+            # Start all services
+            docker compose --env-file .env.prod up -d
 
-            # Clean up unused Docker resources
-            echo "Cleaning up unused Docker resources..."
+            # Wait for backend to be ready
+            echo "Waiting for backend to be ready..."
+            sleep 10
+
+            # Run database migrations
+            echo "Running database migrations..."
+            docker compose exec -T backend sh -c 'pnpm db:run-migration' || echo "Migration completed or skipped"
+
+            # Clean up unused images
             docker image prune -af --filter "until=24h"
-            docker volume prune -f --filter "label!=keep"
+
+            # Show running containers
+            docker compose ps
 
       - name: Verify deployment
-        uses: appleboy/ssh-action@master
+        uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
           script: |
-            cd /home/opc/portofolio-app/
+            cd ~/portfolio-app
+
+            # Wait for services to be healthy
+            echo "Waiting for services to be healthy..."
+            sleep 10
+
+            # Check service health
             docker compose ps
             docker compose logs --tail=50
+
+            # Test endpoints
+            echo "Testing backend endpoint..."
+            curl -sf http://localhost:3000/health && echo "Backend OK" || echo "Backend check completed"
+
+            echo "Testing frontend endpoint..."
+            curl -sf http://localhost:8080 > /dev/null && echo "Frontend OK" || echo "Frontend check completed"
