@@ -12,7 +12,7 @@
             target="_blank"
             class="boxShadow-glow inline-block animate-pulse-glow text-blue-600 transition-colors duration-300 hover:text-blue-800"
           >
-            handromel@gmail.com
+            handraromel@gmail.com
           </a>
         </div>
       </div>
