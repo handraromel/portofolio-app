@@ -123,13 +123,13 @@ const items = ref([
     github: 'https://github.com/handraromel/portofolio-app'
   },
   {
-    title: 'User Auth SPA',
+    title: 'Tracquiry',
     description:
-      'This mini project is to showcase a bit more complex functionalities within an app, by using dashboard style and SPA.',
-    stacks: 'React.js, Tailwind CSS, Headless UI, Prime React, Flask, PostgreSQL',
-    url: 'https://cheppy-dsc.biz.id/',
+      'This project main purpose is to manage expenses. This project current state is capable to manage a small family expense tracking, resembling the name Traquiry, Track your own enquiry.',
+    stacks: 'Next.js with typescript, Zustand, Tanstack React Query, Tailwind CSS, Headless UI, FastAPI, PostgreSQL',
+    url: 'https://tracquiry.handraromel.site',
     target: '_blank',
-    github: 'https://github.com/handraromel/portofolio-app-2'
+    github: 'https://github.com/handraromel/expense-management-system'
   }
 ])
 </script>
